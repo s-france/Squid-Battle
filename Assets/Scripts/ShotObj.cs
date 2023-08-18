@@ -23,6 +23,6 @@ public class ShotObj : MonoBehaviour
     public void Shoot(float chargeTime)
     {
         rb = this.GetComponent<Rigidbody2D>();
-        rb.AddForce(Vector2.up * shotStrength * Math.Clamp(chargeTime, 0, maxChargeTime));
+        rb.AddForce(-transform.up * shotStrength * Math.Clamp(chargeTime, .5f, maxChargeTime), ForceMode2D.Impulse);
     }
 }

@@ -27,7 +27,9 @@ public class ShotBehavior : MonoBehaviour, IItemBehavior
 
     public void UseItem(float chargeTime)
     {
-        GameObject shot = Instantiate(ShotPrefab, transform.position, transform.rotation);
+        Vector2 ShotSpawn = transform.parent.position - 1.5f*transform.parent.up;
+
+        GameObject shot = Instantiate(ShotPrefab, ShotSpawn, transform.parent.rotation);
         shot.GetComponent<ShotObj>().Shoot(chargeTime);
         DestroyItem();
     }

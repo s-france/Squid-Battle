@@ -52,6 +52,7 @@ public class ItemController : MonoBehaviour
         pc = playerPC;
         sr.enabled = false; //hide sprite after pickup
         GetComponent<Collider2D>().enabled = false; //disable future collision
+
         
         pc.GainItem(ib);
 
