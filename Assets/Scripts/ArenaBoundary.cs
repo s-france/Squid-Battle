@@ -17,7 +17,11 @@ public class ArenaBoundary : MonoBehaviour
         if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
         {
             im.KillPlayer(col.GetComponentInParent<PlayerController>().idx);
+        } else if (col.gameObject.layer == LayerMask.NameToLayer("ItemObjs"))
+        {
+            
         }
+
     }
 
 }

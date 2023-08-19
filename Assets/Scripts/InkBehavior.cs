@@ -2,20 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class ShotBehavior : MonoBehaviour, IItemBehavior
+public class InkBehavior : MonoBehaviour, IItemBehavior
 {
     ItemManager im;
-    GameObject ShotPrefab;
-    
+    GameObject InkPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
         im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
-        ShotPrefab = im.ItemObjs[0];
+        InkPrefab = im.ItemObjs[1]; //ink prefab in slot 1
 
-
-        Debug.Log("ShotBehavior added!");
     }
 
     // Update is called once per frame
@@ -25,12 +22,13 @@ public class ShotBehavior : MonoBehaviour, IItemBehavior
     }
 
 
-    public void UseItem(float chargeTime)
+     public void UseItem(float chargeTime)
     {
-        Vector2 ShotSpawn = transform.parent.position - 1.5f*transform.parent.up;
+        //MUST CHANGE SPAWN DISTANCE
+        Vector2 InkSpawn = transform.parent.position - 1.2f*transform.parent.up;
 
-        GameObject shot = Instantiate(ShotPrefab, ShotSpawn, transform.parent.rotation);
-        shot.GetComponent<ShotObj>().Shoot(chargeTime);
+        GameObject ink = Instantiate(InkPrefab, InkSpawn, transform.parent.rotation);
+        ink.GetComponent<InkObj>().Deploy(chargeTime);
         DestroyItem();
     }
 
@@ -38,5 +36,4 @@ public class ShotBehavior : MonoBehaviour, IItemBehavior
     {
         GameObject.Destroy(gameObject);
     }
-
 }

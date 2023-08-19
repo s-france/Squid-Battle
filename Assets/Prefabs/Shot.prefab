@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7046570537419428876}
   - component: {fileID: 7046570537419428877}
   - component: {fileID: 7046570537419428874}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Shot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ Rigidbody2D:
   m_Material: {fileID: 6200000, guid: 7c780137f7caa4d459c997bb7ca3179c, type: 2}
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!58 &7046570537419428877
 CircleCollider2D:

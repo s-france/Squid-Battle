@@ -23,15 +23,17 @@ public class ItemManager : MonoBehaviour
         
     }
 
-    //spawns (creates) an item of type at position pos
+    //spawns (creates) an item-pickup of type at position pos
     void SpawnItem(int type, Transform pos)
     {
         Debug.Log("spawning item");
+        
         //instantiate new ItemPrefab
         GameObject newItem = Instantiate(ItemPrefab, pos.position, pos.rotation);
+        
         //set item type
         //MUST ADD OTHER ITEM TYPES BASED ON int type
-        newItem.GetComponent<ItemController>().ib = newItem.AddComponent<ShotBehavior>() as ShotBehavior;
+        newItem.GetComponent<ItemController>().ib = newItem.AddComponent<InkBehavior>() as InkBehavior;
         
         Debug.Log("new behavior assigned!");
 

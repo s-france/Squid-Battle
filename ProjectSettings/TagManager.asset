@@ -12,10 +12,10 @@ TagManager:
   - Water
   - UI
   - Players
-  - Items
+  - ItemPickups
+  - ItemObjs
   - Arena
   - Background
-  - 
   - 
   - 
   - 
@@ -47,11 +47,14 @@ TagManager:
   - name: Arena
     uniqueID: 1841227551
     locked: 0
-  - name: Items
+  - name: ItemPickups
     uniqueID: 2569367585
     locked: 0
   - name: Players
     uniqueID: 1810327131
+    locked: 0
+  - name: Obstructions
+    uniqueID: 550400597
     locked: 0
   - name: UI
     uniqueID: 2950271887
