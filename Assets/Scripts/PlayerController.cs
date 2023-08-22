@@ -247,7 +247,7 @@ public class PlayerController : MonoBehaviour
         //After charging
         if(im.gameStarted && !isCoolingDown /*&& !specialCharging*/) //perform movement during match
         {
-            Move();
+            Move(0);
         } else if (!im.gameStarted && !im.playerList[idx].isReady)
         {
             sr.sprite = spriteSet[0];
@@ -258,10 +258,12 @@ public class PlayerController : MonoBehaviour
     }
 
     //called in OnCharge - handles launch movement
-    void Move()
+    //type of movement - 0:normal 1:special
+    //^^stupid workaround for demo sprint MUST FIX LATER
+    void Move(int type)
     {
         rb.velocity = Vector2.zero;
-        Vector2 moveForce = calcMoveForce();
+        Vector2 moveForce = calcMoveForce(type);
         Debug.Log("Moving Force: " + moveForce.magnitude);
 
         rb.AddForce(moveForce, ForceMode2D.Impulse);
@@ -270,8 +272,24 @@ public class PlayerController : MonoBehaviour
         RotateSprite(i_move);
     }
 
-    public Vector2 calcMoveForce()
+    //type of movement - 0:normal 1:special
+    //^^stupid workaround for demo sprint MUST FIX LATER
+    public Vector2 calcMoveForce(int type)
     {
+        float charge;
+        switch (type)
+        {
+            case 0:
+                charge = chargeTime;
+                break;
+            case 1:
+                charge = specialChargeTime;
+                break;
+            default:
+                charge = chargeTime;
+                break;
+        }
+
         float xmod = .4f;
         float ymod = 1.37f;
 
@@ -280,8 +298,21 @@ public class PlayerController : MonoBehaviour
         float chargeFactor = chargeScale / chargeCurve;
         float minCharge = .5f;
 
-        Vector2 moveForce = i_move * chargeStrength * Math.Clamp(ymod*chargeFactor * (MathF.Log10(xmod*Math.Clamp(chargeTime, 0, maxChargeTime)) + 1), minCharge, 100);
-        return moveForce;
+        Vector2 moveForce = i_move * chargeStrength * Math.Clamp(ymod*chargeFactor * (MathF.Log10(xmod*Math.Clamp(charge, 0, maxChargeTime)) + 1), minCharge, 100);
+        
+        if (type == 1) //total bullshit
+        {
+            float idk = moveForce.magnitude*.25f + 7;
+
+            //return moveForce * .33f;
+            return moveForce.normalized * idk;
+
+        } else
+        {
+            return moveForce;
+        }
+
+        
     }
 
 
@@ -304,7 +335,6 @@ public class PlayerController : MonoBehaviour
 
     public void OnSpecial(InputAction.CallbackContext ctx)
     {
-        OnCharge(ctx);
         if(ctx.performed) //special charging
         {
             specialChargeTime = 0;
@@ -319,27 +349,42 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator SpecialCharge()
     {
+        if(im.gameStarted)
+        {
+            StartCoroutine(rc.RenderReticle());
+        }
 
 
-        //Charging
+        //Special Charging
         while (specialCharging)
         {
             if (!isCoolingDown)
             {
                 sr.sprite = spriteSet[2]; //charging sprite
                 specialChargeTime += Time.deltaTime;
+            } else
+            {
+                specialChargeTime = 0;
             }
+
+            //readyUp if held for 2 secs before game
+            if(specialChargeTime > 1 && !im.gameStarted && !im.playerList[idx].isReady)
+            {
+                ReadyUp();
+            }
+
             yield return null;
         }
 
-        //After charging
+        //After special charging
         if(im.gameStarted && !isCoolingDown) //use item during match
         {
+            Move(1);
             UseItem(selectedItemIdx);
-        }/* else if (!im.gameStarted && !im.playerList[idx].isReady)
+        } else if (!im.gameStarted && !im.playerList[idx].isReady)
         {
             sr.sprite = spriteSet[0];
-        }*/
+        }
 
         //reset chargeTime
         specialChargeTime = 0;

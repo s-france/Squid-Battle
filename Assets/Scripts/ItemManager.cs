@@ -65,6 +65,11 @@ public class ItemManager : MonoBehaviour
         int type;
         Transform pos = new GameObject().transform;
 
+        //spawn at start of match
+        type = Random.Range(0,itemTypesCount);
+        pos.position = Random.insideUnitCircle * 7;
+        SpawnItem(type, pos);
+
         while(im.gameStarted)
         {
             //if(!im.gameStarted) {break;}
@@ -80,7 +85,7 @@ public class ItemManager : MonoBehaviour
                 timer = 0;
             }
             
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
 
         Destroy(pos.gameObject);

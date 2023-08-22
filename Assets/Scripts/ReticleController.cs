@@ -32,13 +32,13 @@ public class ReticleController : MonoBehaviour
 
     void ActivateReticle()
     {
-        SetReticle(Vector2.zero);
+        SetReticle(0, Vector2.zero);
         lr.enabled = true;
     }
 
     void DeactivateReticle()
     {
-        SetReticle(Vector2.zero);
+        SetReticle(0, Vector2.zero);
         lr.enabled = false;
     }
 
@@ -50,18 +50,38 @@ public class ReticleController : MonoBehaviour
 
     public IEnumerator RenderReticle()
     {
-        //CHANGE 0 TO MINCHARGETIME
-        yield return new WaitUntil(() => pc.chargeTime > 0);
-        ActivateReticle();
+        Debug.Log("starting RenderReticle()!");
+        Debug.Log("charging: "+ pc.charging);
+        Debug.Log("specialCharging: " + pc.specialCharging);
 
-        while (pc.charging /*&& !pc.isCoolingDown*/)
+        //CHANGE 0 TO MINCHARGETIME
+        yield return new WaitUntil(() => pc.chargeTime > 0 || pc.specialChargeTime > 0);
+        ActivateReticle();
+        int chargeType;
+
+        if(pc.charging)
         {
+            Debug.Log("normal charge rendering!");
+            chargeType = 0;
+        } else if(pc.specialCharging)
+        {
+            Debug.Log("specialcharge Rendering!");
+            chargeType = 1;
+        } else
+        {
+            chargeType = 0;
+        }
+
+
+        while (pc.charging || pc.specialCharging)
+        {
+
             if(!pc.isCoolingDown)
             {
                 lr.enabled = true;
 
                 //SetReticle(pc.i_move);
-                SetReticle(Vector2.up);
+                SetReticle(chargeType, Vector2.up);
             } else
             {
                 lr.enabled = false;
@@ -75,15 +95,16 @@ public class ReticleController : MonoBehaviour
 
     }
 
-    void SetReticle(Vector2 point)
+    //type 1: normal charge, type2: specialCharge
+    void SetReticle(int chargeType, Vector2 point)
     {
         reticlePosition.x = point.x;
         reticlePosition.y = point.y;
 
-        float reticleLength = pc.calcMoveForce().magnitude;
+        float reticleLength = pc.calcMoveForce(chargeType).magnitude;
 
         lr.SetPosition(1, reticlePosition * reticleLength * .08f);
-        //Debug.Log("reticlePosition: " + reticlePosition);
+        //Debug.Log("reticlePosition: " + reticlePosition*reticleLength*.08f);
     }
 
 }
