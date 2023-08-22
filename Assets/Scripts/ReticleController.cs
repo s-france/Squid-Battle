@@ -54,10 +54,20 @@ public class ReticleController : MonoBehaviour
         yield return new WaitUntil(() => pc.chargeTime > 0);
         ActivateReticle();
 
-        while (pc.charging && !pc.isCoolingDown)
+        while (pc.charging /*&& !pc.isCoolingDown*/)
         {
-            //SetReticle(pc.i_move);
-            SetReticle(Vector2.up);
+            if(!pc.isCoolingDown)
+            {
+                lr.enabled = true;
+
+                //SetReticle(pc.i_move);
+                SetReticle(Vector2.up);
+            } else
+            {
+                lr.enabled = false;
+            }
+
+
             yield return null;
         }
 

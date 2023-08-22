@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
 using Cinemachine;
+using Unity.Mathematics;
 
 public class PlayerController : MonoBehaviour
 {
@@ -131,6 +132,9 @@ public class PlayerController : MonoBehaviour
 
     public void Deactivate()
     {
+        rb.angularVelocity = 0;
+        transform.rotation = quaternion.identity;
+
         rb.velocity = Vector2.zero;
         i_move = Vector2.zero;
         chargeTime = 0;
@@ -144,6 +148,9 @@ public class PlayerController : MonoBehaviour
 
     public void Reactivate()
     {
+        rb.angularVelocity = 0;
+        transform.rotation = quaternion.identity;
+
         i_move= Vector2.zero;
         chargeTime = 0;
         charging = false;
@@ -221,11 +228,16 @@ public class PlayerController : MonoBehaviour
             {
                 sr.sprite = spriteSet[2]; //charging sprite
                 chargeTime += Time.deltaTime;
+            } else
+            {
+                //failsafe prevents chargehold while stunned
+                //MIGHT CAUSE PROBLEMS idk
+                chargeTime = 0;
             }
             
 
             //readyUp if held for 2 secs before game
-            if(chargeTime > 2 && !im.gameStarted && !im.playerList[idx].isReady)
+            if(chargeTime > 1 && !im.gameStarted && !im.playerList[idx].isReady)
             {
                 ReadyUp();
             }
