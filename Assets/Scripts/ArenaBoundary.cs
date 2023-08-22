@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class ArenaBoundary : MonoBehaviour
 {
@@ -19,9 +20,15 @@ public class ArenaBoundary : MonoBehaviour
             im.KillPlayer(col.GetComponentInParent<PlayerController>().idx);
         } else if (col.gameObject.layer == LayerMask.NameToLayer("ItemObjs"))
         {
-            
+            StartCoroutine(KillClock(col.gameObject, 2));
         }
 
+    }
+
+    IEnumerator KillClock(GameObject obj, float timer)
+    {
+        yield return new WaitForSeconds(timer);
+        Destroy(obj);
     }
 
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class InkObj : MonoBehaviour
 {
+    InputManager im;
+
     Rigidbody2D rb;
 
     float activeTimer;
@@ -16,6 +18,8 @@ public class InkObj : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
+
         activeTimer = 0;
         upTime = maxUpTime;
     }
@@ -28,7 +32,7 @@ public class InkObj : MonoBehaviour
 
         //this should be its own func / coroutine
         activeTimer += Time.deltaTime;
-        if (activeTimer >= upTime)
+        if (activeTimer >= upTime || !im.gameStarted)
         {
             Destroy(this.gameObject);
         }
@@ -44,7 +48,7 @@ public class InkObj : MonoBehaviour
         transform.localScale += new Vector3(size, size, 0);
 
         rb = this.GetComponent<Rigidbody2D>();
-        rb.AddForce(-transform.up * 20, ForceMode2D.Impulse);
+        rb.AddForce(-transform.up * 10, ForceMode2D.Impulse);
     }
 
 }

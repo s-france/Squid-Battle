@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
+    InputManager im;
+
     public GameObject ItemPrefab;
     public List<GameObject> ItemObjs;
 
@@ -14,7 +16,9 @@ public class ItemManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SpawnItem(0, this.transform);
+        im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
+
+        //SpawnItem(0, this.transform);
     }
 
     // Update is called once per frame
@@ -30,17 +34,61 @@ public class ItemManager : MonoBehaviour
         
         //instantiate new ItemPrefab
         GameObject newItem = Instantiate(ItemPrefab, pos.position, pos.rotation);
-        
+
         //set item type
-        //MUST ADD OTHER ITEM TYPES BASED ON int type
-        newItem.GetComponent<ItemController>().ib = newItem.AddComponent<InkBehavior>() as InkBehavior;
-        
-        Debug.Log("new behavior assigned!");
+        switch (type)
+        {
+            case 0: //shot
+                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<ShotBehavior>() as ShotBehavior;
+                Debug.Log("spawned shot at " + pos.position);
+                break;
+
+            case 1: //ink
+                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<InkBehavior>() as InkBehavior;
+                Debug.Log("spawned ink at " + pos.position);
+                break;
+            
+            default:
+                Debug.Log("ERROR: invalid item type!!");
+                break;
+        }
+
 
         spawnedItemsCount++;
         //spawnedItems[spawnedItemsCount] = 
 
+    }
 
+    public IEnumerator RandomSpawns(float spawnRate)
+    {
+        float timer = 0;
+        int type;
+        Transform pos = new GameObject().transform;
+
+        while(im.gameStarted)
+        {
+            //if(!im.gameStarted) {break;}
+            timer += Time.deltaTime;
+
+            if(timer >= spawnRate)
+            {
+                type = Random.Range(0,itemTypesCount);
+                pos.position = Random.insideUnitCircle * 7;
+
+                SpawnItem(type, pos);
+
+                timer = 0;
+            }
+            
+            yield return new WaitForEndOfFrame();
+        }
+
+        Destroy(pos.gameObject);
+    }
+
+    void DestroyAllItemObjs()
+    {
+        
     }
 
 }

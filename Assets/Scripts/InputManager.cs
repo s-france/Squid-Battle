@@ -8,6 +8,7 @@ public class InputManager : MonoBehaviour
 {
     CamController camCon;
     UIController ui;
+    ItemManager itemMan;
 
     public List<PlayerConfig> playerList {get; private set;}
 
@@ -62,6 +63,7 @@ public class InputManager : MonoBehaviour
 
             ui = GameObject.Find("MenuUI").GetComponent<UIController>();
             camCon = GameObject.Find("VCams").GetComponent<CamController>();
+            itemMan = GameObject.Find("ItemManager").GetComponent<ItemManager>();
 
             ui.HideAllPlayers();
         }
@@ -196,6 +198,11 @@ public class InputManager : MonoBehaviour
     //declare winner and end/reset game
     void ResetGame(int winnerIdx)
     {
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Despawns"))
+        {
+            Destroy(obj);
+        }
+
         //turn start menu on
         ui.ShowAll();
         camCon.StartCamOn();
@@ -243,6 +250,8 @@ public class InputManager : MonoBehaviour
 
         gameStarted = true;
         Debug.Log("game started!");
+
+        StartCoroutine(itemMan.RandomSpawns(15));
 
     }
 

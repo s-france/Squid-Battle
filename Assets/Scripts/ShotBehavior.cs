@@ -27,7 +27,7 @@ public class ShotBehavior : MonoBehaviour, IItemBehavior
 
     public void UseItem(float chargeTime)
     {
-        Vector2 ShotSpawn = transform.parent.position - 1.5f*transform.parent.up;
+        Vector2 ShotSpawn = transform.parent.position - 1f*transform.parent.up;
 
         GameObject shot = Instantiate(ShotPrefab, ShotSpawn, transform.parent.rotation);
         shot.GetComponent<ShotObj>().Shoot(chargeTime);
