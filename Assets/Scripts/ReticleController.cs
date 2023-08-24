@@ -103,7 +103,7 @@ public class ReticleController : MonoBehaviour
 
         float reticleLength = pc.calcMoveForce(chargeType).magnitude;
 
-        lr.SetPosition(1, reticlePosition * reticleLength * .08f);
+        lr.SetPosition(1, reticlePosition * reticleLength * .08f / pc.GetComponent<Rigidbody2D>().mass);
         //Debug.Log("reticlePosition: " + reticlePosition*reticleLength*.08f);
     }
 

@@ -8,6 +8,7 @@ public class ItemManager : MonoBehaviour
 
     public GameObject ItemPrefab;
     public List<GameObject> ItemObjs;
+    public Sprite[] ItemPickupSprites;
 
     public int itemTypesCount;
     [HideInInspector] public int spawnedItemsCount;
@@ -18,7 +19,7 @@ public class ItemManager : MonoBehaviour
     {
         im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
 
-        //SpawnItem(0, this.transform);
+        //SpawnItem(2, this.transform);
     }
 
     // Update is called once per frame
@@ -28,7 +29,7 @@ public class ItemManager : MonoBehaviour
     }
 
     //spawns (creates) an item-pickup of type at position pos
-    void SpawnItem(int type, Transform pos)
+    public void SpawnItem(int type, Transform pos)
     {
         Debug.Log("spawning item");
         
@@ -46,6 +47,11 @@ public class ItemManager : MonoBehaviour
             case 1: //ink
                 newItem.GetComponent<ItemController>().ib = newItem.AddComponent<InkBehavior>() as InkBehavior;
                 Debug.Log("spawned ink at " + pos.position);
+                break;
+
+            case 2: //grow
+                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<GrowBehavior>() as GrowBehavior;
+                Debug.Log("spawned grow at " + pos.position);
                 break;
             
             default:

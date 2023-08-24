@@ -122,16 +122,7 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        /*
-        if(playerList[0] != null)
-        {
-            Debug.Log("P" + playerList[0].playerIndex + " i_move val: " + playerList[0].playerScript.i_move);
-        }
-        if(playerList[1] != null)
-        {
-            Debug.Log("P" + playerList[1].playerIndex + " i_move val: " + playerList[1].playerScript.i_move);
-        }
-        */
+        
     }
 
     public void ReadyPlayer(int idx)
@@ -151,6 +142,12 @@ public class InputManager : MonoBehaviour
     {
         ui.UnReadyPlayer(idx);
         playerList[idx].isReady = false;
+
+        //start game if all active players are ready && more than 1 player
+        if((playerList.TrueForAll(p => (p.isReady || !p.isActive))) && playerList.Count(p => p.isActive) > 1 && !gameStarted)
+        {
+            StartGame();
+        }
     }
 
 
@@ -171,7 +168,7 @@ public class InputManager : MonoBehaviour
         playerList[idx].playerScript.Deactivate();
         UnReadyPlayer(idx);
 
-        playerList[idx].input.DeactivateInput();
+        //playerList[idx].input.DeactivateInput();
         playerList[idx].isReady = false;
         playerList[idx].isAlive = false;
 
@@ -252,6 +249,9 @@ public class InputManager : MonoBehaviour
         Debug.Log("game started!");
 
         StartCoroutine(itemMan.RandomSpawns(15));
+
+        itemMan.SpawnItem(2, itemMan.transform);
+        itemMan.SpawnItem(2, itemMan.transform);
 
     }
 

@@ -27,15 +27,22 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool specialCharging;
     [HideInInspector] public float specialChargeTime;
     [HideInInspector] public bool isCoolingDown;
+    [HideInInspector] public bool isGrown;
 
 
     [SerializeField] public int inventorySize; //amount of items that can be held at once
-    [SerializeField] float chargeStrength;
+    [SerializeField] public float chargeStrength;
     [SerializeField] float maxChargeTime;
-    [SerializeField] float knockbackMultiplier;
+    [SerializeField] public float knockbackMultiplier;
     [SerializeField] float coolDownFactor;
     [SerializeField] float moveCoolDown;
     [SerializeField] float coolDownVelocity;
+
+    [HideInInspector] public Vector3 defaultScale;
+    [HideInInspector] public float defaultMass;
+    [HideInInspector] public float defaultChargeStrength;
+    [HideInInspector] public float defaultKnockbackMultiplier;
+
 
     void Start()
     {
@@ -77,7 +84,11 @@ public class PlayerController : MonoBehaviour
         i_move = Vector2.zero;
         rotation = Vector3.zero;
 
-
+        //set default stats
+        defaultScale = transform.localScale;
+        defaultMass = rb.mass;
+        defaultChargeStrength = chargeStrength;
+        defaultKnockbackMultiplier = knockbackMultiplier;
     }
 
     // Update is called once per frame
@@ -130,10 +141,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Deactivate()
+    void ResetDefaultStats()
     {
+        transform.localScale = defaultScale;
+        rb.mass = defaultMass;
+        chargeStrength = defaultChargeStrength;
+        knockbackMultiplier = defaultKnockbackMultiplier;
+
         rb.angularVelocity = 0;
         transform.rotation = quaternion.identity;
+    }
+
+    public void Deactivate()
+    {
+        ResetDefaultStats();
 
         rb.velocity = Vector2.zero;
         i_move = Vector2.zero;
@@ -148,8 +169,7 @@ public class PlayerController : MonoBehaviour
 
     public void Reactivate()
     {
-        rb.angularVelocity = 0;
-        transform.rotation = quaternion.identity;
+        ResetDefaultStats();
 
         i_move= Vector2.zero;
         chargeTime = 0;
@@ -203,6 +223,14 @@ public class PlayerController : MonoBehaviour
         //Debug.Log(ctx.phase);
         if(ctx.performed) //charging
         {
+            Debug.Log("charging!!");
+            
+            if(!im.gameStarted && !im.playerList[idx].isActive)
+            {
+                Debug.Log("Reconnect!!");
+                OnControllerReconnect(GetComponent<PlayerInput>());
+            }
+
             chargeTime = 0;
             charging = true;
             StartCoroutine(Charge());
@@ -216,7 +244,7 @@ public class PlayerController : MonoBehaviour
     //called when OnCharge() performed - handles player charging
     IEnumerator Charge()
     {
-        if(im.gameStarted)
+        if(im.gameStarted && im.playerList[idx].isActive && im.playerList[idx].isAlive)
         {
             StartCoroutine(rc.RenderReticle());
         }
@@ -236,7 +264,7 @@ public class PlayerController : MonoBehaviour
             }
             
 
-            //readyUp if held for 2 secs before game
+            //readyUp if held for 1 secs before game
             if(chargeTime > 1 && !im.gameStarted && !im.playerList[idx].isReady)
             {
                 ReadyUp();
@@ -349,7 +377,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator SpecialCharge()
     {
-        if(im.gameStarted)
+        if(im.gameStarted && im.playerList[idx].isActive && im.playerList[idx].isAlive)
         {
             StartCoroutine(rc.RenderReticle());
         }
@@ -367,10 +395,10 @@ public class PlayerController : MonoBehaviour
                 specialChargeTime = 0;
             }
 
-            //readyUp if held for 2 secs before game
-            if(specialChargeTime > 1 && !im.gameStarted && !im.playerList[idx].isReady)
+            //readyUp if held for 1 secs before game
+            if(specialChargeTime > 1 && !im.gameStarted /*&& !im.playerList[idx].isReady*/)
             {
-                ReadyUp();
+                OnControllerDisconnect(gameObject.GetComponent<PlayerInput>());
             }
 
             yield return null;

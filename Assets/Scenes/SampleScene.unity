@@ -1187,6 +1187,7 @@ MonoBehaviour:
   ItemObjs:
   - {fileID: 7046570537419428875, guid: 6489b33c6d5cbc44dbef07b9062962db, type: 3}
   - {fileID: 2881871483441659485, guid: a5f71059864e90d4eb36fcae5c54e889, type: 3}
+  ItemPickupSprites: []
   itemTypesCount: 2
   spawnedItemsCount: 0
   spawnedItems: 
@@ -3063,8 +3064,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
-  m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
+  m_ReferencePixelsPerUnit: 32
+  m_ScaleFactor: 2
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
