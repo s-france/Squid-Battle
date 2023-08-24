@@ -132,7 +132,7 @@ public class InputManager : MonoBehaviour
         Debug.Log("player" + playerList[idx].playerIndex + " is ready: " + playerList[idx].isReady);
 
         //start game if all active players are ready && more than 1 player
-        if((playerList.TrueForAll(p => (p.isReady || !p.isActive))) && playerList.Count(p => p.isActive) > 1)
+        if((playerList.TrueForAll(p => (p.isReady || !p.isActive))) && playerList.Count(p => p.isActive) > 1 && !gameStarted)
         {
             StartGame();
         }
@@ -185,7 +185,7 @@ public class InputManager : MonoBehaviour
         DeactivatePlayer(idx);
 
         //if only one remaining player alive end/reset the game
-        if (playerList.Count(p => p.isAlive) == 1)
+        if (playerList.Count(p => p.isAlive) == 1 && gameStarted)
         {
             ResetGame(playerList.FindIndex(p => p.isAlive));
         }
@@ -195,6 +195,11 @@ public class InputManager : MonoBehaviour
     //declare winner and end/reset game
     void ResetGame(int winnerIdx)
     {
+        Debug.Log("stopping music!!!");
+        //turn off battle music
+        FindObjectOfType<AudioManager>().Stop("BattleTheme");
+
+
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Despawns"))
         {
             Destroy(obj);
@@ -229,6 +234,10 @@ public class InputManager : MonoBehaviour
 
     void StartGame()
     {
+
+        Debug.Log("playing music!!!");
+        //play music
+        FindObjectOfType<AudioManager>().Play("BattleTheme");
 
         //move players to spawn positions
         foreach (PlayerConfig p in playerList.Where(p => p.isActive))
