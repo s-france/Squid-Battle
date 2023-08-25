@@ -19,6 +19,7 @@ public class UIController : MonoBehaviour
     public void ShowAll()
     {
         gameObject.SetActive(true);
+        transform.Find("Canvas").Find("PlayersWin").gameObject.SetActive(false);
     }
     public void HideAll()
     {
@@ -54,6 +55,25 @@ public class UIController : MonoBehaviour
     {
         transform.Find("Canvas").Find("PlayersReady").GetChild(idx).Find("Waiting").gameObject.SetActive(true);
         transform.Find("Canvas").Find("PlayersReady").GetChild(idx).Find("Ready").gameObject.SetActive(false);  
+    }
+    public void HighlightWinner(int idx)
+    {
+        int count = 0;
+
+        transform.Find("Canvas").Find("PlayersWin").gameObject.SetActive(true);
+
+        foreach (Transform child in transform.Find("Canvas").Find("PlayersWin"))
+        {
+            if(count == idx)
+            {
+                child.gameObject.SetActive(true);
+            } else
+            {
+                child.gameObject.SetActive(false);
+            }
+
+            count++;
+        }
     }
 
 }

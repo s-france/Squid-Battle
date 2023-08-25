@@ -207,6 +207,7 @@ public class InputManager : MonoBehaviour
 
         //turn start menu on
         ui.ShowAll();
+        ui.HighlightWinner(winnerIdx);
         camCon.StartCamOn();
 
         gameStarted = false;
