@@ -44,7 +44,7 @@ public class InkObj : MonoBehaviour
         //TWEAK THIS
         upTime = Mathf.Clamp(chargetime * 10, 13, 25);
 
-        float size = Mathf.Clamp(chargetime, 0, maxChargeTime);
+        float size = 1 + 1.25f * Mathf.Clamp(chargetime, 0, maxChargeTime);
         transform.localScale += new Vector3(size, size, 0);
 
         rb = this.GetComponent<Rigidbody2D>();

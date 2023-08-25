@@ -136,5 +136,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf38c84351d861941892c3a845b3c5cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shotStrength: 20
+  shotStrength: 35
   maxChargeTime: 3

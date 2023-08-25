@@ -1238,7 +1238,10 @@ MonoBehaviour:
   ItemObjs:
   - {fileID: 7046570537419428875, guid: 6489b33c6d5cbc44dbef07b9062962db, type: 3}
   - {fileID: 2881871483441659485, guid: a5f71059864e90d4eb36fcae5c54e889, type: 3}
-  ItemPickupSprites: []
+  ItemPickupSprites:
+  - {fileID: 21300000, guid: 3a9c92bf870d9a24ab1bcb1f3d6dfc73, type: 3}
+  - {fileID: 21300000, guid: f6d3688dfa720c041b4d300220f06686, type: 3}
+  - {fileID: 21300000, guid: 155a964163ff88a4389d888da83de41f, type: 3}
   itemTypesCount: 2
   spawnedItemsCount: 0
   spawnedItems: 

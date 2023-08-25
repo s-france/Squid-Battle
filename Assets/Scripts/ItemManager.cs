@@ -8,7 +8,7 @@ public class ItemManager : MonoBehaviour
 
     public GameObject ItemPrefab;
     public List<GameObject> ItemObjs;
-    public Sprite[] ItemPickupSprites;
+    [SerializeField] Sprite[] ItemPickupSprites;
 
     public int itemTypesCount;
     [HideInInspector] public int spawnedItemsCount;
@@ -41,16 +41,19 @@ public class ItemManager : MonoBehaviour
         {
             case 0: //shot
                 newItem.GetComponent<ItemController>().ib = newItem.AddComponent<ShotBehavior>() as ShotBehavior;
+                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[0];
                 Debug.Log("spawned shot at " + pos.position);
                 break;
 
             case 1: //ink
                 newItem.GetComponent<ItemController>().ib = newItem.AddComponent<InkBehavior>() as InkBehavior;
+                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[1];
                 Debug.Log("spawned ink at " + pos.position);
                 break;
 
             case 2: //grow
                 newItem.GetComponent<ItemController>().ib = newItem.AddComponent<GrowBehavior>() as GrowBehavior;
+                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[2];
                 Debug.Log("spawned grow at " + pos.position);
                 break;
             
@@ -67,12 +70,22 @@ public class ItemManager : MonoBehaviour
 
     public IEnumerator RandomSpawns(float spawnRate)
     {
+        float rand;
+
         float timer = 0;
         int type;
         Transform pos = new GameObject().transform;
 
         //spawn at start of match
-        type = Random.Range(0,itemTypesCount);
+        rand = Random.value;
+        if (rand <= .9f) //9/10 chance for shot+ink
+        {
+            type = Random.Range(0,2);
+        } else //1/10 chance for grow
+        {
+            type = 2;
+        }
+
         pos.position = Random.insideUnitCircle * 7;
         SpawnItem(type, pos);
 
@@ -83,7 +96,14 @@ public class ItemManager : MonoBehaviour
 
             if(timer >= spawnRate)
             {
-                type = Random.Range(0,itemTypesCount);
+                rand = Random.value;
+                if (rand <= .9f) //9/10 chance for shot+ink
+                {
+                    type = Random.Range(0,2);
+                } else //1/10 chance for grow
+                {
+                    type = 2;
+                }
                 pos.position = Random.insideUnitCircle * 7;
 
                 SpawnItem(type, pos);

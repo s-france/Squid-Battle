@@ -259,9 +259,8 @@ public class InputManager : MonoBehaviour
 
         StartCoroutine(itemMan.RandomSpawns(15));
 
-        itemMan.SpawnItem(2, itemMan.transform);
-        itemMan.SpawnItem(2, itemMan.transform);
-
+        //ITEM TESTING
+        //itemMan.SpawnItem(2, itemMan.transform);
     }
 
     
