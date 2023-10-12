@@ -86,6 +86,42 @@ public class Arena0LC : MonoBehaviour, ILevelController
         //deactivate all players
         //declare winner somewhere
         //load start menu
+
+        Debug.Log("stopping music!!!");
+        //turn off battle music
+        FindObjectOfType<AudioManager>().Stop("BattleTheme");
+
+
+        //not really needed anymore
+        /*
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Despawns"))
+        {
+            Destroy(obj);
+        }
+        */
+
+        gm.battleStarted = false;
+
+        gm.sl.LoadScene("StartMenu");
+
+    }
+
+
+    //REWORK:  LevelController.EndBattle should call this -> leads back to start menu
+    //declare winner and end/reset game
+    public void ResetGame(int winnerIdx)
+    {
+        
+
+
+        
+
+
+        
+
+        //reactivate() all isactive players
+        //move players to spawn points
+        
     }
 
 

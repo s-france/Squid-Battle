@@ -126,7 +126,8 @@ public class PlayerManager : MonoBehaviour
         //if only one remaining player alive end/reset the game
         if (playerList.Count(p => p.isAlive) == 1 && gm.battleStarted)
         {
-            gm.ResetGame(playerList.FindIndex(p => p.isAlive));
+            gm.lc.EndLevel();
+            //gm.ResetGame(playerList.FindIndex(p => p.isAlive));
         }
     }
 

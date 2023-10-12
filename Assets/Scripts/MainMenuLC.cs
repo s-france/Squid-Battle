@@ -43,8 +43,14 @@ public class MainMenuLC : MonoBehaviour, ILevelController
         {
             if(p.isActive)
             {
+                pm.DeactivatePlayer(p.playerIndex);
+                pm.ReactivatePlayer(p.playerIndex);
+
                 pm.UnReadyPlayer(p.playerIndex);
                 ui.ShowPlayerUI(p.playerIndex);
+
+                Transform spawn = this.gameObject.transform.GetChild(p.playerIndex);
+                p.input.gameObject.transform.position = spawn.position;
             }
             else
             {

@@ -37,6 +37,7 @@ public class SceneLoader : MonoBehaviour
 
         scene.allowSceneActivation = true;
 
+        //this doesn't work. Cool idea though
         //Debug.Log("assigning new lc");
         //gm.lc = GameObject.Find("LevelController").GetComponent<ILevelController>();
         //Debug.Log("starting level");

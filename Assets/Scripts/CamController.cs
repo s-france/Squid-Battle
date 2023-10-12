@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CamController : MonoBehaviour
 {
-    [SerializeField] private GameObject startCam;
     [SerializeField] private GameObject gameCam;
 
 

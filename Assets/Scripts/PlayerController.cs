@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private SpriteRenderer sr;
     private Sprite[] spriteSet;
-    [SerializeField] CinemachineTargetGroup tg;
+    CinemachineTargetGroup tg;
 
     [HideInInspector] public Vector2 i_move;
     Vector3 rotation;
@@ -195,7 +195,11 @@ public class PlayerController : MonoBehaviour
         this.GetComponent<SpriteRenderer>().enabled = true;
         
         //REWORK
-        //tg.AddMember(this.transform, 1, 1);
+        tg = FindObjectOfType<CinemachineTargetGroup>();
+        if(tg != null)
+        {
+            tg.AddMember(this.transform, 1, 1);
+        }
     }
 
     //handle player leaving in conjunction with im.OnPlayerLeave()

@@ -77,39 +77,5 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-    //REWORK: move to LevelController.StartBattle
-    void StartGame()
-    {
-
-        Debug.Log("playing music!!!");
-        //play music
-        FindObjectOfType<AudioManager>().Play("BattleTheme");
-
-        //move players to spawn positions
-        foreach (PlayerConfig p in pm.playerList.Where(p => p.isActive))
-        {
-            pm.DeactivatePlayer(p.playerIndex);
-            pm.ReactivatePlayer(p.playerIndex);
-
-            Transform start = this.gameObject.transform.GetChild(p.playerIndex + 4);
-            p.input.gameObject.transform.position = start.position;
-
-            p.isAlive = true;
-        }
-
-        //REWORK
-        //camCon.GameCamOn();
-
-        battleStarted = true;
-        Debug.Log("game started!");
-
-        //REWORK
-        //StartCoroutine(itemMan.RandomSpawns(15));
-
-        //ITEM TESTING
-        //itemMan.SpawnItem(2, itemMan.transform);
-    }
-
     
 }
