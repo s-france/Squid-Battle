@@ -11,18 +11,18 @@ public class CamController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCamOn();
+        GameCamOn();
     }
 
     public void StartCamOn()
     {
-        startCam.SetActive(true);
+        //startCam.SetActive(true);
         gameCam.SetActive(false);
     }
 
     public void GameCamOn()
     {
-        startCam.SetActive(false);
+        //startCam.SetActive(false);
         gameCam.SetActive(true);
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class InkObj : MonoBehaviour
 {
     InputManager im;
+    GameManager gm;
 
     Rigidbody2D rb;
 
@@ -19,6 +20,7 @@ public class InkObj : MonoBehaviour
     void Start()
     {
         im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         activeTimer = 0;
         upTime = maxUpTime;
@@ -32,7 +34,7 @@ public class InkObj : MonoBehaviour
 
         //this should be its own func / coroutine
         activeTimer += Time.deltaTime;
-        if (activeTimer >= upTime || !im.gameStarted)
+        if (activeTimer >= upTime || !gm.battleStarted)
         {
             Destroy(this.gameObject);
         }

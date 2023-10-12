@@ -6,18 +6,20 @@ using UnityEngine.TextCore.Text;
 public class ArenaBoundary : MonoBehaviour
 {
     InputManager im;
+    PlayerManager pm;
 
     // Start is called before the first frame update
     void Start()
     {
-        im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();   
+        im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
+        pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();  
     }
 
     void OnTriggerExit2D(Collider2D col)
     {
         if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
         {
-            im.KillPlayer(col.GetComponentInParent<PlayerController>().idx);
+            pm.KillPlayer(col.GetComponentInParent<PlayerController>().idx);
         } else if (col.gameObject.layer == LayerMask.NameToLayer("ItemObjs"))
         {
             StartCoroutine(KillClock(col.gameObject, 2));

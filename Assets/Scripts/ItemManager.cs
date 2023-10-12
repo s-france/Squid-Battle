@@ -5,6 +5,7 @@ using UnityEngine;
 public class ItemManager : MonoBehaviour
 {
     InputManager im;
+    GameManager gm;
 
     public GameObject ItemPrefab;
     public List<GameObject> ItemObjs;
@@ -18,6 +19,7 @@ public class ItemManager : MonoBehaviour
     void Start()
     {
         im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         //SpawnItem(2, this.transform);
     }
@@ -89,7 +91,7 @@ public class ItemManager : MonoBehaviour
         pos.position = Random.insideUnitCircle * 7;
         SpawnItem(type, pos);
 
-        while(im.gameStarted)
+        while(gm.battleStarted)
         {
             //if(!im.gameStarted) {break;}
             timer += Time.deltaTime;

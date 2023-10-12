@@ -8,6 +8,8 @@ using Unity.Mathematics;
 
 public class PlayerController : MonoBehaviour
 {
+    GameManager gm;
+    PlayerManager pm;
     InputManager im;
     ReticleController rc;
     [SerializeField] private Rigidbody2D rb;
@@ -44,8 +46,10 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float defaultKnockbackMultiplier;
 
 
-    void Start()
+    void Awake()
     {
+        DontDestroyOnLoad(this);
+
         rb = this.gameObject.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
@@ -58,16 +62,24 @@ public class PlayerController : MonoBehaviour
             Debug.Log("got IM!!");
         }
 
-        idx = im.playerList.FindIndex(i => i.input == this.gameObject.GetComponent<PlayerInput>());
+        pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        transform.parent = gm.transform.GetChild(0);
+
+        idx = pm.playerList.FindIndex(i => i.input == this.gameObject.GetComponent<PlayerInput>());
         colorID = idx;
         Debug.Log("player idx (from playercontroller): " + idx);
 
+        //REWORK
+        /*
         tg = GameObject.Find("TargetGroup1").GetComponent<CinemachineTargetGroup>();
         if (tg != null)
         {
             Debug.Log("got TG!");
         }
         tg.AddMember(this.transform, 1, 1);
+        */
+
 
         sr = this.gameObject.GetComponent<SpriteRenderer>();
         if(sr != null)
@@ -152,6 +164,7 @@ public class PlayerController : MonoBehaviour
         transform.rotation = quaternion.identity;
     }
 
+    //REWORK NEEDED
     public void Deactivate()
     {
         ResetDefaultStats();
@@ -164,9 +177,11 @@ public class PlayerController : MonoBehaviour
         ClearInventory();
         this.GetComponent<CircleCollider2D>().enabled = false;
         this.GetComponent<SpriteRenderer>().enabled = false;
-        tg.RemoveMember(this.transform);
+        //REWORK THIS!!
+        //tg.RemoveMember(this.transform);
     }
 
+    //REWORK THIS
     public void Reactivate()
     {
         ResetDefaultStats();
@@ -178,7 +193,9 @@ public class PlayerController : MonoBehaviour
         
         this.GetComponent<CircleCollider2D>().enabled = true;
         this.GetComponent<SpriteRenderer>().enabled = true;
-        tg.AddMember(this.transform, 1, 1);
+        
+        //REWORK
+        //tg.AddMember(this.transform, 1, 1);
     }
 
     //handle player leaving in conjunction with im.OnPlayerLeave()
@@ -197,7 +214,7 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext ctx)
     {
         //save move input
-        if(ctx.ReadValue<Vector2>().magnitude != 0 && im.gameStarted)
+        if(ctx.ReadValue<Vector2>().magnitude != 0 && gm.battleStarted)
         {
             i_move = ctx.ReadValue<Vector2>();
         }
@@ -225,7 +242,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("charging!!");
             
-            if(!im.gameStarted && !im.playerList[idx].isActive)
+            if(!gm.battleStarted && !pm.playerList[idx].isActive)
             {
                 Debug.Log("Reconnect!!");
                 OnControllerReconnect(GetComponent<PlayerInput>());
@@ -244,7 +261,7 @@ public class PlayerController : MonoBehaviour
     //called when OnCharge() performed - handles player charging
     IEnumerator Charge()
     {
-        if(im.gameStarted && im.playerList[idx].isActive && im.playerList[idx].isAlive)
+        if(gm.battleStarted && pm.playerList[idx].isActive && pm.playerList[idx].isAlive)
         {
             StartCoroutine(rc.RenderReticle());
         }
@@ -265,7 +282,7 @@ public class PlayerController : MonoBehaviour
             
 
             //readyUp if held for 1 secs before game
-            if(chargeTime > 1 && !im.gameStarted && !im.playerList[idx].isReady)
+            if(chargeTime > 1 && !gm.battleStarted && !pm.playerList[idx].isReady)
             {
                 ReadyUp();
             }
@@ -273,10 +290,10 @@ public class PlayerController : MonoBehaviour
         }
 
         //After charging
-        if(im.gameStarted && !isCoolingDown /*&& !specialCharging*/) //perform movement during match
+        if(gm.battleStarted && !isCoolingDown /*&& !specialCharging*/) //perform movement during match
         {
             Move(0);
-        } else if (!im.gameStarted && !im.playerList[idx].isReady)
+        } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
         {
             sr.sprite = spriteSet[0];
         }
@@ -377,7 +394,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator SpecialCharge()
     {
-        if(im.gameStarted && im.playerList[idx].isActive && im.playerList[idx].isAlive)
+        if(gm.battleStarted && pm.playerList[idx].isActive && pm.playerList[idx].isAlive)
         {
             StartCoroutine(rc.RenderReticle());
         }
@@ -396,7 +413,7 @@ public class PlayerController : MonoBehaviour
             }
 
             //readyUp if held for 1 secs before game
-            if(specialChargeTime > 1 && !im.gameStarted /*&& !im.playerList[idx].isReady*/)
+            if(specialChargeTime > 1 && !gm.battleStarted /*&& !im.playerList[idx].isReady*/)
             {
                 OnControllerDisconnect(gameObject.GetComponent<PlayerInput>());
             }
@@ -405,11 +422,11 @@ public class PlayerController : MonoBehaviour
         }
 
         //After special charging
-        if(im.gameStarted && !isCoolingDown) //use item during match
+        if(gm.battleStarted && !isCoolingDown) //use item during match
         {
             Move(1);
             UseItem(selectedItemIdx);
-        } else if (!im.gameStarted && !im.playerList[idx].isReady)
+        } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
         {
             sr.sprite = spriteSet[0];
         }
@@ -445,10 +462,10 @@ public class PlayerController : MonoBehaviour
     {
         if(ctx.performed)
         {
-            if(!im.gameStarted) //change color only before match
+            if(!gm.battleStarted) //change color only before match
             {
                 colorID = (colorID - 1);
-                if(colorID < 0) {colorID = im.colorsCount;}
+                if(colorID < 0) {colorID = pm.colorsCount;}
                 ChangeColor(colorID);
             } else
             {
@@ -462,10 +479,10 @@ public class PlayerController : MonoBehaviour
     {
         if(ctx.performed)
         {
-            if(!im.gameStarted) //change color only before match
+            if(!gm.battleStarted) //change color only before match
             {
                 colorID = (colorID + 1);
-                if(colorID > im.colorsCount) {colorID = 0;}
+                if(colorID > pm.colorsCount) {colorID = 0;}
                 ChangeColor(colorID);
             } else
             {
@@ -478,15 +495,15 @@ public class PlayerController : MonoBehaviour
     //change color - updates sprite
     public void ChangeColor(int color)
     {
-        spriteSet = im.playerSprites[color];
+        spriteSet = pm.playerSprites[color];
         sr.sprite = spriteSet[0];
 
-        im.SetPlayerColor(idx, color);
+        pm.SetPlayerColor(idx, color);
     }
 
     public void ReadyUp()
     {
         sr.sprite = spriteSet[2]; //charging sprite doubles as ready sprite
-        im.ReadyPlayer(idx);
+        pm.ReadyPlayer(idx);
     }
 }

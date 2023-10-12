@@ -1,0 +1,157 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8436537656722528499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8436537656722528508}
+  - component: {fileID: 8436537656722528509}
+  - component: {fileID: 8436537656722528498}
+  m_Layer: 0
+  m_Name: PlayerInputManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8436537656722528508
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8436537656722528499}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8436537656722528509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8436537656722528499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 621567455fd1c4ceb811cc8a00b6a1a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NotificationBehavior: 2
+  m_MaxPlayerCount: 4
+  m_AllowJoining: 1
+  m_JoinBehavior: 1
+  m_PlayerJoinedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8436537656722528498}
+        m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
+        m_MethodName: OnPlayerJoin
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  m_PlayerLeftEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8436537656722528498}
+        m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
+        m_MethodName: OnPlayerLeave
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  m_JoinAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Join
+      m_Type: 1
+      m_ExpectedControlType: Button
+      m_Id: fd2c6512-857d-41d0-a61b-fe9e18db2b31
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: 19a694ec-d524-4eff-9310-1753e06c4819
+        m_Path: <Gamepad>/buttonSouth
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Join
+        m_Flags: 0
+      m_Flags: 0
+    m_Reference: {fileID: -5811120847328683145, guid: a628b33e3aed2ab4897d5bb760502929, type: 3}
+  m_PlayerPrefab: {fileID: 5251562808165186444, guid: 8bc975856c76cbf449d0e9ac040fd1cd, type: 3}
+  m_SplitScreen: 0
+  m_MaintainAspectRatioInSplitScreen: 0
+  m_FixedNumberOfSplitScreens: -1
+  m_SplitScreenRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!114 &8436537656722528498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8436537656722528499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afac9f2f9a4e23a40b19efde70ae3bea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorsCount: 8
+  blueSprites:
+  - {fileID: 21300000, guid: 41370ee188022d84ca3ed867e61a317c, type: 3}
+  - {fileID: 21300000, guid: 652048781a9a5434e8eb1c71888e2ce9, type: 3}
+  - {fileID: 21300000, guid: b9043d771c7140f4ba25e98c418bac30, type: 3}
+  cyanSprites:
+  - {fileID: 21300000, guid: 801f422b3e29bfe44a182e23d24ae49b, type: 3}
+  - {fileID: 21300000, guid: 3f8d4f9bc8024d548ac830b85f68dad1, type: 3}
+  - {fileID: 21300000, guid: 086dec5fef00ed6418a3bf0f510f4e9c, type: 3}
+  greenSprites:
+  - {fileID: 21300000, guid: 500f191c3ebfdd14d98a1b4a5257ce8c, type: 3}
+  - {fileID: 21300000, guid: 17fdf00902af564498ef4bdd682b6e96, type: 3}
+  - {fileID: 21300000, guid: 125d7c6b26bef144bb113a826daa9560, type: 3}
+  orangeSprites:
+  - {fileID: 21300000, guid: 9a6a5e56f6b0f454b8971e83bd99c3f5, type: 3}
+  - {fileID: 21300000, guid: af2d19f1fbf16ba4db50367696284761, type: 3}
+  - {fileID: 21300000, guid: e74fbd3c5b954f541b15b506b9b4d170, type: 3}
+  pinkSprites:
+  - {fileID: 21300000, guid: ab12ff48f46d8954e99ab3b040ad39a9, type: 3}
+  - {fileID: 21300000, guid: 700945cd8b0310a4d8df5635e76e0fcc, type: 3}
+  - {fileID: 21300000, guid: b402dee5566db73489fc8c12c73efcf0, type: 3}
+  purpSprites:
+  - {fileID: 21300000, guid: 6d9d7a30276a0c94986ae3ab8eb9a1a3, type: 3}
+  - {fileID: 21300000, guid: 8eca8de178d8c40458792be56b15ed6a, type: 3}
+  - {fileID: 21300000, guid: 10bbda5e026847b428736894437119d3, type: 3}
+  redSprites:
+  - {fileID: 21300000, guid: ac196e0609c1f3d4b821d9acdf9ed917, type: 3}
+  - {fileID: 21300000, guid: ed3917bc3f38c454e91fd1a94b99e6ba, type: 3}
+  - {fileID: 21300000, guid: 9b4de4a83bbfdcf4f8f385e2a2483785, type: 3}
+  yellowSprites:
+  - {fileID: 21300000, guid: 136053f723efd974eb08b648a7a88d5e, type: 3}
+  - {fileID: 21300000, guid: 27c2baed93a7b67408021f2ef63378b9, type: 3}
+  - {fileID: 21300000, guid: b5b870b0c3b992d4daf7e44751437c1a, type: 3}
+  gameStarted: 0
