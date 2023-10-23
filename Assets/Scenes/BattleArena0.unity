@@ -299,6 +299,61 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &303554493
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 303554495}
+  - component: {fileID: 303554494}
+  m_Layer: 0
+  m_Name: ItemManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &303554494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303554493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 025fc8b57e2723c488cb1016234d6784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemPrefab: {fileID: 8962942876037893872, guid: ac33492e8e85ffa49bb3cbbf493ba07d, type: 3}
+  ItemObjs:
+  - {fileID: 7046570537419428875, guid: 6489b33c6d5cbc44dbef07b9062962db, type: 3}
+  - {fileID: 2881871483441659485, guid: a5f71059864e90d4eb36fcae5c54e889, type: 3}
+  ItemPickupSprites:
+  - {fileID: 21300000, guid: 3a9c92bf870d9a24ab1bcb1f3d6dfc73, type: 3}
+  - {fileID: 21300000, guid: f6d3688dfa720c041b4d300220f06686, type: 3}
+  - {fileID: 21300000, guid: 155a964163ff88a4389d888da83de41f, type: 3}
+  itemTypesCount: 3
+  spawnedItemsCount: 0
+  spawnedItems: 
+--- !u!4 &303554495
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303554493}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1081.616, y: 632.65814, z: -19.45693}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &318699642
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,7 +383,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3dbf209b25777242a838c6c43fc80a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startCam: {fileID: 0}
   gameCam: {fileID: 924387122}
 --- !u!4 &318699644
 Transform:

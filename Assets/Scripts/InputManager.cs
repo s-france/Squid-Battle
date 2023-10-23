@@ -16,6 +16,12 @@ public class InputManager : MonoBehaviour
 
     private void Awake()
     {
+        
+        
+    }
+
+    public void Init()
+    {
         //REWORK
         //camCon = GameObject.Find("VCams").GetComponent<CamController>();
         //itemMan = GameObject.Find("ItemManager").GetComponent<ItemManager>();
@@ -23,7 +29,6 @@ public class InputManager : MonoBehaviour
         gm = GetComponentInParent<GameManager>();
 
         //ui.HideAllPlayers();
-        
     }
 
 

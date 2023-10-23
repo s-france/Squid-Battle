@@ -62,8 +62,10 @@ public class PlayerController : MonoBehaviour
             Debug.Log("got IM!!");
         }
 
-        pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        pm = gm.GetComponentInChildren<PlayerManager>(); 
+        //pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
+        
         transform.parent = gm.transform.GetChild(0);
 
         idx = pm.playerList.FindIndex(i => i.input == this.gameObject.GetComponent<PlayerInput>());
@@ -111,7 +113,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-
+        
     }
 
     //handle players colliding

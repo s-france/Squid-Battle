@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
+    [SerializeField] GameObject pmPrefab;
 
     PlayerManager pm;
     [HideInInspector] public ILevelController lc;
@@ -25,15 +26,27 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(Instance);
+            
+            GameObject PlayerManager = Instantiate(pmPrefab, transform.position, transform.rotation);
+            PlayerManager.transform.parent = this.transform;
+            pm = PlayerManager.GetComponent<PlayerManager>();
+            //pm = GetComponentInChildren<PlayerManager>();
+            pm.Init();
+
+            
+
+
+            sl = GetComponentInChildren<SceneLoader>();
+            lc = GameObject.Find("LevelController").GetComponent<ILevelController>();
+
+            battleStarted = false;
+
         }
 
+        
 
 
-        pm = GetComponentInChildren<PlayerManager>();
-        sl = GetComponentInChildren<SceneLoader>();
-        lc = GameObject.Find("LevelController").GetComponent<ILevelController>();
 
-        battleStarted = false;
     }
 
     // Update is called once per frame

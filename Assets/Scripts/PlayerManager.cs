@@ -31,6 +31,12 @@ public class PlayerManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        
+        
+    }
+
+    public void Init()
+    {
         gm = GetComponentInParent<GameManager>();
 
         playerList = new List<PlayerConfig>();
@@ -48,8 +54,8 @@ public class PlayerManager : MonoBehaviour
         playerSprites[7] = yellowSprites;
 
         colorsCount = playerSprites.Length - 1;
-        
-        
+
+        GetComponentInChildren<InputManager>().Init();
     }
 
     // Update is called once per frame
@@ -76,6 +82,7 @@ public class PlayerManager : MonoBehaviour
         {
             //load map select
             gm.sl.LoadScene("MapSelect");
+            
         }
     }
 
@@ -105,11 +112,11 @@ public class PlayerManager : MonoBehaviour
 
     public void DeactivatePlayer(int idx)
     {
-        //need to disable and hide gameobject
+        //disable and hide gameobject
         playerList[idx].playerScript.Deactivate();
         UnReadyPlayer(idx);
 
-        //playerList[idx].input.DeactivateInput();
+        playerList[idx].input.DeactivateInput();
         playerList[idx].isReady = false;
         playerList[idx].isAlive = false;
 
@@ -127,7 +134,6 @@ public class PlayerManager : MonoBehaviour
         if (playerList.Count(p => p.isAlive) == 1 && gm.battleStarted)
         {
             gm.lc.EndLevel();
-            //gm.ResetGame(playerList.FindIndex(p => p.isAlive));
         }
     }
 

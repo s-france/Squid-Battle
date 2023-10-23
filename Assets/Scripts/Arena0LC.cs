@@ -7,6 +7,7 @@ public class Arena0LC : MonoBehaviour, ILevelController
 {
     GameManager gm;
     PlayerManager pm;
+    ItemManager im;
     List<Transform> SpawnPoints;
 
     // Start is called before the first frame update
@@ -14,7 +15,8 @@ public class Arena0LC : MonoBehaviour, ILevelController
     {
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         gm.lc = this;
-        pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
+        pm = gm.GetComponentInChildren<PlayerManager>();
+        im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
 
         SpawnPoints = new List<Transform>();
 
@@ -70,7 +72,7 @@ public class Arena0LC : MonoBehaviour, ILevelController
         Debug.Log("game started!");
 
         //REWORK
-        //StartCoroutine(itemMan.RandomSpawns(15));
+        StartCoroutine(im.RandomSpawns(15));
 
         //ITEM TESTING
         //itemMan.SpawnItem(2, itemMan.transform);

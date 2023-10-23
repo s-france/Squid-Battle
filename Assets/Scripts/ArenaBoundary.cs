@@ -5,14 +5,16 @@ using UnityEngine.TextCore.Text;
 
 public class ArenaBoundary : MonoBehaviour
 {
+    GameManager gm;
     InputManager im;
     PlayerManager pm;
 
     // Start is called before the first frame update
     void Start()
     {
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
-        pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();  
+        pm = gm.GetComponentInChildren<PlayerManager>();  
     }
 
     void OnTriggerExit2D(Collider2D col)

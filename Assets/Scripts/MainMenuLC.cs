@@ -16,7 +16,9 @@ public class MainMenuLC : MonoBehaviour, ILevelController
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         gm.lc = this;
         ui = GameObject.Find("MenuUI").GetComponent<UIController>();
-        pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
+        pm = FindObjectOfType<PlayerManager>();
+        //pm = GetGameManager().GetComponentInChildren<PlayerManager>();
+        //pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
 
         SpawnPoints = new List<Transform>();
 
@@ -39,23 +41,24 @@ public class MainMenuLC : MonoBehaviour, ILevelController
     {
         ui.HideAllPlayers();
 
+        //ADD THIS if(pm.playerList != null)
         foreach (PlayerConfig p in pm.playerList)
         {
-            if(p.isActive)
-            {
-                pm.DeactivatePlayer(p.playerIndex);
-                pm.ReactivatePlayer(p.playerIndex);
+            //if(p.isActive)
+            //{
+            pm.DeactivatePlayer(p.playerIndex);
+            pm.ReactivatePlayer(p.playerIndex);
 
-                pm.UnReadyPlayer(p.playerIndex);
-                ui.ShowPlayerUI(p.playerIndex);
+            pm.UnReadyPlayer(p.playerIndex);
+            ui.ShowPlayerUI(p.playerIndex);
 
-                Transform spawn = this.gameObject.transform.GetChild(p.playerIndex);
-                p.input.gameObject.transform.position = spawn.position;
-            }
-            else
-            {
-                ui.HidePlayerUI(p.playerIndex);
-            }
+            Transform spawn = this.gameObject.transform.GetChild(p.playerIndex);
+            p.input.gameObject.transform.position = spawn.position;
+            //}
+            //else
+            //{
+            //    ui.HidePlayerUI(p.playerIndex);
+            //}
         }
     }
 
@@ -63,6 +66,7 @@ public class MainMenuLC : MonoBehaviour, ILevelController
     public void EndLevel()
     {
         //run any kind of outro/transition stuff here
+        Debug.Log("ending main menu");
     }
 
 

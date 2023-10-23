@@ -16,7 +16,7 @@ public class ItemManager : MonoBehaviour
     [HideInInspector] public int[] spawnedItems;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
