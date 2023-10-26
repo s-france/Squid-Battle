@@ -21,7 +21,8 @@ public class ItemManager : MonoBehaviour
         im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        //SpawnItem(2, this.transform);
+        //uncomment for testing items
+        SpawnItem(3, this.transform);
     }
 
     // Update is called once per frame
@@ -57,6 +58,12 @@ public class ItemManager : MonoBehaviour
                 newItem.GetComponent<ItemController>().ib = newItem.AddComponent<GrowBehavior>() as GrowBehavior;
                 newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[2];
                 Debug.Log("spawned grow at " + pos.position);
+                break;
+            
+            case 3: //wall
+                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<WallBehavior>() as WallBehavior;
+                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[3];
+                Debug.Log("spawned wall at " + pos.position);
                 break;
             
             default:

@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     PlayerManager pm;
     InputManager im;
     ReticleController rc;
-    [SerializeField] private Rigidbody2D rb;
+    public Rigidbody2D rb;
     [SerializeField] private SpriteRenderer sr;
     private Sprite[] spriteSet;
     CinemachineTargetGroup tg;
@@ -119,6 +119,10 @@ public class PlayerController : MonoBehaviour
     //handle players colliding
     void OnCollisionEnter2D(Collision2D col)
     {
+
+        FindObjectOfType<AudioManager>().PlayRandom("Impact");
+
+
         Debug.Log("Player colliding! Collision LayerMask name: " + LayerMask.LayerToName(col.gameObject.layer));
 
         if (LayerMask.LayerToName(col.gameObject.layer) == "Players")
@@ -318,6 +322,8 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Moving Force: " + moveForce.magnitude);
 
         rb.AddForce(moveForce, ForceMode2D.Impulse);
+
+        FindObjectOfType<AudioManager>().PlayRandom("Move");
 
         sr.sprite = spriteSet[1];
         RotateSprite(i_move);

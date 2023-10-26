@@ -24,10 +24,35 @@ public class AudioManager : MonoBehaviour
         //Play("BattleTheme");
     }
 
+    //plays sound of name
     public void Play (string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
         s.source.Play();
+        Debug.Log("playing sound: " + name);
+    }
+
+    //plays random sound from designated type
+    public void PlayRandom (string type)
+    {
+        int n;
+
+        switch (type)
+        {
+            case "Impact":
+                n = UnityEngine.Random.Range(1, 4);
+                break;
+
+            case "Move":
+                n = UnityEngine.Random.Range(1, 8);
+                break;
+            default:
+                n = -1;
+                Debug.Log("ERROR: invalid audio type!!");
+                break;
+        }
+
+        Play(type+n);
     }
 
     public void Stop (string name)

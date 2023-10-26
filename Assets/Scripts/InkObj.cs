@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class InkObj : MonoBehaviour
 {
-    InputManager im;
     GameManager gm;
 
     Rigidbody2D rb;
@@ -19,7 +18,6 @@ public class InkObj : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         activeTimer = 0;

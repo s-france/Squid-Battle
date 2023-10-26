@@ -47,7 +47,67 @@ MonoBehaviour:
   sounds:
   - name: BattleTheme
     clip: {fileID: 8300000, guid: 05f345b324ea69a4ab2713b65da9273a, type: 3}
-    volume: 0.5
+    volume: 0.175
     pitch: 1
     loop: 1
+    source: {fileID: 0}
+  - name: Impact1
+    clip: {fileID: 8300000, guid: baf239969ba07e649b6d37d64b02d35a, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Impact2
+    clip: {fileID: 8300000, guid: 33d43457bd83b1544b9980264882631e, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Impact3
+    clip: {fileID: 8300000, guid: e88ec7f4397861441ad2ad465ac9c809, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Move1
+    clip: {fileID: 8300000, guid: 392a99ff96b09cf429ef6df549b0e3d1, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Move2
+    clip: {fileID: 8300000, guid: 401684e1b88d37047b0e01665a757ba3, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Move3
+    clip: {fileID: 8300000, guid: 420b4b25eba38cb4681a9e03ec83f6ab, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Move4
+    clip: {fileID: 8300000, guid: 0400937952ac20942b02042c7c4045a8, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Move5
+    clip: {fileID: 8300000, guid: d926b67bf251b8f44ab4bb30b3c67f43, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Move6
+    clip: {fileID: 8300000, guid: b56075b05303aaf45a97e7f8403a467a, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Move7
+    clip: {fileID: 8300000, guid: b56075b05303aaf45a97e7f8403a467a, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
     source: {fileID: 0}

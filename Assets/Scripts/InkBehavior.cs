@@ -25,9 +25,10 @@ public class InkBehavior : MonoBehaviour, IItemBehavior
      public void UseItem(float chargeTime)
     {
         //MUST CHANGE SPAWN DISTANCE
-        Vector2 InkSpawn = transform.parent.position - 1.2f*transform.parent.up;
+      
+        //Vector2 InkSpawn = transform.parent.position - 1.2f*transform.parent.up;
 
-        GameObject ink = Instantiate(InkPrefab, InkSpawn, transform.parent.rotation);
+        GameObject ink = Instantiate(InkPrefab, transform.parent.Find("ItemSpawn").position, transform.parent.Find("ItemSpawn").rotation);
         ink.GetComponent<InkObj>().Deploy(chargeTime);
         DestroyItem();
     }
