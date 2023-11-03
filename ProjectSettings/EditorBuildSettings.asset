@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/DemoScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
@@ -20,5 +20,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BattleArena1.unity
     guid: a5a9a08b5663ac54b8a8a4a5de9ec4f1
+  - enabled: 1
+    path: Assets/Scenes/BattleArena2.unity
+    guid: cbf5c7854d355a34f97d588fb675c408
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9642bdf4d655dc340acfb4d1485b1a8f, type: 2}

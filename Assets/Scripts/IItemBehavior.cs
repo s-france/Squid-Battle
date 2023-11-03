@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface IItemBehavior
 {
+    string GetItemType();
     void UseItem(float charge);
     void DestroyItem();
 }

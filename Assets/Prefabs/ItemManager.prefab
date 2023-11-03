@@ -51,9 +51,9 @@ MonoBehaviour:
   - {fileID: 1542760363053130029, guid: d6e3218973e9c4449ad0b5afc840be29, type: 3}
   ItemPickupSprites:
   - {fileID: 21300000, guid: 3a9c92bf870d9a24ab1bcb1f3d6dfc73, type: 3}
-  - {fileID: 21300000, guid: f6d3688dfa720c041b4d300220f06686, type: 3}
+  - {fileID: 21300000, guid: 074b79f5331a4494a9ade8940b168f94, type: 3}
   - {fileID: 21300000, guid: 155a964163ff88a4389d888da83de41f, type: 3}
-  - {fileID: 21300000, guid: f95f697d66d238446b1ab717def09945, type: 3}
+  - {fileID: 21300000, guid: 17f6546a1d5f34243b68df84b7aca603, type: 3}
   itemTypesCount: 4
   spawnedItemsCount: 0
   spawnedItems: 

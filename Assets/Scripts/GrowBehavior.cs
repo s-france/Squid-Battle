@@ -34,6 +34,13 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
         
     }
 
+
+    public string GetItemType()
+    {
+        return "Grow";
+    }
+
+
     public void UseItem(float chargeTime)
     {
         pc = GetComponentInParent<PlayerController>();

@@ -24,6 +24,11 @@ public class ShotBehavior : MonoBehaviour, IItemBehavior
         
     }
 
+    public string GetItemType()
+    {
+        return "Shot";
+    }
+    
 
     public void UseItem(float chargeTime)
     {

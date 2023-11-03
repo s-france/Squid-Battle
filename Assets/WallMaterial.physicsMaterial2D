@@ -6,6 +6,6 @@ PhysicsMaterial2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ShotMaterial
-  friction: 2
-  bounciness: 3
+  m_Name: WallMaterial
+  friction: 5
+  bounciness: 0

@@ -23,6 +23,11 @@ public class WallBehavior : MonoBehaviour, IItemBehavior
         
     }
 
+    public string GetItemType()
+    {
+        return "Wall";
+    }
+
 
     public void UseItem(float charge)
     {

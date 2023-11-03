@@ -129,6 +129,8 @@ public class PlayerManager : MonoBehaviour
     public void KillPlayer(int idx)
     {
         DeactivatePlayer(idx);
+        FindObjectOfType<AudioManager>().Play("Fall");
+
 
         //if only one remaining player alive end/reset the game
         if (playerList.Count(p => p.isAlive) == 1 && gm.battleStarted)

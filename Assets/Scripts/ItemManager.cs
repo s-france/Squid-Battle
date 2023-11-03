@@ -22,7 +22,7 @@ public class ItemManager : MonoBehaviour
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         //uncomment for testing items
-        SpawnItem(3, this.transform);
+        //SpawnItem(2, this.transform);
     }
 
     // Update is called once per frame
@@ -54,16 +54,16 @@ public class ItemManager : MonoBehaviour
                 Debug.Log("spawned ink at " + pos.position);
                 break;
 
-            case 2: //grow
-                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<GrowBehavior>() as GrowBehavior;
-                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[2];
-                Debug.Log("spawned grow at " + pos.position);
-                break;
-            
-            case 3: //wall
+            case 2: //wall
                 newItem.GetComponent<ItemController>().ib = newItem.AddComponent<WallBehavior>() as WallBehavior;
                 newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[3];
                 Debug.Log("spawned wall at " + pos.position);
+                break;
+            
+            case 3: //grow
+                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<GrowBehavior>() as GrowBehavior;
+                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[2];
+                Debug.Log("spawned grow at " + pos.position);
                 break;
             
             default:
@@ -87,12 +87,12 @@ public class ItemManager : MonoBehaviour
 
         //spawn at start of match
         rand = Random.value;
-        if (rand <= .9f) //9/10 chance for shot+ink
+        if (rand <= .9f) //9/10 chance for shot+ink+wall
         {
-            type = Random.Range(0,2);
+            type = Random.Range(0,3);
         } else //1/10 chance for grow
         {
-            type = 2;
+            type = 3;
         }
 
         pos.position = Random.insideUnitCircle * 7;

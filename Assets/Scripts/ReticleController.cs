@@ -65,8 +65,21 @@ public class ReticleController : MonoBehaviour
             chargeType = 0;
         } else if(pc.specialCharging)
         {
-            Debug.Log("specialcharge Rendering!");
-            chargeType = 1;
+            if(pc.heldItems.Count != 0 && pc.heldItems[pc.selectedItemIdx] != null)
+            {
+                if(pc.heldItems[pc.selectedItemIdx].GetItemType() == "Wall")
+                {
+                    chargeType = 2;
+                } else
+                {
+                    chargeType = 1;
+                }
+            } else
+            {
+                Debug.Log("specialcharge Rendering!");
+                chargeType = 1;
+            }
+            
         } else
         {
             chargeType = 0;

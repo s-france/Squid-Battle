@@ -318,6 +318,7 @@ MonoBehaviour:
   i_move: {x: 0, y: 0}
   idx: 0
   colorID: 0
+  selectedItemIdx: 0
   charging: 0
   chargeTime: 0
   specialCharging: 0
@@ -593,8 +594,8 @@ TrailRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 0, g: 0, b: 0, a: 1}
-      key1: {r: 0, g: 0, b: 0, a: 1}
-      key2: {r: 1, g: 1, b: 1, a: 0}
+      key1: {r: 0, g: 0.04565568, b: 0.41509432, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}
@@ -621,7 +622,7 @@ TrailRenderer:
       m_NumAlphaKeys: 2
     numCornerVertices: 3
     numCapVertices: 0
-    alignment: 1
+    alignment: 0
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0

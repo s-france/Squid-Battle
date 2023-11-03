@@ -47,7 +47,7 @@ MonoBehaviour:
   sounds:
   - name: BattleTheme
     clip: {fileID: 8300000, guid: 05f345b324ea69a4ab2713b65da9273a, type: 3}
-    volume: 0.175
+    volume: 0.075
     pitch: 1
     loop: 1
     source: {fileID: 0}
@@ -107,6 +107,12 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: Move7
     clip: {fileID: 8300000, guid: b56075b05303aaf45a97e7f8403a467a, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Fall
+    clip: {fileID: 8300000, guid: 1484ad9e82bfd4f499ee9c71c9352135, type: 3}
     volume: 0.75
     pitch: 1
     loop: 0

@@ -2,13 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Numerics;
+using UnityEngine.UIElements;
+using Unity.Mathematics;
 
-public class Arena0LC : MonoBehaviour, ILevelController
+public class Arena2LC : MonoBehaviour, ILevelController
 {
     GameManager gm;
     PlayerManager pm;
     ItemManager im;
     List<Transform> SpawnPoints;
+
+    Transform Box1;
+    Transform Box2;
+
+    [SerializeField] float moveDistance;
+    [SerializeField] float moveSpeed;
+    int moveDirection1;
+    int moveDirection2;
+    float arenaPosition;
+    bool forward;
+    UnityEngine.Vector2 movePos;
 
     // Start is called before the first frame update
     void Awake()
@@ -25,13 +39,62 @@ public class Arena0LC : MonoBehaviour, ILevelController
         SpawnPoints.Add(transform.GetChild(2));
         SpawnPoints.Add(transform.GetChild(3));
         
+        Box1 = GameObject.Find("Box1").transform;
+        Box2 = GameObject.Find("Box2").transform;
+        arenaPosition = 0;
+        moveDirection1 = 1;
+        moveDirection2 = -1;
+        forward = true;
+        
+        
         StartLevel();
     }
 
     // Update is called once per frame
     void Update()
     {
+        MoveBox(1);
+        MoveBox(2);
+    }
+
+    void MoveBox(int boxNum)
+    {
+        Transform box = null;
+        int direction = 0;
+        UnityEngine.Vector2 target = UnityEngine.Vector2.zero;
+        UnityEngine.Vector2 start = UnityEngine.Vector2.zero;
+
+        if(boxNum == 1)
+        {
+            box = Box1;
+            direction = moveDirection1;
+        } else if(boxNum == 2)
+        {
+            box = Box2;
+            direction = moveDirection2;
+        }
+
+        start = new UnityEngine.Vector2(0, box.localPosition.y);
+        target = new UnityEngine.Vector2(moveDistance*direction, box.localPosition.y);
         
+        if(Mathf.Abs(box.localPosition.x) == Mathf.Abs(target.x) /*-.01*/)
+        {
+            forward = false;
+        } else if(Mathf.Abs(box.localPosition.x) == Mathf.Abs(start.x))
+        {
+            forward = true;
+        }
+
+        if(forward)
+        {
+            box.localPosition = UnityEngine.Vector2.MoveTowards(box.localPosition, target, moveSpeed*Time.deltaTime);
+        } else
+        {
+            box.localPosition = UnityEngine.Vector2.MoveTowards(box.localPosition, start, moveSpeed*Time.deltaTime);
+        }
+        
+
+
     }
 
 

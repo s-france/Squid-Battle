@@ -12,6 +12,8 @@ public class WallObj : MonoBehaviour
 
     [SerializeField] float maxUpTime;
 
+    Vector3[] positions = new Vector3[50];
+
     float activeTimer;
     float upTime;
 
@@ -30,12 +32,11 @@ public class WallObj : MonoBehaviour
         if(!pc.isCoolingDown)
         {
             tr.emitting = false;
-        }
-
-        if(tr.positionCount == 0)
-        {
-            tr.emitting = false;
-            Destroy(gameObject);
+            if(tr.GetVisiblePositions(positions) == 0)
+            {
+                tr.emitting = false;
+                Destroy(gameObject);
+            }
         }
 
         SetColliderPointsFromTrail(tr, col);
@@ -51,7 +52,12 @@ public class WallObj : MonoBehaviour
 
         while(pc.isCoolingDown)
         {
-            
+            if(pc.GetComponent<Collider2D>().IsTouchingLayers(LayerMask.GetMask("Players")))
+            {
+                Debug.Log("COLLISISON -> CANCELLING TRAILRENDER");
+                tr.emitting = false;
+                break;
+            }
         }
 
         tr.emitting = false;
@@ -61,12 +67,10 @@ public class WallObj : MonoBehaviour
     void SetColliderPointsFromTrail(TrailRenderer tr, EdgeCollider2D col)
     {
         List<Vector2> points = new List<Vector2>();
-        Vector3[] positions;
 
-        for(int pos = 0; pos < tr.positionCount; pos++)
+        for(int pos = 0; pos < tr.GetVisiblePositions(positions); pos++)
         {
-            points.Add(tr.GetPosition(pos));
-            
+            points.Add(positions[pos]);
         }
         //tr.GetVisiblePositions(positions)
 

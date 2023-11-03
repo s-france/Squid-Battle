@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public int idx;
     [HideInInspector] public int colorID;
     [HideInInspector] public List<IItemBehavior> heldItems;
-    int selectedItemIdx;
+    [HideInInspector] public int selectedItemIdx;
     [HideInInspector] public bool charging;
     [HideInInspector] public float chargeTime;
     [HideInInspector] public bool specialCharging;
@@ -94,6 +94,7 @@ public class PlayerController : MonoBehaviour
 
         ChangeColor(colorID);
 
+        selectedItemIdx = 0;
         isCoolingDown = false;
         i_move = Vector2.zero;
         rotation = Vector3.zero;
@@ -128,6 +129,8 @@ public class PlayerController : MonoBehaviour
         if (LayerMask.LayerToName(col.gameObject.layer) == "Players")
         {
             Debug.Log("Player" + idx + " collided with Player " + col.gameObject.GetComponent<PlayerController>().idx);
+            
+            GetComponentInChildren<TrailRenderer>().emitting = false; //cancel wall item on impact
 
             //REPLACE THIS WITH STUNNED SPRITE!!!!!!!!!!!!
             sr.sprite = spriteSet[0];
@@ -183,6 +186,7 @@ public class PlayerController : MonoBehaviour
         ClearInventory();
         this.GetComponent<CircleCollider2D>().enabled = false;
         this.GetComponent<SpriteRenderer>().enabled = false;
+        GetComponentInChildren<TrailRenderer>().Clear();
         //REWORK THIS!!
         //tg.RemoveMember(this.transform);
     }
@@ -199,6 +203,7 @@ public class PlayerController : MonoBehaviour
         
         this.GetComponent<CircleCollider2D>().enabled = true;
         this.GetComponent<SpriteRenderer>().enabled = true;
+        GetComponentInChildren<TrailRenderer>().Clear();
         
         //REWORK
         tg = FindObjectOfType<CinemachineTargetGroup>();
@@ -342,6 +347,9 @@ public class PlayerController : MonoBehaviour
             case 1:
                 charge = specialChargeTime;
                 break;
+            case 2: //exception for powerups that launch full distance
+                charge = specialChargeTime;
+                break;
             default:
                 charge = chargeTime;
                 break;
@@ -424,7 +432,7 @@ public class PlayerController : MonoBehaviour
                 specialChargeTime = 0;
             }
 
-            //readyUp if held for 1 secs before game
+            //drop out if held for 1 secs before game
             if(specialChargeTime > 1 && !gm.battleStarted /*&& !im.playerList[idx].isReady*/)
             {
                 OnControllerDisconnect(gameObject.GetComponent<PlayerInput>());
@@ -436,7 +444,22 @@ public class PlayerController : MonoBehaviour
         //After special charging
         if(gm.battleStarted && !isCoolingDown) //use item during match
         {
-            Move(1);
+            if(heldItems.Count != 0 && heldItems[selectedItemIdx] != null)
+            {
+                if(heldItems[selectedItemIdx].GetItemType() == "Wall")
+                {
+                    Debug.Log("WALL MOVEMENT");
+                    Move(2);
+                } else
+                {
+                    Move(1);
+                }
+                
+            }else
+            {
+                Move(1);
+            }
+
             UseItem(selectedItemIdx);
         } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
         {

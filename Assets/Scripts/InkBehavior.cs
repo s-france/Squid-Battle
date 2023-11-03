@@ -21,6 +21,12 @@ public class InkBehavior : MonoBehaviour, IItemBehavior
         
     }
 
+    public string GetItemType()
+    {
+        return "Ink";
+    }
+
+
 
      public void UseItem(float chargeTime)
     {
