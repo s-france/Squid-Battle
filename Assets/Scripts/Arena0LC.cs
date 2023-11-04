@@ -51,7 +51,7 @@ public class Arena0LC : MonoBehaviour, ILevelController
 
         Debug.Log("playing music!!!");
         //play music
-        //FindObjectOfType<AudioManager>().Play("BattleTheme");
+        FindObjectOfType<AudioManager>().Play("BattleTheme");
 
         //move players to spawn positions
         foreach (PlayerConfig p in pm.playerList.Where(p => p.isActive))

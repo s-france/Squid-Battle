@@ -253,7 +253,7 @@ public class PlayerController : MonoBehaviour
     public void OnCharge(InputAction.CallbackContext ctx)
     {
         //Debug.Log(ctx.phase);
-        if(ctx.performed) //charging
+        if(ctx.performed && pm.playerList[idx].isInBounds) //charging
         {
             Debug.Log("charging!!");
             

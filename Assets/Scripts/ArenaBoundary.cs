@@ -21,10 +21,23 @@ public class ArenaBoundary : MonoBehaviour
     {
         if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
         {
-            pm.KillPlayer(col.GetComponentInParent<PlayerController>().idx);
+            int idx = col.GetComponentInParent<PlayerController>().idx;
+
+            pm.playerList[idx].isInBounds = false;
+            StartCoroutine(pm.PlayerKillClock(idx, 1.0f));
+
         } else if (col.gameObject.layer == LayerMask.NameToLayer("ItemObjs"))
         {
             StartCoroutine(KillClock(col.gameObject, 2));
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
+        {
+            int idx = col.GetComponentInParent<PlayerController>().idx;
+            pm.playerList[idx].isInBounds = true;
         }
 
     }
@@ -34,5 +47,6 @@ public class ArenaBoundary : MonoBehaviour
         yield return new WaitForSeconds(timer);
         Destroy(obj);
     }
+
 
 }

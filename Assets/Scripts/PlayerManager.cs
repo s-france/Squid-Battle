@@ -105,6 +105,7 @@ public class PlayerManager : MonoBehaviour
         playerList[idx].playerScript.Reactivate();
         playerList[idx].input.ActivateInput();
         playerList[idx].isAlive = true;
+        playerList[idx].isInBounds = true;
 
 
         Debug.Log("player" + idx + " reactivated!");
@@ -119,6 +120,7 @@ public class PlayerManager : MonoBehaviour
         playerList[idx].input.DeactivateInput();
         playerList[idx].isReady = false;
         playerList[idx].isAlive = false;
+        playerList[idx].isInBounds = false;
 
 
         Debug.Log("player " + idx + " deactivated!");
@@ -139,6 +141,26 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public IEnumerator PlayerKillClock(int idx, float timer)
+    {
+        float clock = 0;
+        
+        while(clock < timer && !playerList[idx].isInBounds)
+        {
+            //add dying animation here
+            
+            
+            clock += Time.deltaTime;
+            yield return null;
+        }
+
+        if(!playerList[idx].isInBounds)
+        {
+            KillPlayer(idx);
+        }
+
+    }
+
 
     
 
@@ -156,6 +178,7 @@ public class PlayerConfig
         isReady = false;
         isActive = true;
         isAlive = true;
+        isInBounds = true;
         color = pi.playerIndex;
     }
 
@@ -165,5 +188,6 @@ public class PlayerConfig
     public bool isReady {get; set;}
     public bool isActive {get; set;}
     public bool isAlive {get; set;}
+    public bool isInBounds {get; set;}
     public int color {get; set;} //color idx
 }
