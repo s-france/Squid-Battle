@@ -50,7 +50,6 @@ public class MainMenuLC : MonoBehaviour, ILevelController
             pm.ReactivatePlayer(p.playerIndex);
 
             pm.UnReadyPlayer(p.playerIndex);
-            ui.ShowPlayerUI(p.playerIndex);
 
             Transform spawn = this.gameObject.transform.GetChild(p.playerIndex);
             p.input.gameObject.transform.position = spawn.position;
@@ -60,6 +59,8 @@ public class MainMenuLC : MonoBehaviour, ILevelController
             //    ui.HidePlayerUI(p.playerIndex);
             //}
         }
+
+        ui.HighlightWinner(pm.winnerIdx);
     }
 
 

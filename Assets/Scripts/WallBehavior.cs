@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.U2D.Path;
+//using UnityEditor.U2D.Path;
 using UnityEngine;
 
 public class WallBehavior : MonoBehaviour, IItemBehavior

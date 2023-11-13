@@ -48,6 +48,12 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
+        
+    }
+
+    //use this instead of Awake()
+    public void Init()
+    {
         DontDestroyOnLoad(this);
 
         rb = this.gameObject.GetComponent<Rigidbody2D>();
@@ -64,7 +70,6 @@ public class PlayerController : MonoBehaviour
 
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         pm = gm.GetComponentInChildren<PlayerManager>(); 
-        //pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
         
         transform.parent = gm.transform.GetChild(0);
 
@@ -257,7 +262,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("charging!!");
             
-            if(!gm.battleStarted && !pm.playerList[idx].isActive)
+            if(!gm.battleStarted && !pm.playerList[idx].isActive && GameObject.Find("LevelController").GetComponent<ILevelController>().GetLevelType() != 1)
             {
                 Debug.Log("Reconnect!!");
                 OnControllerReconnect(GetComponent<PlayerInput>());
@@ -433,7 +438,7 @@ public class PlayerController : MonoBehaviour
             }
 
             //drop out if held for 1 secs before game
-            if(specialChargeTime > 1 && !gm.battleStarted /*&& !im.playerList[idx].isReady*/)
+            if(specialChargeTime > 1 && !gm.battleStarted && GameObject.Find("LevelController").GetComponent<ILevelController>().GetLevelType() != 1)
             {
                 OnControllerDisconnect(gameObject.GetComponent<PlayerInput>());
             }
@@ -486,11 +491,13 @@ public class PlayerController : MonoBehaviour
 
     void ClearInventory()
     {
+        
         foreach (IItemBehavior item in heldItems)
         {
             item.DestroyItem();
         }
         heldItems.Clear();
+        
     }
 
     public void OnSelectL(InputAction.CallbackContext ctx)

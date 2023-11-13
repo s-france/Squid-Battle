@@ -48,10 +48,14 @@ public class InputManager : MonoBehaviour
             Transform spawn = gm.lc.GetSpawnPoints()[pi.playerIndex];
             pi.gameObject.transform.position = spawn.position;
 
+            //must initialize heldItems list before calling DeactivatePlayer()
+            pm.playerList[pi.playerIndex].playerScript.Init();
+
+            pm.DeactivatePlayer(pi.playerIndex);
             //only show new player if on Start Menu
-            if(SceneManager.GetActiveScene().name != "StartMenu")
+            if(SceneManager.GetActiveScene().name == "StartMenu")
             {
-                pm.DeactivatePlayer(pi.playerIndex);
+                pm.ReactivatePlayer(pi.playerIndex);
             }
         }
     }

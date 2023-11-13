@@ -34,6 +34,11 @@ public class Arena0LC : MonoBehaviour, ILevelController
         
     }
 
+    IEnumerator ShrinkClock()
+    {
+        
+    }
+
 
     public void StartLevel()
     {
@@ -73,6 +78,8 @@ public class Arena0LC : MonoBehaviour, ILevelController
 
         //REWORK
         StartCoroutine(im.RandomSpawns(15));
+
+
 
         //ITEM TESTING
         //itemMan.SpawnItem(2, itemMan.transform);

@@ -13,7 +13,7 @@ public class PlayerManager : MonoBehaviour
     GameManager gm;
 
     //REWORK!!!
-    /*[HideinInspector]*/ public List<PlayerConfig> playerList {get; private set;}
+    [HideInInspector] public List<PlayerConfig> playerList {get; private set;}
     
     /*[HideInInspector]*/ public int colorsCount;
     public Sprite[] blueSprites;
@@ -26,6 +26,7 @@ public class PlayerManager : MonoBehaviour
     public Sprite[] yellowSprites;
     public Sprite[][] playerSprites;
 
+    [HideInInspector] public int winnerIdx;
 
 
     // Start is called before the first frame update
@@ -35,6 +36,7 @@ public class PlayerManager : MonoBehaviour
         
     }
 
+    //use this instead of Awake()
     public void Init()
     {
         gm = GetComponentInParent<GameManager>();
@@ -56,6 +58,8 @@ public class PlayerManager : MonoBehaviour
         colorsCount = playerSprites.Length - 1;
 
         GetComponentInChildren<InputManager>().Init();
+
+        winnerIdx = -1;
     }
 
     // Update is called once per frame
@@ -77,6 +81,12 @@ public class PlayerManager : MonoBehaviour
         playerList[idx].isReady = true;
         Debug.Log("player" + playerList[idx].playerIndex + " is ready: " + playerList[idx].isReady);
 
+        if(gm.lc.GetLevelType() == 0)
+        {
+            UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
+            ui.ReadyPlayer(idx);
+        }
+
         //start game if all active players are ready && more than 1 player
         if((playerList.TrueForAll(p => (p.isReady || !p.isActive))) && playerList.Count(p => p.isActive) > 1 && SceneManager.GetActiveScene().name == "StartMenu")
         {
@@ -91,6 +101,12 @@ public class PlayerManager : MonoBehaviour
     {
         playerList[idx].isReady = false;
 
+        if(gm.lc.GetLevelType() == 0)
+        {
+            UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
+            ui.UnReadyPlayer(idx);
+        }
+
         //start game if all active players are ready && more than 1 player
         if((playerList.TrueForAll(p => (p.isReady || !p.isActive))) && playerList.Count(p => p.isActive) > 1 && !gm.battleStarted)
         {
@@ -103,10 +119,15 @@ public class PlayerManager : MonoBehaviour
     public void ReactivatePlayer(int idx)
     {
         playerList[idx].playerScript.Reactivate();
-        playerList[idx].input.ActivateInput();
+        //playerList[idx].input.ActivateInput();
         playerList[idx].isAlive = true;
         playerList[idx].isInBounds = true;
 
+        if(gm.lc.GetLevelType() == 0)
+        {
+            UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
+            ui.ShowPlayerUI(idx);
+        }
 
         Debug.Log("player" + idx + " reactivated!");
     }
@@ -117,10 +138,17 @@ public class PlayerManager : MonoBehaviour
         playerList[idx].playerScript.Deactivate();
         UnReadyPlayer(idx);
 
-        playerList[idx].input.DeactivateInput();
+        //playerList[idx].input.DeactivateInput();
         playerList[idx].isReady = false;
         playerList[idx].isAlive = false;
-        playerList[idx].isInBounds = false;
+        playerList[idx].isInBounds = true;
+
+        if(gm.lc.GetLevelType() == 0)
+        {
+            UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
+            ui.HidePlayerUI(idx);
+        }
+        
 
 
         Debug.Log("player " + idx + " deactivated!");
@@ -137,6 +165,8 @@ public class PlayerManager : MonoBehaviour
         //if only one remaining player alive end/reset the game
         if (playerList.Count(p => p.isAlive) == 1 && gm.battleStarted)
         {
+            winnerIdx = playerList.FindIndex(p => p.isAlive);
+            Debug.Log("winner: " + winnerIdx);
             gm.lc.EndLevel();
         }
     }

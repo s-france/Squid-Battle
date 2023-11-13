@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
+    PlayerManager pm;
+
     // Start is called before the first frame update
     void Start()
     {
+        pm = GameObject.Find("GameManager").GetComponentInChildren<PlayerManager>();
+        HighlightWinner(pm.winnerIdx);
+
         ShowAll();
     }
 
@@ -19,7 +24,7 @@ public class UIController : MonoBehaviour
     public void ShowAll()
     {
         gameObject.SetActive(true);
-        transform.Find("Canvas").Find("PlayersWin").gameObject.SetActive(false);
+        //transform.Find("Canvas").Find("PlayersWin").gameObject.SetActive(false);
     }
     public void HideAll()
     {
@@ -58,14 +63,20 @@ public class UIController : MonoBehaviour
     }
     public void HighlightWinner(int idx)
     {
+        bool winnerFound = false;
+
+        Debug.Log("winner idx: " + idx);
         int count = 0;
 
-        transform.Find("Canvas").Find("PlayersWin").gameObject.SetActive(true);
+        //transform.Find("Canvas").Find("PlayersWin").gameObject.SetActive(true);
+        GameObject.Find("PlayersWin").SetActive(true);
 
         foreach (Transform child in transform.Find("Canvas").Find("PlayersWin"))
         {
             if(count == idx)
             {
+                winnerFound = true;
+                Debug.Log("showing winner");
                 child.gameObject.SetActive(true);
             } else
             {
@@ -73,6 +84,11 @@ public class UIController : MonoBehaviour
             }
 
             count++;
+        }
+
+        if (!winnerFound)
+        {
+            GameObject.Find("PlayersWin").SetActive(false);
         }
     }
 
