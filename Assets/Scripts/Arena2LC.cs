@@ -146,7 +146,7 @@ public class Arena2LC : MonoBehaviour, ILevelController
 
         Debug.Log("playing music!!!");
         //play music
-        FindObjectOfType<AudioManager>().Play("BattleTheme");
+        FindObjectOfType<AudioManager>().PlayRandom("BattleTheme");
 
         //move players to spawn positions
         foreach (PlayerConfig p in pm.playerList.Where(p => p.isActive))
@@ -188,7 +188,8 @@ public class Arena2LC : MonoBehaviour, ILevelController
 
         Debug.Log("stopping music!!!");
         //turn off battle music
-        FindObjectOfType<AudioManager>().Stop("BattleTheme");
+        FindObjectOfType<AudioManager>().Stop("BattleTheme1");
+        FindObjectOfType<AudioManager>().Stop("BattleTheme2");
 
 
         //not really needed anymore

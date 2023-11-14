@@ -46,6 +46,11 @@ public class AudioManager : MonoBehaviour
             case "Move":
                 n = UnityEngine.Random.Range(1, 8);
                 break;
+
+            case "BattleTheme":
+                n = UnityEngine.Random.Range(1,3);
+                break;
+
             default:
                 n = -1;
                 Debug.Log("ERROR: invalid audio type!!");
