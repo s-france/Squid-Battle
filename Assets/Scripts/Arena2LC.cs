@@ -24,6 +24,11 @@ public class Arena2LC : MonoBehaviour, ILevelController
     bool forward;
     UnityEngine.Vector2 movePos;
 
+
+    [SerializeField] List<UnityEngine.Vector2> ArenaShrinks;
+    [SerializeField] float shrinkSpeed;
+    Transform arena;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -46,6 +51,7 @@ public class Arena2LC : MonoBehaviour, ILevelController
         moveDirection2 = -1;
         forward = true;
         
+        arena = GameObject.Find("Arena").transform;
         
         StartLevel();
     }
@@ -93,8 +99,34 @@ public class Arena2LC : MonoBehaviour, ILevelController
             box.localPosition = UnityEngine.Vector2.MoveTowards(box.localPosition, start, moveSpeed*Time.deltaTime);
         }
         
+    }
 
 
+    IEnumerator ShrinkClock()
+    {
+        float timer = 0;
+        Debug.Log("COROUTINE STARTED");
+        
+        while(arena.localScale.magnitude > ArenaShrinks[2].magnitude)
+        {
+            if (timer >= 35 && arena.localScale.magnitude > ArenaShrinks[0].magnitude)
+            {
+                Debug.Log("SHRINKING 0");
+                arena.localScale = UnityEngine.Vector2.MoveTowards(arena.localScale, ArenaShrinks[0], shrinkSpeed * Time.deltaTime);
+            } else if (timer >= 70 && arena.localScale.magnitude > ArenaShrinks[1].magnitude)
+            {
+                Debug.Log("SHRINKING 1");
+                arena.localScale = UnityEngine.Vector2.MoveTowards(arena.localScale, ArenaShrinks[1], shrinkSpeed * Time.deltaTime);
+            } else if (timer >= 105 && arena.localScale.magnitude > ArenaShrinks[2].magnitude)
+            {
+                Debug.Log("SHRINKING 2");
+                arena.localScale = UnityEngine.Vector2.MoveTowards(arena.localScale, ArenaShrinks[2], shrinkSpeed * Time.deltaTime);
+            }
+            timer = timer + Time.deltaTime;
+            yield return null;
+        }
+        Debug.Log("ENDING SHRINK COROUTINE");
+        
     }
 
 
@@ -136,6 +168,8 @@ public class Arena2LC : MonoBehaviour, ILevelController
 
         //REWORK
         StartCoroutine(im.RandomSpawns(15));
+
+        StartCoroutine(ShrinkClock());
 
         //ITEM TESTING
         //itemMan.SpawnItem(2, itemMan.transform);

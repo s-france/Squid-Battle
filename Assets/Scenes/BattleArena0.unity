@@ -391,7 +391,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &565571499
 GameObject:
@@ -510,6 +510,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50c21270622367d48b369627e6b72522, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ArenaShrinks:
+  - {x: 12, y: 12}
+  - {x: 10, y: 10}
+  - {x: 8, y: 8}
+  shrinkSpeed: 0.15
 --- !u!4 &723883653
 Transform:
   m_ObjectHideFlags: 0
@@ -527,7 +532,7 @@ Transform:
   - {fileID: 1986101112}
   - {fileID: 729558501}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &729558500
 GameObject:
@@ -856,7 +861,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8965419758988160698, guid: 884d74b2925cdd343a77d1daa62eb53e, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8965419758988160698, guid: 884d74b2925cdd343a77d1daa62eb53e, type: 3}
       propertyPath: m_LocalPosition.x

@@ -496,6 +496,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveDistance: 2
   moveSpeed: 0.2
+  ArenaShrinks:
+  - {x: 1.57, y: 1.57}
+  - {x: 1.44, y: 1.4}
+  - {x: 1.3, y: 1.2}
+  shrinkSpeed: 0.1
 --- !u!1 &993084185
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,7 +705,7 @@ Transform:
   m_GameObject: {fileID: 1287440126}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.7958058, y: 1.7958058, z: 1}
+  m_LocalScale: {x: 1.7, y: 1.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 993084188}
@@ -728,30 +733,30 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 794296471}
     m_ColliderPaths:
-    - - X: 67342720
+    - - X: 63750000
         Y: 0
-      - X: -67342720
+      - X: -63750000
         Y: 0
-      - X: -67342720
-        Y: -67342720
-      - X: 67342720
-        Y: -67342720
+      - X: -63750000
+        Y: -63750000
+      - X: 63750000
+        Y: -63750000
   - m_Collider: {fileID: 993084186}
     m_ColliderPaths:
-    - - X: 67342720
-        Y: 67342720
-      - X: -67342720
-        Y: 67342720
-      - X: -67342720
+    - - X: 63750000
+        Y: 63750000
+      - X: -63750000
+        Y: 63750000
+      - X: -63750000
         Y: 0
-      - X: 67342720
+      - X: 63750000
         Y: 0
   m_CompositePaths:
     m_Paths:
-    - - {x: 6.7342424, y: -6.734272}
-      - {x: 6.7342424, y: 6.734272}
-      - {x: -6.734272, y: 6.7342424}
-      - {x: -6.7342424, y: -6.734272}
+    - - {x: 6.374971, y: -6.375}
+      - {x: 6.374971, y: 6.375}
+      - {x: -6.375, y: 6.374971}
+      - {x: -6.374971, y: -6.375}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
 --- !u!50 &1287440132

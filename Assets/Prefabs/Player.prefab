@@ -328,7 +328,7 @@ MonoBehaviour:
   inventorySize: 3
   chargeStrength: 25
   maxChargeTime: 3
-  knockbackMultiplier: 1.1
+  knockbackMultiplier: 1.75
   coolDownFactor: 0.25
   moveCoolDown: 0.3
   coolDownVelocity: 1

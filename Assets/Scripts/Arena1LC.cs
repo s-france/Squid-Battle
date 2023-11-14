@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Unity.VisualScripting.FullSerializer;
 
-public class Arena0LC : MonoBehaviour, ILevelController
+public class Arena1LC : MonoBehaviour, ILevelController
 {
     GameManager gm;
     PlayerManager pm;
