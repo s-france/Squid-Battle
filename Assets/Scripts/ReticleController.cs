@@ -89,7 +89,7 @@ public class ReticleController : MonoBehaviour
         while (pc.charging || pc.specialCharging)
         {
 
-            if(!pc.isCoolingDown)
+            if(!pc.isCoolingDown && pc.pm.playerList[pc.idx].isInBounds)
             {
                 lr.enabled = true;
 

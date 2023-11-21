@@ -9,7 +9,7 @@ using Unity.Mathematics;
 public class PlayerController : MonoBehaviour
 {
     GameManager gm;
-    PlayerManager pm;
+    [HideInInspector] public PlayerManager pm;
     InputManager im;
     ReticleController rc;
     public Rigidbody2D rb;
@@ -76,16 +76,6 @@ public class PlayerController : MonoBehaviour
         idx = pm.playerList.FindIndex(i => i.input == this.gameObject.GetComponent<PlayerInput>());
         colorID = idx;
         Debug.Log("player idx (from playercontroller): " + idx);
-
-        //REWORK
-        /*
-        tg = GameObject.Find("TargetGroup1").GetComponent<CinemachineTargetGroup>();
-        if (tg != null)
-        {
-            Debug.Log("got TG!");
-        }
-        tg.AddMember(this.transform, 1, 1);
-        */
 
 
         sr = this.gameObject.GetComponent<SpriteRenderer>();
@@ -289,7 +279,7 @@ public class PlayerController : MonoBehaviour
         //Charging
         while (charging)
         {
-            if (!isCoolingDown)
+            if (!isCoolingDown && pm.playerList[idx].isInBounds)
             {
                 sr.sprite = spriteSet[2]; //charging sprite
                 chargeTime += Time.deltaTime;
@@ -310,7 +300,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //After charging
-        if(gm.battleStarted && !isCoolingDown /*&& !specialCharging*/) //perform movement during match
+        if(gm.battleStarted && !isCoolingDown && pm.playerList[idx].isInBounds /*&& !specialCharging*/) //perform movement during match
         {
             Move(0);
         } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
@@ -363,13 +353,15 @@ public class PlayerController : MonoBehaviour
         float xmod = .4f;
         float ymod = 1.37f;
 
-        float chargeCurve = (MathF.Log10(maxChargeTime) + 1);
+        float chargeCurve = MathF.Log10(maxChargeTime) + 1;
         float chargeScale = 3; //max charge
         float chargeFactor = chargeScale / chargeCurve;
         float minCharge = .5f;
 
         Vector2 moveForce = i_move * chargeStrength * Math.Clamp(ymod*chargeFactor * (MathF.Log10(xmod*Math.Clamp(charge, 0, maxChargeTime)) + 1), minCharge, 100);
         
+        Debug.Log("MOVEFORCE: " + moveForce.magnitude);
+
         if (type == 1) //total bullshit
         {
             float idk = moveForce.magnitude*.25f + 7;
