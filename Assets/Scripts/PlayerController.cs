@@ -28,6 +28,13 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float chargeTime;
     [HideInInspector] public bool specialCharging;
     [HideInInspector] public float specialChargeTime;
+
+    //NEW movement system
+    float moveTime; //time to spend moving
+    float moveSpeed; //speed of movement
+    float movePower; //knockback to apply on collision
+
+
     [HideInInspector] public bool isCoolingDown;
     [HideInInspector] public bool isGrown;
 
@@ -39,6 +46,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float coolDownFactor;
     [SerializeField] float moveCoolDown;
     [SerializeField] float coolDownVelocity;
+    [SerializeField] float DIStrength;
 
     [HideInInspector] public Vector3 defaultScale;
     [HideInInspector] public float defaultMass;
@@ -109,7 +117,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        
+        DirectionalInfluence();
     }
 
     //handle players colliding
@@ -234,6 +242,17 @@ public class PlayerController : MonoBehaviour
         if(!isCoolingDown)
         {
             RotateSprite(i_move);
+        }
+    }
+
+
+    //allows players to slightly alter their trajectory while moving / being launched
+    //called in FixedUpdate()
+    void DirectionalInfluence()
+    {
+        if(isCoolingDown)
+        {
+            rb.AddForce(i_move * DIStrength);
         }
     }
 
@@ -540,4 +559,45 @@ public class PlayerController : MonoBehaviour
         sr.sprite = spriteSet[2]; //charging sprite doubles as ready sprite
         pm.ReadyPlayer(idx);
     }
+
+
+    //NEW movement system stuff
+
+    //called in Update
+    void MovementTick()
+    {
+        //if time is almost up start deccel
+        //if(moveTime < )
+        //{
+
+        //}
+
+
+
+
+        if(moveTime > 0)
+        {
+            moveTime -= Time.deltaTime;
+        } else if(moveTime < 0)
+        {
+            moveTime = 0;
+        }
+
+    }
+
+
+    void ApplyMove(Vector2 direction, float time, float speed, float power)
+    {
+        moveSpeed = speed;
+        moveTime = time;
+        movePower = power;
+
+        rb.velocity = Vector2.zero;
+        rb.AddForce(direction * speed, ForceMode2D.Impulse);
+    }
+
+
+
+
+
 }
