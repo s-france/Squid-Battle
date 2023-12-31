@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using System;
 using Cinemachine;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour
 {
@@ -30,9 +31,22 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float specialChargeTime;
 
     //NEW movement system
+    [SerializeField] AnimationCurve moveCurve; //speed:time movement curve
+    [SerializeField] AnimationCurve speedCurve; //scaling of max speed : charge in movement
+    [SerializeField] AnimationCurve timeCurve; //scaling of time spent moving : charge in movement
+    [SerializeField] AnimationCurve powerCurve; //scaling of knockback power : charge in movement
+    
+    [SerializeField] float maxMoveSpeed;
+    [SerializeField] float maxMoveTime;
+    [SerializeField] float maxMovePower;
+
+
     float moveTime; //time to spend moving
     float moveSpeed; //speed of movement
     float movePower; //knockback to apply on collision
+    bool isMoving;
+    bool isHitStop;
+    Coroutine MoveCR;
 
 
     [HideInInspector] public bool isCoolingDown;
@@ -107,6 +121,10 @@ public class PlayerController : MonoBehaviour
         defaultMass = rb.mass;
         defaultChargeStrength = chargeStrength;
         defaultKnockbackMultiplier = knockbackMultiplier;
+
+        isMoving = false;
+        isHitStop = false;
+        MoveCR = StartCoroutine(ApplyMove(0, Vector2.zero, 0));
     }
 
     // Update is called once per frame
@@ -117,7 +135,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        DirectionalInfluence();
+        //DirectionalInfluence();
     }
 
     //handle players colliding
@@ -128,6 +146,10 @@ public class PlayerController : MonoBehaviour
 
 
         Debug.Log("Player colliding! Collision LayerMask name: " + LayerMask.LayerToName(col.gameObject.layer));
+
+        //TESTING HITSTOP
+        StartCoroutine(HitStop(.05f));
+
 
         if (LayerMask.LayerToName(col.gameObject.layer) == "Players")
         {
@@ -321,7 +343,10 @@ public class PlayerController : MonoBehaviour
         //After charging
         if(gm.battleStarted && !isCoolingDown && pm.playerList[idx].isInBounds /*&& !specialCharging*/) //perform movement during match
         {
-            Move(0);
+            //Move(0);
+            StopCoroutine(MoveCR);
+            MoveCR = StartCoroutine(ApplyMove(0, i_move, chargeTime));
+
         } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
         {
             sr.sprite = spriteSet[0];
@@ -563,40 +588,110 @@ public class PlayerController : MonoBehaviour
 
     //NEW movement system stuff
 
-    //called in Update
-    void MovementTick()
+    //basic movement function
+    //pauses during hitstop -> continues after stop is over
+    //type 1 -> player-inputted movement
+    //type 2 -> attack knockback/launching
+    IEnumerator ApplyMove(int type, Vector2 direction, float charge)
     {
-        //if time is almost up start deccel
-        //if(moveTime < )
-        //{
-
-        //}
-
-
-
-
-        if(moveTime > 0)
+        if(!isMoving)
         {
-            moveTime -= Time.deltaTime;
-        } else if(moveTime < 0)
-        {
-            moveTime = 0;
+            
+            if(type == 0)
+            {
+                isMoving = true;
+                sr.sprite = spriteSet[1];
+                charge = Mathf.Clamp(charge, 0, maxChargeTime);
+            }
+
+            Debug.Log("running new move!");
+            Debug.Log("direction = " + direction);
+            Debug.Log("charge = " + charge);
+
+            //max speed reached in this movement
+            moveSpeed = maxMoveSpeed * speedCurve.Evaluate(charge/maxChargeTime);
+            //total time to spend moving in this movement
+            moveTime = maxMoveTime * timeCurve.Evaluate(charge/maxChargeTime);
+            //knockback power of this movement
+            movePower = maxMovePower * powerCurve.Evaluate(charge/maxChargeTime);
+
+            //probably not needed in this context
+            rb.velocity = direction.normalized;
+
+            Debug.Log("moveSpeed: " + moveSpeed);
+            Debug.Log("starting rb velocity: " + rb.velocity);
+            Debug.Log("starting speed: " + rb.velocity.magnitude);
+
+            float timer = 0;
+            WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
+            //movement accel/deccel
+            while (timer <= moveTime && isMoving)
+            {
+                if(!isHitStop)
+                {
+                    rb.velocity = moveCurve.Evaluate(timer/moveTime) * moveSpeed * rb.velocity.normalized;
+
+                    Debug.Log("MOVE LOOP");
+                    Debug.Log("velocity = " + rb.velocity);
+                    Debug.Log("speed = " + rb.velocity.magnitude);
+                    Debug.Log("timer percent: " + timer/moveTime);
+
+                    if(type == 0)
+                    {
+                        RotateSprite(rb.velocity.normalized);
+                    }
+
+                    timer += Time.fixedDeltaTime;
+                }
+
+                yield return fuWait;
+            }
+
+            //may cause problems in the future
+            rb.velocity = Vector2.zero;
+            sr.sprite = spriteSet[0];
+
+            isMoving = false;
+            Debug.Log("newMove DONE!");
         }
 
+        
     }
 
 
-    void ApplyMove(Vector2 direction, float time, float speed, float power)
+    //coroutine applies hitstop for specified time
+    //type 0 -> "passthrough": after hitstop is over player continues moving as they were
+    //type 1 -> knockback: new movement applied after hitstop is over
+    IEnumerator HitStop(float time)
     {
-        moveSpeed = speed;
-        moveTime = time;
-        movePower = power;
+        if(!isHitStop)
+        {
+            WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
+            //for collisions just in case
+            yield return fuWait;
 
-        rb.velocity = Vector2.zero;
-        rb.AddForce(direction * speed, ForceMode2D.Impulse);
+            isHitStop = true;
+            Vector2 initialVelocity = rb.velocity;
+
+            float timer = 0;
+            while (timer < time)
+            {
+                rb.velocity = Vector2.zero;
+
+                timer += Time.fixedDeltaTime;
+                yield return fuWait;
+            }
+            isHitStop = false;
+
+            rb.velocity = initialVelocity;
+        
+        
+        }
     }
 
 
+
+ 
 
 
 
