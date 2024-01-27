@@ -111,15 +111,15 @@ public class Arena2LC : MonoBehaviour, ILevelController
         {
             if (timer >= 35 && arena.localScale.magnitude > ArenaShrinks[0].magnitude)
             {
-                Debug.Log("SHRINKING 0");
+                //Debug.Log("SHRINKING 0");
                 arena.localScale = UnityEngine.Vector2.MoveTowards(arena.localScale, ArenaShrinks[0], shrinkSpeed * Time.deltaTime);
             } else if (timer >= 70 && arena.localScale.magnitude > ArenaShrinks[1].magnitude)
             {
-                Debug.Log("SHRINKING 1");
+                //Debug.Log("SHRINKING 1");
                 arena.localScale = UnityEngine.Vector2.MoveTowards(arena.localScale, ArenaShrinks[1], shrinkSpeed * Time.deltaTime);
             } else if (timer >= 105 && arena.localScale.magnitude > ArenaShrinks[2].magnitude)
             {
-                Debug.Log("SHRINKING 2");
+                //Debug.Log("SHRINKING 2");
                 arena.localScale = UnityEngine.Vector2.MoveTowards(arena.localScale, ArenaShrinks[2], shrinkSpeed * Time.deltaTime);
             }
             timer = timer + Time.deltaTime;

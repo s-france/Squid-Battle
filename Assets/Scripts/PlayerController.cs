@@ -6,6 +6,11 @@ using System;
 using Cinemachine;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using System.Security.Cryptography;
+using UnityEditor.UIElements;
+using UnityEngine.Assertions.Must;
+using UnityEngine.Timeline;
+//using System.Numerics;
 
 public class PlayerController : MonoBehaviour
 {
@@ -34,17 +39,24 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AnimationCurve moveCurve; //speed:time movement curve
     [SerializeField] AnimationCurve speedCurve; //scaling of max speed : charge in movement
     [SerializeField] AnimationCurve timeCurve; //scaling of time spent moving : charge in movement
-    [SerializeField] AnimationCurve powerCurve; //scaling of knockback power : charge in movement
+    [SerializeField] AnimationCurve powerCurve; //scaling of movement kb power : charge in movement
+    [SerializeField] AnimationCurve knockbackCurve; //scaling of relative power (movePower-otherPlayer.movePower) : "knockback-charge" applied when colliding
+    [SerializeField] AnimationCurve directnessKBCurve;
+    [SerializeField] AnimationCurve hitstopCurve; //scaling of knockback power : hitstop applied when colliding
     
     [SerializeField] float maxMoveSpeed;
     [SerializeField] float maxMoveTime;
     [SerializeField] float maxMovePower;
+    [SerializeField] float maxHitstop;
 
 
-    float moveTime; //time to spend moving
+    [HideInInspector] public float moveTime; //total time to spend in the current movement instance
+    [HideInInspector] public float moveTimer; //timer counting time to spend moving
+    float hitStopTimer; //timer counting time to spend in hitstop
     float moveSpeed; //speed of movement
-    float movePower; //knockback to apply on collision
-    bool isMoving;
+    [HideInInspector] public float movePower; //knockback to apply on collision
+    [HideInInspector] public bool isMoving;
+    bool isKnockback;
     bool isHitStop;
     Coroutine MoveCR;
 
@@ -122,9 +134,14 @@ public class PlayerController : MonoBehaviour
         defaultChargeStrength = chargeStrength;
         defaultKnockbackMultiplier = knockbackMultiplier;
 
+        moveTime = 0;
+        moveTimer = 0;
+        hitStopTimer = 0;
         isMoving = false;
+        isKnockback = false;
         isHitStop = false;
-        MoveCR = StartCoroutine(ApplyMove(0, Vector2.zero, 0));
+        //MoveCR = StartCoroutine(ApplyMove(0, Vector2.zero, 0));
+        ApplyMove(0, Vector2.zero, 0);
     }
 
     // Update is called once per frame
@@ -136,6 +153,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         //DirectionalInfluence();
+        MovementTick();
     }
 
     //handle players colliding
@@ -148,19 +166,16 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Player colliding! Collision LayerMask name: " + LayerMask.LayerToName(col.gameObject.layer));
 
         //TESTING HITSTOP
-        StartCoroutine(HitStop(.05f));
+        //StartCoroutine(HitStop(.05f));
 
 
         if (LayerMask.LayerToName(col.gameObject.layer) == "Players")
         {
             Debug.Log("Player" + idx + " collided with Player " + col.gameObject.GetComponent<PlayerController>().idx);
-            
-            GetComponentInChildren<TrailRenderer>().emitting = false; //cancel wall item on impact
 
-            //REPLACE THIS WITH STUNNED SPRITE!!!!!!!!!!!!
-            sr.sprite = spriteSet[0];
 
-            StartCoroutine(Knockback(col.rigidbody));
+            StartCoroutine(ApplyKnockback(col.gameObject.GetComponent<PlayerController>().movePower, col.gameObject.GetComponent<PlayerController>().rb));
+
         } /*else if(LayerMask.LayerToName(col.gameObject.layer) == "Items")
         {
 
@@ -343,9 +358,8 @@ public class PlayerController : MonoBehaviour
         //After charging
         if(gm.battleStarted && !isCoolingDown && pm.playerList[idx].isInBounds /*&& !specialCharging*/) //perform movement during match
         {
-            //Move(0);
-            StopCoroutine(MoveCR);
-            MoveCR = StartCoroutine(ApplyMove(0, i_move, chargeTime));
+            ApplyMove(0, i_move, chargeTime);
+
 
         } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
         {
@@ -404,7 +418,7 @@ public class PlayerController : MonoBehaviour
 
         Vector2 moveForce = i_move * chargeStrength * Math.Clamp(ymod*chargeFactor * (MathF.Log10(xmod*Math.Clamp(charge, 0, maxChargeTime)) + 1), minCharge, 100);
         
-        Debug.Log("MOVEFORCE: " + moveForce.magnitude);
+        //Debug.Log("MOVEFORCE: " + moveForce.magnitude);
 
         if (type == 1) //total bullshit
         {
@@ -490,15 +504,18 @@ public class PlayerController : MonoBehaviour
                 if(heldItems[selectedItemIdx].GetItemType() == "Wall")
                 {
                     Debug.Log("WALL MOVEMENT");
-                    Move(2);
+                    //Move(2);
+                    ApplyMove(0, i_move, specialChargeTime);
                 } else
                 {
-                    Move(1);
+                    //Move(1);
+                    ApplyMove(0, i_move, .35f * specialChargeTime);
                 }
                 
             }else
             {
-                Move(1);
+                //Move(1);
+                ApplyMove(0, i_move, .35f * specialChargeTime);
             }
 
             UseItem(selectedItemIdx);
@@ -586,27 +603,81 @@ public class PlayerController : MonoBehaviour
     }
 
 
+
     //NEW movement system stuff
 
-    //basic movement function
-    //pauses during hitstop -> continues after stop is over
-    //type 1 -> player-inputted movement
-    //type 2 -> attack knockback/launching
-    IEnumerator ApplyMove(int type, Vector2 direction, float charge)
+
+    //processes player movement
+    //called in FixedUpdate()
+    void MovementTick()
     {
-        if(!isMoving)
+        if(moveTimer <= moveTime)
         {
+            if(!isHitStop)
+            {
+                rb.velocity = moveCurve.Evaluate(moveTimer/moveTime) * moveSpeed * rb.velocity.normalized;
+
+                //ADD THIS: should only rotate sprite if in player-inputted movement, i.e. NOT in knockback state
+                RotateSprite(rb.velocity.normalized);
+
+                moveTimer += Time.fixedDeltaTime;
+            }
             
-            if(type == 0)
+        } else 
+        {
+            //movement is over -> reset movement tracking variables
+            if(isMoving)
+            {
+                isMoving = false;
+                moveTime = 0;
+                movePower = 0;
+                moveSpeed = 0;
+
+                //may cause problems in the future
+                rb.velocity = Vector2.zero;
+                sr.sprite = spriteSet[0];
+            }
+
+            if(isKnockback)
+            {
+                isKnockback = false;
+                moveTime = 0;
+                movePower = 0;
+                moveSpeed = 0;
+
+                //may cause problems in the future
+                rb.velocity = Vector2.zero;
+                sr.sprite = spriteSet[0];
+            }
+
+
+        }
+
+    }
+
+    //basic movement function
+    //updates movement variables which are processed in MovementTick()
+    //pauses during hitstop -> continues after stop is over
+    //type 0 -> player-inputted movement
+    //type 1 -> attack knockback/launching    
+    void ApplyMove(int type, Vector2 direction, float charge)
+    {
+        Debug.Log("player" + idx + " moving!");
+        Debug.Log("type = " + type);
+        Debug.Log("direction = " + direction);
+        Debug.Log("charge = " + charge);
+
+        if(type == 0) //movement
             {
                 isMoving = true;
                 sr.sprite = spriteSet[1];
                 charge = Mathf.Clamp(charge, 0, maxChargeTime);
+            } else if(type == 1) //knockback
+            {
+                isKnockback = true;
+                //SET SPRITE TO STUNNED
+                charge = Mathf.Clamp(charge, 0, maxChargeTime * 2);
             }
-
-            Debug.Log("running new move!");
-            Debug.Log("direction = " + direction);
-            Debug.Log("charge = " + charge);
 
             //max speed reached in this movement
             moveSpeed = maxMoveSpeed * speedCurve.Evaluate(charge/maxChargeTime);
@@ -618,54 +689,21 @@ public class PlayerController : MonoBehaviour
             //probably not needed in this context
             rb.velocity = direction.normalized;
 
-            Debug.Log("moveSpeed: " + moveSpeed);
-            Debug.Log("starting rb velocity: " + rb.velocity);
-            Debug.Log("starting speed: " + rb.velocity.magnitude);
+            //reset moveTimer to beginning
+            moveTimer = 0;
 
-            float timer = 0;
-            WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
-            //movement accel/deccel
-            while (timer <= moveTime && isMoving)
-            {
-                if(!isHitStop)
-                {
-                    rb.velocity = moveCurve.Evaluate(timer/moveTime) * moveSpeed * rb.velocity.normalized;
-
-                    Debug.Log("MOVE LOOP");
-                    Debug.Log("velocity = " + rb.velocity);
-                    Debug.Log("speed = " + rb.velocity.magnitude);
-                    Debug.Log("timer percent: " + timer/moveTime);
-
-                    if(type == 0)
-                    {
-                        RotateSprite(rb.velocity.normalized);
-                    }
-
-                    timer += Time.fixedDeltaTime;
-                }
-
-                yield return fuWait;
-            }
-
-            //may cause problems in the future
-            rb.velocity = Vector2.zero;
-            sr.sprite = spriteSet[0];
-
-            isMoving = false;
-            Debug.Log("newMove DONE!");
-        }
-
-        
     }
 
 
+
+
     //coroutine applies hitstop for specified time
-    //type 0 -> "passthrough": after hitstop is over player continues moving as they were
-    //type 1 -> knockback: new movement applied after hitstop is over
     IEnumerator HitStop(float time)
     {
         if(!isHitStop)
         {
+            Debug.Log("P" + idx + " entering hitstop for " + time + " seconds");
+
             WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
             //for collisions just in case
             yield return fuWait;
@@ -687,6 +725,104 @@ public class PlayerController : MonoBehaviour
         
         
         }
+    }
+
+
+    //applies knockback effects to this player - does nothing to other colliding player
+    //called in OnCollisionEnter2D when colliding with opponent
+    public IEnumerator ApplyKnockback(float otherPower, Rigidbody2D otherRB)
+    {
+        Debug.Log("ApplyKnockback!");
+
+        //REPLACE THIS WITH STUNNED SPRITE!!!!!!!!!!!!
+        sr.sprite = spriteSet[0];
+
+        GetComponentInChildren<TrailRenderer>().emitting = false; //cancel wall item on impact
+
+
+        //compare relative movePowers, directions, and positions
+        //calculate hitstop
+
+        //difference in powers
+        float powerDiff = movePower - otherPower;
+
+        //angle players are colliding:
+            //1 = moving straight at each other
+            //0 = moving in same direction
+        float directionDiff = Vector2.Angle(rb.velocity, otherRB.velocity) / 180;
+
+        //relative positions
+        //vector pointing from player's position to otherPlayer's position i.e. relative position (direction only)
+        Vector2 posDiff = (otherRB.position - rb.position).normalized;
+        //vector pointing from otherPlayer's position to this player's position
+        Vector2 otherPosDiff = (rb.position - otherRB.position).normalized;
+
+        //how much of a "direct hit" it is
+            //1 = direct hit
+            //0 = indirect hit
+        //animationCurve used to level out "almost direct hits" and keep value > 0
+
+        float directness = 0;
+        if(rb.velocity != Vector2.zero)
+        {
+            directness = directnessKBCurve.Evaluate(Vector2.Angle(posDiff, rb.velocity) / 180);
+        }
+
+        float otherDirectness = 0;
+        if(otherRB.velocity != Vector2.zero)
+        {
+            otherDirectness = directnessKBCurve.Evaluate(Vector2.Angle(otherPosDiff, otherRB.velocity) / 180);
+        }
+
+        Debug.Log("Player" + idx + " directness: " + directness);
+        Debug.Log("Player" + idx + " movePower: " + movePower);
+
+
+
+        //overall strength: takes directness and power into account
+        float strength = directness * movePower;
+        float otherStrength = otherDirectness * otherPower;
+
+        float strengthDiff = strength - otherStrength;
+
+        //calculate knockback direction
+        Vector2 direction;
+
+        //if(powerDiff and directness are strong enough)
+        //TWEAK THESE VALUES
+        /*
+        if(otherDirectness > .9 && powerDiff < 0)
+        {
+            //launch in direction of impact
+            direction = otherPlayer.rb.velocity.normalized;
+        } else
+        {
+            //TRY CHANGING THIS
+            //direction = (rb.velocity.normalized * movePower) + (otherPlayer.rb.velocity.normalized * otherPlayer.movePower);
+            direction = rb.velocity.normalized;
+        }
+        */
+
+        Vector2 otherImpactDirection = otherRB.velocity.normalized;
+        yield return new WaitForFixedUpdate();
+        //direction = (otherStrength * pre-impact otherPlayer.direction) + (strenght * post-impact thisPlayer.direction)
+        //direction = ((movePower * rb.velocity.normalized) + (otherStrength * otherImpactDirection)).normalized;
+        direction = rb.velocity.normalized;
+
+        //calculate knockback strength/charge
+
+
+
+        //apply hitstop
+        float hitstop = (strength > otherStrength) ? (strength/maxMovePower) : (otherStrength/maxMovePower);
+
+        StartCoroutine(HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
+
+        
+        //apply movement - type 1
+        //need to calculate direction and charge
+        ApplyMove(1, direction, knockbackMultiplier * otherStrength);
+
     }
 
 

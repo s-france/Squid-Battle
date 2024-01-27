@@ -22,7 +22,7 @@ public class ItemManager : MonoBehaviour
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         //uncomment for testing items
-        //SpawnItem(2, this.transform);
+        SpawnItem(2, this.transform);
     }
 
     // Update is called once per frame

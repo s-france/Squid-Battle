@@ -382,10 +382,19 @@ MonoBehaviour:
       time: 1
       value: 1
       inSlope: 0
-      outSlope: 0
-      tangentMode: 0
+      outSlope: 0.17896155
+      tangentMode: 1
       weightedMode: 0
       inWeight: 0
+      outWeight: 0.15973747
+    - serializedVersion: 3
+      time: 2
+      value: 1.1
+      inSlope: 0.15398999
+      outSlope: 0.15398999
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.19693649
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -405,11 +414,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0.39999998
-      outSlope: 0.39999998
-      tangentMode: 34
+      inSlope: 0.28609434
+      outSlope: 0.18657732
+      tangentMode: 1
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0.3571387
+      outWeight: 0.25017953
+    - serializedVersion: 3
+      time: 2
+      value: 1.1
+      inSlope: 0.03756193
+      outSlope: 0.03756193
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.36841583
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -419,13 +437,61 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
+      value: 0.05
+      inSlope: 0.4099618
+      outSlope: 0.4099618
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
+      outWeight: 0.1723878
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0.29143494
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.27434075
+    - serializedVersion: 3
+      time: 2
+      value: 1.5
+      inSlope: 0.834766
+      outSlope: 0.834766
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.23852026
       outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  knockbackCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  directnessKBCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.05
+      inSlope: 0.15353703
+      outSlope: 0.15353703
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.17804556
+    - serializedVersion: 3
+      time: 0.540761
+      value: 0.5740004
+      inSlope: 1.284568
+      outSlope: 1.284568
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.118511274
     - serializedVersion: 3
       time: 1
       value: 1
@@ -438,15 +504,50 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxMoveSpeed: 40
-  maxMoveTime: 0.25
-  maxMovePower: 100
+  hitstopCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: -0
+      outSlope: -0
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.18443134
+    - serializedVersion: 3
+      time: 0.5660278
+      value: 0.44214368
+      inSlope: 1.2685802
+      outSlope: 1.2685802
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.13075346
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1.24986
+      outSlope: 1.24986
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.15630892
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxMoveSpeed: 35
+  maxMoveTime: 0.3
+  maxMovePower: 3
+  maxHitstop: 0.1
+  movePower: 0
   isCoolingDown: 0
   isGrown: 0
   inventorySize: 3
   chargeStrength: 25
   maxChargeTime: 3
-  knockbackMultiplier: 1.75
+  knockbackMultiplier: 1.2
   coolDownFactor: 0.25
   moveCoolDown: 0.3
   coolDownVelocity: 1

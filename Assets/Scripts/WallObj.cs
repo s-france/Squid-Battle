@@ -26,10 +26,10 @@ public class WallObj : MonoBehaviour
         upTime = maxUpTime;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        if(!pc.isCoolingDown)
+        if(!pc.isMoving || (pc.moveTimer/pc.moveTime) > .9)
         {
             tr.emitting = false;
             if(tr.GetVisiblePositions(positions) == 0)
