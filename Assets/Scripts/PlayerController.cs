@@ -44,10 +44,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AnimationCurve directnessKBCurve;
     [SerializeField] AnimationCurve hitstopCurve; //scaling of knockback power : hitstop applied when colliding
     
-    [SerializeField] float maxMoveSpeed;
-    [SerializeField] float maxMoveTime;
-    [SerializeField] float maxMovePower;
-    [SerializeField] float maxHitstop;
+    [SerializeField] public float maxMoveSpeed;
+    [SerializeField] public float maxMoveTime;
+    [SerializeField] public float maxMovePower;
+    [SerializeField] public float maxHitstop;
 
 
     [HideInInspector] public float moveTime; //total time to spend in the current movement instance
@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] public int inventorySize; //amount of items that can be held at once
     [SerializeField] public float chargeStrength;
-    [SerializeField] float maxChargeTime;
+    [SerializeField] public float maxChargeTime;
     [SerializeField] public float knockbackMultiplier;
     [SerializeField] float coolDownFactor;
     [SerializeField] float moveCoolDown;
@@ -75,9 +75,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float DIStrength;
 
     [HideInInspector] public Vector3 defaultScale;
-    [HideInInspector] public float defaultMass;
     [HideInInspector] public float defaultChargeStrength;
-    [HideInInspector] public float defaultKnockbackMultiplier;
+
+    [HideInInspector] public float defaultMaxMoveSpeed;
+    [HideInInspector] public float defaultMaxMoveTime;
+    [HideInInspector] public float defaultMaxMovePower;
+    [HideInInspector] public float defaultMaxHitstop;
 
 
     void Awake()
@@ -130,9 +133,13 @@ public class PlayerController : MonoBehaviour
 
         //set default stats
         defaultScale = transform.localScale;
-        defaultMass = rb.mass;
         defaultChargeStrength = chargeStrength;
-        defaultKnockbackMultiplier = knockbackMultiplier;
+
+        defaultMaxMoveSpeed = maxMoveSpeed;
+        defaultMaxMoveTime = maxMoveTime;
+        defaultMaxMovePower = maxMovePower;
+        defaultMaxHitstop = maxHitstop;
+        
 
         moveTime = 0;
         moveTimer = 0;
@@ -140,7 +147,6 @@ public class PlayerController : MonoBehaviour
         isMoving = false;
         isKnockback = false;
         isHitStop = false;
-        //MoveCR = StartCoroutine(ApplyMove(0, Vector2.zero, 0));
         ApplyMove(0, Vector2.zero, 0);
     }
 
@@ -184,6 +190,8 @@ public class PlayerController : MonoBehaviour
     }
 
 
+
+    /* OLD KNOCKBACK
     IEnumerator Knockback(Rigidbody2D col)
     {
         var fuWait = new WaitForFixedUpdate();
@@ -201,13 +209,17 @@ public class PlayerController : MonoBehaviour
 
         }
     }
+    */
 
     void ResetDefaultStats()
     {
         transform.localScale = defaultScale;
-        rb.mass = defaultMass;
         chargeStrength = defaultChargeStrength;
-        knockbackMultiplier = defaultKnockbackMultiplier;
+
+        maxMoveSpeed = defaultMaxMoveSpeed;
+        maxMoveTime = defaultMaxMoveTime;
+        maxMovePower = defaultMaxMovePower;
+        maxHitstop = defaultMaxHitstop;
 
         rb.angularVelocity = 0;
         transform.rotation = quaternion.identity;
@@ -373,6 +385,7 @@ public class PlayerController : MonoBehaviour
     //called in OnCharge - handles launch movement
     //type of movement - 0:normal 1:special
     //^^stupid workaround for demo sprint MUST FIX LATER
+    /*OLD MOVEMENT SYSTEM
     void Move(int type)
     {
         rb.velocity = Vector2.zero;
@@ -386,6 +399,7 @@ public class PlayerController : MonoBehaviour
         sr.sprite = spriteSet[1];
         RotateSprite(i_move);
     }
+    */
 
     //type of movement - 0:normal 1:special
     //^^stupid workaround for demo sprint MUST FIX LATER
@@ -817,6 +831,15 @@ public class PlayerController : MonoBehaviour
         float hitstop = (strength > otherStrength) ? (strength/maxMovePower) : (otherStrength/maxMovePower);
 
         StartCoroutine(HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
+
+        //behavior for non-player hitstop collisions
+        if(LayerMask.LayerToName(otherRB.gameObject.layer) != "Players")
+        {
+            if(otherRB.TryGetComponent<ShotObj>(out ShotObj shot))
+            {
+                shot.StartCoroutine(shot.HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
+            }
+        }
 
         
         //apply movement - type 1

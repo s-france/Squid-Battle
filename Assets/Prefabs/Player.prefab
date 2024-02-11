@@ -537,11 +537,14 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxMoveSpeed: 35
-  maxMoveTime: 0.3
+  maxMoveSpeed: 37
+  maxMoveTime: 0.25
   maxMovePower: 3
   maxHitstop: 0.1
+  moveTime: 0
+  moveTimer: 0
   movePower: 0
+  isMoving: 0
   isCoolingDown: 0
   isGrown: 0
   inventorySize: 3
@@ -553,9 +556,11 @@ MonoBehaviour:
   coolDownVelocity: 1
   DIStrength: 15
   defaultScale: {x: 0, y: 0, z: 0}
-  defaultMass: 0
   defaultChargeStrength: 0
-  defaultKnockbackMultiplier: 0
+  defaultMaxMoveSpeed: 0
+  defaultMaxMoveTime: 0
+  defaultMaxMovePower: 0
+  defaultMaxHitstop: 0
 --- !u!1 &5322126026401388776
 GameObject:
   m_ObjectHideFlags: 0

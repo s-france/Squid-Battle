@@ -10,17 +10,26 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
     Rigidbody2D rb;
 
     float minSize = 1.5f;
-    float maxSize = 4;
+    float maxSize = 3;
     float timeToGrow = .75f;
-    float minStrength = 1.2f;
-    float maxStrength = 2.5f;
-    float minMass = 1.2f;
-    float maxMass = 2.5f;
+    
+    float maxMoveSpeedMod = .5f;
+    float maxMoveTimeMod = .75f;
+    float maxMovePowerMod = 2;
+    float maxHitstopMod = 1.5f;
+
+
+
 
     Vector3 defaultScale;
     float defaultStrength;
     float defaultKnockback;
-    float defaultMass;
+    float defaultMaxMoveSpeed;
+    float defaultMaxMoveTime;
+    float defaultMaxMovePower;
+    float defaultMaxHitstop;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -48,8 +57,12 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
 
         defaultScale = pc.defaultScale;
         defaultStrength = pc.defaultChargeStrength;
-        defaultKnockback = pc.defaultKnockbackMultiplier;
-        defaultMass = pc.defaultMass;
+
+        defaultMaxMoveSpeed = pc.defaultMaxMoveSpeed;
+        defaultMaxMoveTime = pc.defaultMaxMoveTime;
+        defaultMaxMovePower = pc.defaultMaxMovePower;
+        defaultMaxHitstop = pc.defaultMaxHitstop;
+        
 
         StartCoroutine(GrowPlayer(chargeTime));
 
@@ -63,10 +76,9 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
         //failsafes
         //mod scale
         pc.transform.localScale = defaultScale;
-        //mod mass
-        rb.mass = defaultMass;
+
         //mod chargestrength
-        pc.chargeStrength = defaultStrength;
+        //pc.chargeStrength = defaultStrength;
         //mod knockback
 
 
@@ -78,10 +90,14 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
     IEnumerator GrowPlayer(float chargeTime)
     {
         float timer = 0;
-        float bigTime = Mathf.Clamp(chargeTime*7, 5, 20);
+        float bigTime = Mathf.Clamp(chargeTime*4, 5, 10);
         float sizeMod = Mathf.Clamp(chargeTime+1, minSize, maxSize);
-        float massMod = Mathf.Clamp(chargeTime/2+1, minMass, maxMass);
-        float strengthMod = Mathf.Clamp(chargeTime/2+1, minStrength, maxStrength);
+
+        //percent values to be added to default ratio
+        float maxMoveSpeedMod = -.5f;
+        float maxMoveTimeMod = .5f; 
+        float maxMovePowerMod = 1;
+        float maxHitstopMod = 1f;
 
         Vector3 finalSize = sizeMod * Vector2.one; /** pc.transform.localScale*/;
 
@@ -95,17 +111,23 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
 
             //mod scale
             pc.transform.localScale = Vector3.Lerp(pc.transform.localScale, finalSize, t);
-            //mod mass
-            rb.mass = Mathf.Lerp(rb.mass, defaultMass*massMod, t);
-            //mod chargestrength
-            pc.chargeStrength = Mathf.Lerp(pc.chargeStrength, defaultStrength*strengthMod, t);
             //mod knockback
 
             timer +=Time.deltaTime;
             yield return null;
         }
 
+        //set maxmovespeed, movetime, movepower, hitstop
+        pc.maxMoveSpeed = pc.defaultMaxMoveSpeed *  (1 + ((chargeTime/pc.maxChargeTime) * maxMoveSpeedMod));
+        pc.maxMoveTime = pc.defaultMaxMoveTime * (1 + ((chargeTime/pc.maxChargeTime) * maxMoveTimeMod));
+        pc.maxMovePower = pc.defaultMaxMovePower * (1 + (chargeTime/pc.maxChargeTime) * maxMovePowerMod);
+        pc.maxHitstop = pc.defaultMaxHitstop * (1 + (chargeTime/pc.maxChargeTime) * maxHitstopMod);
+
         Debug.Log("player is now big");
+        Debug.Log("maxMoveSpeed: " + pc.maxMoveSpeed);
+        Debug.Log("maxMoveTime: " + pc.maxMoveTime);
+        Debug.Log("maxMovePower: " + pc.maxMovePower);
+        Debug.Log("maxHitstop: " + pc.maxHitstop);
 
         //stay big for bigTime
         while (timer <= bigTime)
@@ -126,16 +148,17 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
 
             //mod scale
             pc.transform.localScale = Vector3.Lerp(pc.transform.localScale, defaultScale, t);
-            //mod mass
-            rb.mass = Mathf.Lerp(rb.mass, defaultMass, t);
-            //mod chargestrength
-            
-
-            //mod knockback
 
             timer +=Time.deltaTime;
             yield return null;
         }
+
+        //reset maxmovespeed, movetime, movepower, hitstop to default values
+        pc.maxMoveSpeed = pc.defaultMaxMoveSpeed;
+        pc.maxMoveTime = pc.defaultMaxMoveTime;
+        pc.maxMovePower = pc.defaultMaxMovePower;
+        pc.maxHitstop = pc.defaultMaxHitstop;
+
 
         DestroyItem();
     }

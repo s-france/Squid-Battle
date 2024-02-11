@@ -51,6 +51,7 @@ public class ShotObj : MonoBehaviour
             PlayerController pc = col.gameObject.GetComponent<PlayerController>();
 
             pc.StartCoroutine(pc.ApplyKnockback(shotPower, rb));
+            //StartCoroutine(HitStop());
         }
     }
 
@@ -69,10 +70,12 @@ public class ShotObj : MonoBehaviour
     }
 
 
-    IEnumerator HitStop(float time)
+    public IEnumerator HitStop(float time)
     {
         if(!isHitStop)
         {
+            Debug.Log("Shot Hitstopping!!");
+            
             WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
             //for collisions just in case
             yield return fuWait;
