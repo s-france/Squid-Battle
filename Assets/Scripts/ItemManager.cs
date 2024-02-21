@@ -21,8 +21,9 @@ public class ItemManager : MonoBehaviour
         im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
+        //TEST TEST TEST - for testing purposes
         //uncomment for testing items
-        SpawnItem(3, this.transform);
+        //SpawnItem(3, this.transform);
     }
 
     // Update is called once per frame

@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     ReticleController rc;
     public Rigidbody2D rb;
     [SerializeField] private SpriteRenderer sr;
+    [SerializeField] ParticleSystem bubblePart;
+
     private Sprite[] spriteSet;
     CinemachineTargetGroup tg;
 
@@ -171,8 +173,6 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("Player colliding! Collision LayerMask name: " + LayerMask.LayerToName(col.gameObject.layer));
 
-        //TESTING HITSTOP
-        //StartCoroutine(HitStop(.05f));
 
 
         if (LayerMask.LayerToName(col.gameObject.layer) == "Players")
@@ -618,7 +618,7 @@ public class PlayerController : MonoBehaviour
 
 
 
-    //NEW movement system stuff
+    //NEW movement system stuff below
 
 
     //processes player movement
@@ -632,7 +632,12 @@ public class PlayerController : MonoBehaviour
                 rb.velocity = moveCurve.Evaluate(moveTimer/moveTime) * moveSpeed * rb.velocity.normalized;
 
                 //ADD THIS: should only rotate sprite if in player-inputted movement, i.e. NOT in knockback state
-                RotateSprite(rb.velocity.normalized);
+                if(isMoving)
+                {
+                    RotateSprite(rb.velocity.normalized);
+                    //not a great fix but it works
+                    sr.sprite = spriteSet[1];
+                }
 
                 moveTimer += Time.fixedDeltaTime;
             }
@@ -706,6 +711,7 @@ public class PlayerController : MonoBehaviour
             //reset moveTimer to beginning
             moveTimer = 0;
 
+            EmitBubbles(.9f * moveTime);
     }
 
 
@@ -847,6 +853,16 @@ public class PlayerController : MonoBehaviour
         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
     }
+
+
+    void EmitBubbles(float time)
+    {
+        bubblePart.Stop();
+        var main = bubblePart.main;
+        main.duration = time;
+        bubblePart.Play();
+    }
+
 
 
 
