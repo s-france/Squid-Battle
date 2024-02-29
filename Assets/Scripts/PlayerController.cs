@@ -70,6 +70,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public int inventorySize; //amount of items that can be held at once
     [SerializeField] public float chargeStrength;
     [SerializeField] public float maxChargeTime;
+    [SerializeField] public float minCharge;
+    [SerializeField] float maxChargeHoldTime;
     [SerializeField] public float knockbackMultiplier;
     [SerializeField] float coolDownFactor;
     [SerializeField] float moveCoolDown;
@@ -221,6 +223,8 @@ public class PlayerController : MonoBehaviour
         maxMovePower = defaultMaxMovePower;
         maxHitstop = defaultMaxHitstop;
 
+        rc.transform.localScale = Vector2.one;
+
         rb.angularVelocity = 0;
         transform.rotation = quaternion.identity;
     }
@@ -229,6 +233,8 @@ public class PlayerController : MonoBehaviour
     public void Deactivate()
     {
         ResetDefaultStats();
+
+        bubblePart.gameObject.SetActive(false);
 
         rb.velocity = Vector2.zero;
         i_move = Vector2.zero;
@@ -239,14 +245,21 @@ public class PlayerController : MonoBehaviour
         this.GetComponent<CircleCollider2D>().enabled = false;
         this.GetComponent<SpriteRenderer>().enabled = false;
         GetComponentInChildren<TrailRenderer>().Clear();
-        //REWORK THIS!!
-        //tg.RemoveMember(this.transform);
+
+        tg = FindObjectOfType<CinemachineTargetGroup>();
+        if(tg != null)
+        {
+            tg.RemoveMember(this.transform);
+        }
+        
     }
 
     //REWORK THIS
     public void Reactivate()
     {
         ResetDefaultStats();
+
+        bubblePart.gameObject.SetActive(true);
 
         i_move= Vector2.zero;
         chargeTime = 0;
@@ -257,7 +270,6 @@ public class PlayerController : MonoBehaviour
         this.GetComponent<SpriteRenderer>().enabled = true;
         GetComponentInChildren<TrailRenderer>().Clear();
         
-        //REWORK
         tg = FindObjectOfType<CinemachineTargetGroup>();
         if(tg != null)
         {
@@ -351,6 +363,13 @@ public class PlayerController : MonoBehaviour
             {
                 sr.sprite = spriteSet[2]; //charging sprite
                 chargeTime += Time.deltaTime;
+
+
+                if(chargeTime > maxChargeHoldTime)
+                {
+                    charging = false;
+                }
+
             } else
             {
                 //failsafe prevents chargehold while stunned
@@ -422,28 +441,26 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
-        float xmod = .4f;
-        float ymod = 1.37f;
+        charge = Mathf.Clamp(charge, minCharge, maxChargeTime);
 
-        float chargeCurve = MathF.Log10(maxChargeTime) + 1;
-        float chargeScale = 3; //max charge
-        float chargeFactor = chargeScale / chargeCurve;
-        float minCharge = .5f;
+        //max speed reached in this movement
+        float calcSpeed = maxMoveSpeed * speedCurve.Evaluate(charge/maxChargeTime);
+        //total time to spend moving in this movement
+        float calcTime = maxMoveTime * timeCurve.Evaluate(charge/maxChargeTime);
 
-        Vector2 moveForce = i_move * chargeStrength * Math.Clamp(ymod*chargeFactor * (MathF.Log10(xmod*Math.Clamp(charge, 0, maxChargeTime)) + 1), minCharge, 100);
+
+        Vector2 moveVector = i_move * calcSpeed * calcTime;
         
         //Debug.Log("MOVEFORCE: " + moveForce.magnitude);
 
-        if (type == 1) //total bullshit
+        if (type == 1) //cut special move length
         {
-            float idk = moveForce.magnitude*.25f + 7;
-
-            //return moveForce * .33f;
-            return moveForce.normalized * idk;
+            //return moveForce * .35f;
+            return moveVector * .35f;
 
         } else
         {
-            return moveForce;
+            return moveVector;
         }
 
         
@@ -496,6 +513,12 @@ public class PlayerController : MonoBehaviour
             {
                 sr.sprite = spriteSet[2]; //charging sprite
                 specialChargeTime += Time.deltaTime;
+
+                if(specialChargeTime > maxChargeHoldTime)
+                {
+                    specialCharging = false;
+                }
+
             } else
             {
                 specialChargeTime = 0;
@@ -518,18 +541,15 @@ public class PlayerController : MonoBehaviour
                 if(heldItems[selectedItemIdx].GetItemType() == "Wall")
                 {
                     Debug.Log("WALL MOVEMENT");
-                    //Move(2);
                     ApplyMove(0, i_move, specialChargeTime);
                 } else
                 {
-                    //Move(1);
-                    ApplyMove(0, i_move, .35f * specialChargeTime);
+                    ApplyMove(0, i_move, .35f * Mathf.Clamp(specialChargeTime, 0, maxChargeTime));
                 }
                 
             }else
             {
-                //Move(1);
-                ApplyMove(0, i_move, .35f * specialChargeTime);
+                ApplyMove(0, i_move, .35f * Mathf.Clamp(specialChargeTime, minCharge, maxChargeTime));
             }
 
             UseItem(selectedItemIdx);
@@ -690,7 +710,7 @@ public class PlayerController : MonoBehaviour
             {
                 isMoving = true;
                 sr.sprite = spriteSet[1];
-                charge = Mathf.Clamp(charge, 0, maxChargeTime);
+                charge = Mathf.Clamp(charge, minCharge, maxChargeTime);
             } else if(type == 1) //knockback
             {
                 isKnockback = true;
@@ -814,7 +834,7 @@ public class PlayerController : MonoBehaviour
         if(otherDirectness > .9 && powerDiff < 0)
         {
             //launch in direction of impact
-            direction = otherPlayer.rb.velocity.normalized;
+            direction = otherRB.velocity.normalized;
         } else
         {
             //TRY CHANGING THIS

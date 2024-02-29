@@ -373,7 +373,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.2
+      value: 0.1
       inSlope: 1.4859176
       outSlope: 1.4859176
       tangentMode: 0
@@ -406,9 +406,9 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.6
-      inSlope: 0.39999998
-      outSlope: 0.39999998
+      value: 0.55
+      inSlope: 0.45
+      outSlope: 0.45
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
@@ -439,7 +439,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.05
+      value: 0
       inSlope: 0.4099618
       outSlope: 0.4099618
       tangentMode: 0
@@ -539,8 +539,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxMoveSpeed: 37
-  maxMoveTime: 0.25
+  maxMoveSpeed: 34
+  maxMoveTime: 0.26
   maxMovePower: 3
   maxHitstop: 0.1
   moveTime: 0
@@ -552,6 +552,8 @@ MonoBehaviour:
   inventorySize: 3
   chargeStrength: 25
   maxChargeTime: 3
+  minCharge: 0.4
+  maxChargeHoldTime: 5.5
   knockbackMultiplier: 1.2
   coolDownFactor: 0.25
   moveCoolDown: 0.3

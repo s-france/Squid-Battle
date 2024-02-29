@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GrowBehavior : MonoBehaviour, IItemBehavior
@@ -101,6 +102,11 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
 
         Vector3 finalSize = sizeMod * Vector2.one; /** pc.transform.localScale*/;
 
+        //adjust aimLine scale
+        ReticleController rc = pc.GetComponentInChildren<ReticleController>();
+        rc.transform.localScale = new Vector2(1/finalSize.x, 1/finalSize.y);
+
+
         float t;
 
         //grow
@@ -122,6 +128,9 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
         pc.maxMoveTime = pc.defaultMaxMoveTime * (1 + ((chargeTime/pc.maxChargeTime) * maxMoveTimeMod));
         pc.maxMovePower = pc.defaultMaxMovePower * (1 + (chargeTime/pc.maxChargeTime) * maxMovePowerMod);
         pc.maxHitstop = pc.defaultMaxHitstop * (1 + (chargeTime/pc.maxChargeTime) * maxHitstopMod);
+        
+        
+
 
         Debug.Log("player is now big");
         Debug.Log("maxMoveSpeed: " + pc.maxMoveSpeed);
@@ -159,6 +168,7 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
         pc.maxMovePower = pc.defaultMaxMovePower;
         pc.maxHitstop = pc.defaultMaxHitstop;
 
+        rc.transform.localScale = Vector2.one;
 
         DestroyItem();
     }

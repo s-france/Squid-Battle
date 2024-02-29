@@ -23,7 +23,7 @@ public class ItemManager : MonoBehaviour
 
         //TEST TEST TEST - for testing purposes
         //uncomment for testing items
-        //SpawnItem(3, this.transform);
+        SpawnItem(3, this.transform);
     }
 
     // Update is called once per frame
