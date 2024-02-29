@@ -11,9 +11,12 @@ public class ItemManager : MonoBehaviour
     public List<GameObject> ItemObjs;
     [SerializeField] Sprite[] ItemPickupSprites;
 
+    [SerializeField] Transform[] ItemSpawners;
+
     public int itemTypesCount;
     [HideInInspector] public int spawnedItemsCount;
     [HideInInspector] public int[] spawnedItems;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -23,7 +26,7 @@ public class ItemManager : MonoBehaviour
 
         //TEST TEST TEST - for testing purposes
         //uncomment for testing items
-        SpawnItem(3, this.transform);
+        //SpawnItem(3, this.transform);
     }
 
     // Update is called once per frame
@@ -39,6 +42,21 @@ public class ItemManager : MonoBehaviour
         
         //instantiate new ItemPrefab
         GameObject newItem = Instantiate(ItemPrefab, pos.position, pos.rotation);
+
+        //Random Item
+        if (type == -1)
+        {
+            float rand = Random.value;
+            if (rand <= .9f) //9/10 chance for shot+ink+wall
+            {
+                type = Random.Range(0,3);
+            } else //1/10 chance for grow
+            {
+                type = 3;
+            }
+        }
+        
+
 
         //set item type
         switch (type)
@@ -72,12 +90,51 @@ public class ItemManager : MonoBehaviour
                 break;
         }
 
+        newItem.GetComponent<ItemController>().spawn = pos;
+        pos.GetComponent<ItemSpawn>().isFull = true;
+
 
         spawnedItemsCount++;
         //spawnedItems[spawnedItemsCount] = 
 
     }
 
+    public IEnumerator RandomSpawns(float spawnRate)
+    {
+
+        float timer = 0;
+
+        for (int i = 0; i < ItemSpawners.Length; i++)
+        {
+            if(!ItemSpawners[i].GetComponent<ItemSpawn>().isFull)
+            {
+            SpawnItem(-1, ItemSpawners[i]);
+            }
+        }
+
+        
+
+        while(gm.battleStarted)
+        {
+            //if(!im.gameStarted) {break;}
+            timer += Time.deltaTime;
+
+            if(timer >= spawnRate)
+            {
+                for (int i = 0; i < ItemSpawners.Length; i++)
+                {
+                    SpawnItem(-1, ItemSpawners[i]);
+                }
+
+                timer = 0;
+            }
+            
+            yield return null;
+        }
+
+    }
+
+    /*
     public IEnumerator RandomSpawns(float spawnRate)
     {
         float rand;
@@ -126,6 +183,8 @@ public class ItemManager : MonoBehaviour
 
         Destroy(pos.gameObject);
     }
+    */
+
 
     void DestroyAllItemObjs()
     {

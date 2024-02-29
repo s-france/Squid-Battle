@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class ItemController : MonoBehaviour
 {
-    SpriteRenderer sr;
+    [HideInInspector] public Transform spawn;
 
+    SpriteRenderer sr;
     public IItemBehavior ib;
     ItemManager im;
     PlayerController pc; //player that owns this item -> null until picked up
@@ -73,6 +74,7 @@ public class ItemController : MonoBehaviour
 
         if (LayerMask.LayerToName(col.gameObject.layer) == "Players" && pc == null)
         {
+            spawn.GetComponent<ItemSpawn>().isFull = false;
             AssignPlayer(col.gameObject.transform);
             Debug.Log("Item" + idx + " collided with Player " + col.gameObject.GetComponent<PlayerController>().idx);
         }
