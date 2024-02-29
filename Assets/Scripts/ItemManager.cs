@@ -104,16 +104,6 @@ public class ItemManager : MonoBehaviour
 
         float timer = 0;
 
-        for (int i = 0; i < ItemSpawners.Length; i++)
-        {
-            if(!ItemSpawners[i].GetComponent<ItemSpawn>().isFull)
-            {
-            SpawnItem(-1, ItemSpawners[i]);
-            }
-        }
-
-        
-
         while(gm.battleStarted)
         {
             //if(!im.gameStarted) {break;}
@@ -123,7 +113,10 @@ public class ItemManager : MonoBehaviour
             {
                 for (int i = 0; i < ItemSpawners.Length; i++)
                 {
-                    SpawnItem(-1, ItemSpawners[i]);
+                    if(ItemSpawners[i].GetComponent<ItemSpawn>().isFull == false)
+                    {
+                        SpawnItem(-1, ItemSpawners[i]);
+                    }
                 }
 
                 timer = 0;

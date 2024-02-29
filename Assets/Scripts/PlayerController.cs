@@ -469,7 +469,8 @@ public class PlayerController : MonoBehaviour
 
     void CoolDown()
     {
-        if(rb.velocity.magnitude > coolDownVelocity)
+        //TEMP FIX - NEEDS MORE SIGNIFICANT REWORKING
+        if(moveTimer/moveTime < .95f)
         {
             isCoolingDown = true;
         } else

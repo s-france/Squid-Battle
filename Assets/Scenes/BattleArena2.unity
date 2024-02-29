@@ -906,11 +906,11 @@ PrefabInstance:
     - target: {fileID: 8965419758988160699, guid: 884d74b2925cdd343a77d1daa62eb53e, type: 3}
       propertyPath: ItemSpawners.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1704045352}
     - target: {fileID: 8965419758988160699, guid: 884d74b2925cdd343a77d1daa62eb53e, type: 3}
       propertyPath: ItemSpawners.Array.data[1]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 608979123}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 884d74b2925cdd343a77d1daa62eb53e, type: 3}
 --- !u!1 &1456743537

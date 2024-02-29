@@ -49,17 +49,16 @@ public class ItemController : MonoBehaviour
         //if player has open space in inventory -> assign item
         if (playerPC.heldItems.Count < playerPC.inventorySize)
         {
-        transform.SetParent(player);
-        pc = playerPC;
-        sr.enabled = false; //hide sprite after pickup
-        GetComponent<Collider2D>().enabled = false; //disable future collision
+            spawn.GetComponent<ItemSpawn>().isFull = false;
 
-        
-        pc.GainItem(ib);
+            transform.SetParent(player);
+            pc = playerPC;
+            sr.enabled = false; //hide sprite after pickup
+            GetComponent<Collider2D>().enabled = false; //disable future collision
+            
+            pc.GainItem(ib);
 
-        
-
-        Debug.Log("Item assigned to player" + pc.idx);
+            Debug.Log("Item assigned to player" + pc.idx);
         } else
         {
             Debug.Log("Player" + playerPC + " inventory is full! Item NOT assigned.");
@@ -74,7 +73,6 @@ public class ItemController : MonoBehaviour
 
         if (LayerMask.LayerToName(col.gameObject.layer) == "Players" && pc == null)
         {
-            spawn.GetComponent<ItemSpawn>().isFull = false;
             AssignPlayer(col.gameObject.transform);
             Debug.Log("Item" + idx + " collided with Player " + col.gameObject.GetComponent<PlayerController>().idx);
         }
