@@ -7,9 +7,11 @@ using Cinemachine;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using System.Security.Cryptography;
-using UnityEditor.UIElements;
+//using UnityEditor.UIElements;
 using UnityEngine.Assertions.Must;
 using UnityEngine.Timeline;
+using UnityEngine.InputSystem.Switch;
+//using System.Numerics;
 //using System.Numerics;
 
 public class PlayerController : MonoBehaviour
@@ -17,15 +19,21 @@ public class PlayerController : MonoBehaviour
     GameManager gm;
     [HideInInspector] public PlayerManager pm;
     InputManager im;
+    [SerializeField] PlayerInput pi;
+    [HideInInspector] public Gamepad gp;
+    [SerializeField] RumbleController rumbleCon;
+
     ReticleController rc;
     public Rigidbody2D rb;
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] ParticleSystem bubblePart;
+    [SerializeField] GameObject hitPart;
 
     private Sprite[] spriteSet;
     CinemachineTargetGroup tg;
 
     [HideInInspector] public Vector2 i_move;
+    [HideInInspector] public Vector2 true_i_move;
     Vector3 rotation;
 
     [HideInInspector] public int idx;
@@ -51,6 +59,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float maxMovePower;
     [SerializeField] public float maxHitstop;
 
+
+    Vector2 DIMod = Vector2.zero;
 
     [HideInInspector] public float moveTime; //total time to spend in the current movement instance
     [HideInInspector] public float moveTimer; //timer counting time to spend moving
@@ -86,6 +96,8 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float defaultMaxMovePower;
     [HideInInspector] public float defaultMaxHitstop;
 
+    
+
 
     void Awake()
     {
@@ -111,7 +123,14 @@ public class PlayerController : MonoBehaviour
 
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         pm = gm.GetComponentInChildren<PlayerManager>(); 
-        
+
+        gp = pi.GetDevice<Gamepad>();
+        if (gp != null)
+        {
+            Debug.Log("got GP!!");
+            Debug.Log("device type: " + gp.GetType().ToString());
+        }
+
         transform.parent = gm.transform.GetChild(0);
 
         idx = pm.playerList.FindIndex(i => i.input == this.gameObject.GetComponent<PlayerInput>());
@@ -133,6 +152,7 @@ public class PlayerController : MonoBehaviour
         selectedItemIdx = 0;
         isCoolingDown = false;
         i_move = Vector2.zero;
+        true_i_move = Vector2.zero;
         rotation = Vector3.zero;
 
         //set default stats
@@ -180,7 +200,6 @@ public class PlayerController : MonoBehaviour
         if (LayerMask.LayerToName(col.gameObject.layer) == "Players")
         {
             Debug.Log("Player" + idx + " collided with Player " + col.gameObject.GetComponent<PlayerController>().idx);
-
 
             StartCoroutine(ApplyKnockback(col.gameObject.GetComponent<PlayerController>().movePower, col.gameObject.GetComponent<PlayerController>().rb));
 
@@ -238,6 +257,7 @@ public class PlayerController : MonoBehaviour
 
         rb.velocity = Vector2.zero;
         i_move = Vector2.zero;
+        true_i_move = Vector2.zero;
         chargeTime = 0;
         charging = false;
         specialCharging = false;
@@ -262,6 +282,7 @@ public class PlayerController : MonoBehaviour
         bubblePart.gameObject.SetActive(true);
 
         i_move= Vector2.zero;
+        true_i_move = Vector2.zero;
         chargeTime = 0;
         charging = false;
         specialCharging = false;
@@ -297,6 +318,9 @@ public class PlayerController : MonoBehaviour
         {
             i_move = ctx.ReadValue<Vector2>();
         }
+
+        true_i_move = ctx.ReadValue<Vector2>();
+
         //Debug.Log(i_move);
 
         //rotate sprite
@@ -354,6 +378,7 @@ public class PlayerController : MonoBehaviour
         if(gm.battleStarted && pm.playerList[idx].isActive && pm.playerList[idx].isAlive)
         {
             StartCoroutine(rc.RenderReticle());
+            gp.SetMotorSpeeds(.5f, .5f);
         }
 
         //Charging
@@ -396,6 +421,9 @@ public class PlayerController : MonoBehaviour
         {
             sr.sprite = spriteSet[0];
         }
+
+        gp.SetMotorSpeeds(0, 0);
+
 
         //reset chargeTime
         chargeTime = 0;
@@ -650,10 +678,19 @@ public class PlayerController : MonoBehaviour
         {
             if(!isHitStop)
             {
-                rb.velocity = moveCurve.Evaluate(moveTimer/moveTime) * moveSpeed * rb.velocity.normalized;
+
+                if(isKnockback)
+                {
+                    DIMod = 1.1f * DIStrength * true_i_move;
+                } else
+                {
+                    DIMod = true_i_move * DIStrength;
+                }
+                
+                rb.velocity = moveCurve.Evaluate(moveTimer/moveTime) * moveSpeed * (rb.velocity.normalized + DIMod);
 
                 //ADD THIS: should only rotate sprite if in player-inputted movement, i.e. NOT in knockback state
-                if(isMoving)
+                if(isMoving && !isKnockback)
                 {
                     RotateSprite(rb.velocity.normalized);
                     //not a great fix but it works
@@ -781,9 +818,6 @@ public class PlayerController : MonoBehaviour
         GetComponentInChildren<TrailRenderer>().emitting = false; //cancel wall item on impact
 
 
-        //compare relative movePowers, directions, and positions
-        //calculate hitstop
-
         //difference in powers
         float powerDiff = movePower - otherPower;
 
@@ -802,7 +836,6 @@ public class PlayerController : MonoBehaviour
             //1 = direct hit
             //0 = indirect hit
         //animationCurve used to level out "almost direct hits" and keep value > 0
-
         float directness = 0;
         if(rb.velocity != Vector2.zero)
         {
@@ -815,16 +848,18 @@ public class PlayerController : MonoBehaviour
             otherDirectness = directnessKBCurve.Evaluate(Vector2.Angle(otherPosDiff, otherRB.velocity) / 180);
         }
 
+        float directnessRatio = otherDirectness/directness;
+
         Debug.Log("Player" + idx + " directness: " + directness);
         Debug.Log("Player" + idx + " movePower: " + movePower);
-
 
 
         //overall strength: takes directness and power into account
         float strength = directness * movePower;
         float otherStrength = otherDirectness * otherPower;
 
-        float strengthDiff = strength - otherStrength;
+        float strengthDiff = otherStrength - strength;
+        float strengthRatio = otherStrength / strength;
 
         //calculate knockback direction
         Vector2 direction;
@@ -856,8 +891,10 @@ public class PlayerController : MonoBehaviour
 
         //apply hitstop
         float hitstop = (strength > otherStrength) ? (strength/maxMovePower) : (otherStrength/maxMovePower);
-
         StartCoroutine(HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
+
+        //impact particle effect
+        
 
         //behavior for non-player hitstop collisions
         if(LayerMask.LayerToName(otherRB.gameObject.layer) != "Players")
@@ -865,8 +902,14 @@ public class PlayerController : MonoBehaviour
             if(otherRB.TryGetComponent<ShotObj>(out ShotObj shot))
             {
                 shot.StartCoroutine(shot.HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
+                GameObject part = Instantiate(hitPart, (transform.position + otherRB.transform.position)/2, Quaternion.identity);
+                part.GetComponent<HitEffect>().Init(.5f, maxHitstop * hitstopCurve.Evaluate(hitstop)*1.1f);
             }
-        }
+        } else if(idx < otherRB.gameObject.GetComponent<PlayerController>().idx)
+            {
+                GameObject part = Instantiate(hitPart, (transform.position + otherRB.transform.position)/2, Quaternion.identity);
+                part.GetComponent<HitEffect>().Init(.5f, maxHitstop * hitstopCurve.Evaluate(hitstop)*1.1f);
+            }
 
         
         //apply movement - type 1
@@ -878,6 +921,7 @@ public class PlayerController : MonoBehaviour
 
     void EmitBubbles(float time)
     {
+        //Debug.Log("bubbles emitting");
         bubblePart.Stop();
         var main = bubblePart.main;
         main.duration = time;

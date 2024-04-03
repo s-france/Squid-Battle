@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6982298533544845101}
   - component: {fileID: 4237179659672751331}
   - component: {fileID: 8809073331192073115}
+  - component: {fileID: 8285239400662830239}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -315,10 +316,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pm: {fileID: 0}
+  pi: {fileID: 4237179659672751331}
+  rumbleCon: {fileID: 8285239400662830239}
   rb: {fileID: -3142732938146884802}
   sr: {fileID: 0}
   bubblePart: {fileID: 6286807170148970422}
+  hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
   i_move: {x: 0, y: 0}
+  true_i_move: {x: 0, y: 0}
   idx: 0
   colorID: 0
   selectedItemIdx: 0
@@ -373,7 +378,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.075
+      value: 0.15
       inSlope: 1.4859176
       outSlope: 1.4859176
       tangentMode: 0
@@ -447,6 +452,24 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.1723878
     - serializedVersion: 3
+      time: 0.49630198
+      value: 0.3919462
+      inSlope: 0.03865681
+      outSlope: 0.03865681
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.56236327
+      outWeight: 0.6975001
+    - serializedVersion: 3
+      time: 0.7519037
+      value: 0.7252161
+      inSlope: 0.013897639
+      outSlope: 0.013897639
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.67382807
+      outWeight: 0.567825
+    - serializedVersion: 3
       time: 1
       value: 1
       inSlope: 0
@@ -495,6 +518,15 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.118511274
     - serializedVersion: 3
+      time: 0.85
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.6790663
+    - serializedVersion: 3
       time: 1
       value: 1
       inSlope: 0
@@ -540,8 +572,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   maxMoveSpeed: 34
-  maxMoveTime: 0.26
-  maxMovePower: 3
+  maxMoveTime: 0.28
+  maxMovePower: 2.75
   maxHitstop: 0.1
   moveTime: 0
   moveTimer: 0
@@ -551,20 +583,33 @@ MonoBehaviour:
   isGrown: 0
   inventorySize: 1
   chargeStrength: 25
-  maxChargeTime: 3
-  minCharge: 0.4
-  maxChargeHoldTime: 6
+  maxChargeTime: 2
+  minCharge: 0.15
+  maxChargeHoldTime: 5
   knockbackMultiplier: 1.2
   coolDownFactor: 0.25
   moveCoolDown: 0.3
   coolDownVelocity: 1
-  DIStrength: 15
+  DIStrength: 0.05
   defaultScale: {x: 0, y: 0, z: 0}
   defaultChargeStrength: 0
   defaultMaxMoveSpeed: 0
   defaultMaxMoveTime: 0
   defaultMaxMovePower: 0
   defaultMaxHitstop: 0
+--- !u!114 &8285239400662830239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5251562808165186444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be38e79597bf4104090e87fcab06625f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pc: {fileID: 8809073331192073115}
 --- !u!1 &5322126026401388776
 GameObject:
   m_ObjectHideFlags: 0
@@ -949,7 +994,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 0.69411767}
+      maxColor: {r: 1, g: 1, b: 1, a: 0.7490196}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -1169,7 +1214,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -1222,7 +1267,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -1275,8 +1320,8 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotation:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0
+      minMaxState: 3
+      scalar: 3.1415925
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -5505,8 +5550,8 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1725599711
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
