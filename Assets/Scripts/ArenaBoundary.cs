@@ -24,6 +24,8 @@ public class ArenaBoundary : MonoBehaviour
             int idx = col.GetComponentInParent<PlayerController>().idx;
 
             pm.playerList[idx].isInBounds = false;
+            pm.playerList[idx].playerScript.isInBounds = false;
+
             StartCoroutine(pm.PlayerKillClock(idx, 1.0f));
 
         } else if (col.gameObject.layer == LayerMask.NameToLayer("ItemObjs"))
@@ -38,6 +40,7 @@ public class ArenaBoundary : MonoBehaviour
         {
             int idx = col.GetComponentInParent<PlayerController>().idx;
             pm.playerList[idx].isInBounds = true;
+            pm.playerList[idx].playerScript.isInBounds = true;
         }
 
     }

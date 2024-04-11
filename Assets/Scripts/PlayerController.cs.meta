@@ -3,7 +3,16 @@ guid: 39c203cea7045a94d924916b3723aa1a
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - pm: {instanceID: 0}
+  - im: {instanceID: 0}
+  - pi: {instanceID: 0}
+  - rumbleCon: {instanceID: 0}
+  - rc: {instanceID: 0}
+  - rb: {instanceID: 0}
+  - sr: {instanceID: 0}
+  - bubblePart: {instanceID: 0}
+  - hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

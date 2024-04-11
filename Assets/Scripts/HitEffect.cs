@@ -28,10 +28,9 @@ public class HitEffect : MonoBehaviour
         main.startLifetime = lifetime;
         var rend = parts[idx].GetComponent<ParticleSystemRenderer>();
 
-
         parts[idx].Play();
         
-
+        Destroy(gameObject, lifetime +Time.deltaTime);
     }
 
 

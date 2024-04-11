@@ -29,6 +29,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5251562808165186444}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -38,7 +39,6 @@ Transform:
   - {fileID: 20947205095912124}
   - {fileID: 4966566639551525388}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5251562808165186445
 SpriteRenderer:
@@ -57,6 +57,8 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -109,6 +111,12 @@ Rigidbody2D:
   m_AngularDrag: 1
   m_GravityScale: 0
   m_Material: {fileID: 6200000, guid: f021cffdb669b144d81cb7592837a11f, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -121,13 +129,33 @@ CircleCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5251562808165186444}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
   m_Radius: 0.32
 --- !u!114 &4237179659672751331
 MonoBehaviour:
@@ -193,7 +221,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 634356fb-b978-44e5-840a-09d87a9ed990
-    m_ActionName: Player/Move[/DualSenseGamepadHID/leftStick,/XInputControllerWindows/leftStick]
+    m_ActionName: 'Player/Move[/DualSenseGamepadHID/leftStick,/XInputControllerWindows/leftStick]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8809073331192073115}
@@ -209,7 +237,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: db08c7ca-baaf-4e34-a883-bccdfa704fe2
-    m_ActionName: Player/Charge[/DualSenseGamepadHID/buttonSouth,/XInputControllerWindows/buttonSouth]
+    m_ActionName: 'Player/Charge[/DualSenseGamepadHID/buttonSouth,/XInputControllerWindows/buttonSouth]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8809073331192073115}
@@ -225,7 +253,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 3dc5de89-200d-4ea3-8d25-bbb9efbdb052
-    m_ActionName: Player/Special[/DualSenseGamepadHID/buttonEast,/XInputControllerWindows/buttonEast]
+    m_ActionName: 'Player/Special[/DualSenseGamepadHID/buttonEast,/XInputControllerWindows/buttonEast]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8809073331192073115}
@@ -241,7 +269,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 3bbab14d-13ab-4e3b-ae66-5194c547abc5
-    m_ActionName: Player/Select L[/XInputControllerWindows/leftShoulder,/XInputControllerWindows/leftTrigger]
+    m_ActionName: 'Player/Select L[/XInputControllerWindows/leftShoulder,/XInputControllerWindows/leftTrigger]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8809073331192073115}
@@ -257,39 +285,39 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: a3d147c9-994c-4404-83f0-fe03ed6d076f
-    m_ActionName: Player/Select R[/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightTrigger]
+    m_ActionName: 'Player/Select R[/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightTrigger]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 11809e48-ba6b-4f02-9aa9-dabb747cdd17
-    m_ActionName: UI/Navigate[/SwitchProControllerHID/leftStick/up,/DualShock4GamepadHID/leftStick/up,/XInputControllerWindows/leftStick/up,/SwitchProControllerHID/rightStick/up,/DualShock4GamepadHID/rightStick/up,/XInputControllerWindows/rightStick/up,/SwitchProControllerHID/leftStick/down,/DualShock4GamepadHID/leftStick/down,/XInputControllerWindows/leftStick/down,/SwitchProControllerHID/rightStick/down,/DualShock4GamepadHID/rightStick/down,/XInputControllerWindows/rightStick/down,/SwitchProControllerHID/leftStick/left,/DualShock4GamepadHID/leftStick/left,/XInputControllerWindows/leftStick/left,/SwitchProControllerHID/rightStick/left,/DualShock4GamepadHID/rightStick/left,/XInputControllerWindows/rightStick/left,/SwitchProControllerHID/leftStick/right,/DualShock4GamepadHID/leftStick/right,/XInputControllerWindows/leftStick/right,/SwitchProControllerHID/rightStick/right,/DualShock4GamepadHID/rightStick/right,/XInputControllerWindows/rightStick/right,/SwitchProControllerHID/dpad,/DualShock4GamepadHID/dpad,/XInputControllerWindows/dpad,/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+    m_ActionName: 'UI/Navigate[/SwitchProControllerHID/leftStick/up,/DualShock4GamepadHID/leftStick/up,/XInputControllerWindows/leftStick/up,/SwitchProControllerHID/rightStick/up,/DualShock4GamepadHID/rightStick/up,/XInputControllerWindows/rightStick/up,/SwitchProControllerHID/leftStick/down,/DualShock4GamepadHID/leftStick/down,/XInputControllerWindows/leftStick/down,/SwitchProControllerHID/rightStick/down,/DualShock4GamepadHID/rightStick/down,/XInputControllerWindows/rightStick/down,/SwitchProControllerHID/leftStick/left,/DualShock4GamepadHID/leftStick/left,/XInputControllerWindows/leftStick/left,/SwitchProControllerHID/rightStick/left,/DualShock4GamepadHID/rightStick/left,/XInputControllerWindows/rightStick/left,/SwitchProControllerHID/leftStick/right,/DualShock4GamepadHID/leftStick/right,/XInputControllerWindows/leftStick/right,/SwitchProControllerHID/rightStick/right,/DualShock4GamepadHID/rightStick/right,/XInputControllerWindows/rightStick/right,/SwitchProControllerHID/dpad,/DualShock4GamepadHID/dpad,/XInputControllerWindows/dpad,/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: e84d6e3e-8c7d-4e65-a230-c8e60b58f837
-    m_ActionName: UI/Submit[/Keyboard/enter,/DualShock4GamepadHID/buttonSouth,/XInputControllerWindows/buttonSouth,/SwitchProControllerHID/buttonEast,/DualShock4GamepadHID/buttonEast,/XInputControllerWindows/buttonEast,/SwitchProControllerHID/buttonSouth]
+    m_ActionName: 'UI/Submit[/Keyboard/enter,/DualShock4GamepadHID/buttonSouth,/XInputControllerWindows/buttonSouth,/SwitchProControllerHID/buttonEast,/DualShock4GamepadHID/buttonEast,/XInputControllerWindows/buttonEast,/SwitchProControllerHID/buttonSouth]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: babe0ffb-4d85-4092-b241-008bdb975d37
-    m_ActionName: UI/Cancel[/Keyboard/escape,/DualShock4GamepadHID/buttonEast,/XInputControllerWindows/buttonEast]
+    m_ActionName: 'UI/Cancel[/Keyboard/escape,/DualShock4GamepadHID/buttonEast,/XInputControllerWindows/buttonEast]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: b9bf6b24-162c-4d7e-9627-4efc97e90160
-    m_ActionName: UI/Point[/Mouse/position,/Pen/position]
+    m_ActionName: 'UI/Point[/Mouse/position,/Pen/position]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: fc6c0f9a-3614-41e2-a9ae-9d0c013a0fa3
-    m_ActionName: UI/Click[/Mouse/leftButton,/Pen/tip]
+    m_ActionName: 'UI/Click[/Mouse/leftButton,/Pen/tip]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 6a505d5a-9af6-40ae-b1a3-8539a83d818d
-    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+    m_ActionName: 'UI/ScrollWheel[/Mouse/scroll]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: aec28a2c-fe6b-44ea-a0a8-f1c113e9ef73
-    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+    m_ActionName: 'UI/MiddleClick[/Mouse/middleButton]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 86153f86-d78f-477d-9b24-6aba8e0bdb41
-    m_ActionName: UI/RightClick[/Mouse/rightButton]
+    m_ActionName: 'UI/RightClick[/Mouse/rightButton]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 2a56e6be-bf34-4f4a-9a8c-232a428ba8cc
@@ -316,14 +344,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pm: {fileID: 0}
+  im: {fileID: 0}
   pi: {fileID: 4237179659672751331}
   rumbleCon: {fileID: 8285239400662830239}
+  rc: {fileID: 0}
   rb: {fileID: -3142732938146884802}
   sr: {fileID: 0}
   bubblePart: {fileID: 6286807170148970422}
   hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
+  spriteSet: []
   i_move: {x: 0, y: 0}
   true_i_move: {x: 0, y: 0}
+  rotation: {x: 0, y: 0, z: 0}
   idx: 0
   colorID: 0
   selectedItemIdx: 0
@@ -577,14 +609,18 @@ MonoBehaviour:
   maxHitstop: 0.1
   moveTime: 0
   moveTimer: 0
+  hitStopTimer: 0
+  moveSpeed: 0
   movePower: 0
   isMoving: 0
+  isKnockback: 0
+  isHitStop: 0
   isCoolingDown: 0
   isGrown: 0
   inventorySize: 1
   chargeStrength: 25
   maxChargeTime: 2
-  minCharge: 0.15
+  minCharge: 0.125
   maxChargeHoldTime: 5
   knockbackMultiplier: 1.2
   coolDownFactor: 0.25
@@ -635,16 +671,17 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5322126026401388776}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5251562808165186442}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!120 &5371809183366282524
 LineRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -660,6 +697,8 @@ LineRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -732,16 +771,20 @@ LineRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 1
+      m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
     textureMode: 1
+    textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
+  m_MaskInteraction: 0
   m_UseWorldSpace: 0
   m_Loop: 0
+  m_ApplyActiveColorSpace: 0
 --- !u!114 &5870986944590643462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -796,13 +839,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5331742974187090821}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5251562808165186442}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &6286807170148970422
 ParticleSystem:
@@ -1022,6 +1065,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -1051,6 +1095,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
     startSize:
@@ -1372,6 +1417,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
+    gravitySource: 0
     maxNumParticles: 10
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
@@ -2101,6 +2147,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -2130,6 +2177,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
   UVModule:
@@ -4350,6 +4398,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -4379,6 +4428,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
@@ -4756,6 +4806,7 @@ ParticleSystem:
         m_RotationOrder: 4
     minVertexDistance: 0.2
     textureMode: 0
+    textureScale: {x: 1, y: 1}
     ribbonCount: 1
     shadowBias: 0.5
     worldSpace: 0
@@ -4798,6 +4849,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -4827,6 +4879,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
     widthOverTrail:
@@ -4914,6 +4967,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -4943,6 +4997,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
   CustomDataModule:
@@ -4981,6 +5036,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -5010,6 +5066,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
     colorLabel0: Color
@@ -5263,6 +5320,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -5292,6 +5350,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
+        m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
     colorLabel1: Color
@@ -5529,6 +5588,8 @@ ParticleSystemRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5567,13 +5628,15 @@ ParticleSystemRenderer:
   m_RenderAlignment: 0
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
-  m_UseCustomVertexStreams: 0
   m_EnableGPUInstancing: 1
   m_ApplyActiveColorSpace: 1
   m_AllowRoll: 1
   m_FreeformStretching: 0
   m_RotateWithStretchDirection: 1
+  m_UseCustomVertexStreams: 0
   m_VertexStreams: 00010304
+  m_UseCustomTrailVertexStreams: 0
+  m_TrailVertexStreams: 00010304
   m_Mesh: {fileID: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
@@ -5608,17 +5671,17 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5751845227386546114}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.46, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5251562808165186442}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!96 &3862397109114594629
 TrailRenderer:
-  serializedVersion: 2
+  serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5634,6 +5697,8 @@ TrailRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5659,6 +5724,7 @@ TrailRenderer:
   m_SortingLayer: 5
   m_SortingOrder: 0
   m_Time: 10
+  m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1.0111064
@@ -5704,17 +5770,21 @@ TrailRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 1
+      m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 3
     numCapVertices: 0
     alignment: 0
     textureMode: 0
+    textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
   m_MinVertexDistance: 0.1
+  m_MaskInteraction: 0
   m_Autodestruct: 0
   m_Emitting: 0
+  m_ApplyActiveColorSpace: 0
 --- !u!1818360609 &4319585059542734191
 RotationConstraint:
   m_ObjectHideFlags: 0
@@ -5723,12 +5793,13 @@ RotationConstraint:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5751845227386546114}
   m_Enabled: 1
+  serializedVersion: 2
   m_Weight: 1
   m_RotationAtRest: {x: 0, y: 0, z: 0}
   m_RotationOffset: {x: 0, y: 0, z: 0}
   m_AffectRotationX: 1
   m_AffectRotationY: 1
   m_AffectRotationZ: 1
-  m_IsContraintActive: 1
+  m_Active: 1
   m_IsLocked: 1
   m_Sources: []

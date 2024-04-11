@@ -1,0 +1,52 @@
+behaviors:
+  MoveToGoal:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 200
+      buffer_size: 1000
+      learning_rate: 1.0e-5
+      beta: 5.0e-3
+      epsilon: 0.3
+      lambd: 0.99
+      num_epoch: 3
+      learning_rate_schedule: linear
+      beta_schedule: constant
+      epsilon_schedule: linear
+    network_settings:
+      normalize: false
+      hidden_units: 128
+      num_layers: 2
+    reward_signals:
+      extrinsic:
+        gamma: 0.9954
+        strength: 1.0
+    checkpoint_interval: 1000000
+    max_steps: 1000000
+    time_horizon: 64
+    summary_freq: 50000
+    
+  Runaway:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 200
+      buffer_size: 1000
+      learning_rate: 1.0e-5
+      beta: 5.0e-3
+      epsilon: 0.3
+      lambd: 0.99
+      num_epoch: 3
+      learning_rate_schedule: linear
+      beta_schedule: constant
+      epsilon_schedule: linear
+    network_settings:
+      normalize: false
+      hidden_units: 128
+      num_layers: 2
+    reward_signals:
+      extrinsic:
+        gamma: 0.9954
+        strength: 1.0
+    checkpoint_interval: 1000000
+    max_steps: 1000000
+    time_horizon: 64
+    summary_freq: 50000

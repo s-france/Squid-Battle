@@ -36,7 +36,7 @@ public class ReticleController : MonoBehaviour
         lr.enabled = true;
     }
 
-    void DeactivateReticle()
+    public void DeactivateReticle()
     {
         SetReticle(0, Vector2.zero);
         lr.enabled = false;
@@ -50,9 +50,9 @@ public class ReticleController : MonoBehaviour
 
     public IEnumerator RenderReticle()
     {
-        Debug.Log("starting RenderReticle()!");
-        Debug.Log("charging: "+ pc.charging);
-        Debug.Log("specialCharging: " + pc.specialCharging);
+        //Debug.Log("starting RenderReticle()!");
+        //Debug.Log("charging: "+ pc.charging);
+        //Debug.Log("specialCharging: " + pc.specialCharging);
 
         //CHANGE 0 TO MINCHARGETIME
         yield return new WaitUntil(() => pc.chargeTime > 0 || pc.specialChargeTime > 0);
@@ -89,7 +89,7 @@ public class ReticleController : MonoBehaviour
         while (pc.charging || pc.specialCharging)
         {
 
-            if(!pc.isCoolingDown && pc.pm.playerList[pc.idx].isInBounds)
+            if(!pc.isCoolingDown && pc.isInBounds)
             {
                 lr.enabled = true;
 
@@ -114,7 +114,7 @@ public class ReticleController : MonoBehaviour
         reticlePosition.x = point.x;
         reticlePosition.y = point.y;
 
-        float reticleLength = pc.calcMoveForce(chargeType).magnitude * .575f;
+        float reticleLength = pc.CalcMoveForce(chargeType).magnitude * .575f;
 
         lr.SetPosition(1, reticlePosition * reticleLength);
         //Debug.Log("reticlePosition: " + reticlePosition*reticleLength*.08f);

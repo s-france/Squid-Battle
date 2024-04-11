@@ -18,23 +18,23 @@ public class PlayerController : MonoBehaviour
 {
     GameManager gm;
     [HideInInspector] public PlayerManager pm;
-    InputManager im;
-    [SerializeField] PlayerInput pi;
+    [HideInInspector] public InputManager im;
+    [SerializeField] public PlayerInput pi;
     [HideInInspector] public Gamepad gp;
     [SerializeField] RumbleController rumbleCon;
 
-    ReticleController rc;
+    [SerializeField] public ReticleController rc;
     public Rigidbody2D rb;
-    [SerializeField] private SpriteRenderer sr;
-    [SerializeField] ParticleSystem bubblePart;
-    [SerializeField] GameObject hitPart;
+    [SerializeField] public SpriteRenderer sr;
+    [SerializeField] public ParticleSystem bubblePart;
+    [SerializeField] public GameObject hitPart;
 
-    private Sprite[] spriteSet;
+    [HideInInspector] public Sprite[] spriteSet;
     CinemachineTargetGroup tg;
 
     [HideInInspector] public Vector2 i_move;
     [HideInInspector] public Vector2 true_i_move;
-    Vector3 rotation;
+    [HideInInspector] public Vector3 rotation;
 
     [HideInInspector] public int idx;
     [HideInInspector] public int colorID;
@@ -46,13 +46,13 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float specialChargeTime;
 
     //NEW movement system
-    [SerializeField] AnimationCurve moveCurve; //speed:time movement curve
-    [SerializeField] AnimationCurve speedCurve; //scaling of max speed : charge in movement
-    [SerializeField] AnimationCurve timeCurve; //scaling of time spent moving : charge in movement
-    [SerializeField] AnimationCurve powerCurve; //scaling of movement kb power : charge in movement
-    [SerializeField] AnimationCurve knockbackCurve; //scaling of relative power (movePower-otherPlayer.movePower) : "knockback-charge" applied when colliding
-    [SerializeField] AnimationCurve directnessKBCurve;
-    [SerializeField] AnimationCurve hitstopCurve; //scaling of knockback power : hitstop applied when colliding
+    [SerializeField] public AnimationCurve moveCurve; //speed:time movement curve
+    [SerializeField] public AnimationCurve speedCurve; //scaling of max speed : charge in movement
+    [SerializeField] public AnimationCurve timeCurve; //scaling of time spent moving : charge in movement
+    [SerializeField] public AnimationCurve powerCurve; //scaling of movement kb power : charge in movement
+    [SerializeField] public AnimationCurve knockbackCurve; //scaling of relative power (movePower-otherPlayer.movePower) : "knockback-charge" applied when colliding
+    [SerializeField] public AnimationCurve directnessKBCurve;
+    [SerializeField] public AnimationCurve hitstopCurve; //scaling of knockback power : hitstop applied when colliding
     
     [SerializeField] public float maxMoveSpeed;
     [SerializeField] public float maxMoveTime;
@@ -64,24 +64,25 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public float moveTime; //total time to spend in the current movement instance
     [HideInInspector] public float moveTimer; //timer counting time to spend moving
-    float hitStopTimer; //timer counting time to spend in hitstop
-    float moveSpeed; //speed of movement
+    [HideInInspector] public float hitStopTimer; //timer counting time to spend in hitstop
+    [HideInInspector] public float moveSpeed; //speed of movement
     [HideInInspector] public float movePower; //knockback to apply on collision
     [HideInInspector] public bool isMoving;
-    bool isKnockback;
-    bool isHitStop;
+    [HideInInspector] public bool isKnockback;
+    [HideInInspector] public bool isHitStop;
     Coroutine MoveCR;
 
 
     [HideInInspector] public bool isCoolingDown;
     [HideInInspector] public bool isGrown;
+    [HideInInspector] public bool isInBounds; //copy of pm.playerList[idx].isInBounds
 
 
     [SerializeField] public int inventorySize; //amount of items that can be held at once
     [SerializeField] public float chargeStrength;
     [SerializeField] public float maxChargeTime;
     [SerializeField] public float minCharge;
-    [SerializeField] float maxChargeHoldTime;
+    [SerializeField] public float maxChargeHoldTime;
     [SerializeField] public float knockbackMultiplier;
     [SerializeField] float coolDownFactor;
     [SerializeField] float moveCoolDown;
@@ -105,7 +106,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //use this instead of Awake()
-    public void Init()
+    public virtual void Init()
     {
         DontDestroyOnLoad(this);
 
@@ -175,22 +176,21 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public virtual void Update()
     {
         CoolDown();
     }
 
-    void FixedUpdate()
+    public virtual void FixedUpdate()
     {
-        //DirectionalInfluence();
         MovementTick();
     }
 
     //handle players colliding
-    void OnCollisionEnter2D(Collision2D col)
+    public virtual void OnCollisionEnter2D(Collision2D col)
     {
 
-        FindObjectOfType<AudioManager>().PlayRandom("Impact");
+        FindFirstObjectByType<AudioManager>().PlayRandom("Impact");
 
 
         Debug.Log("Player colliding! Collision LayerMask name: " + LayerMask.LayerToName(col.gameObject.layer));
@@ -211,28 +211,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
-    /* OLD KNOCKBACK
-    IEnumerator Knockback(Rigidbody2D col)
-    {
-        var fuWait = new WaitForFixedUpdate();
-
-        if (col.velocity.magnitude < rb.velocity.magnitude)
-        {
-
-            Debug.Log("player" + idx + " velocity: " + rb.velocity.magnitude);
-            Debug.Log(col.gameObject.name + " velocity: " + col.velocity.magnitude);
-
-            yield return fuWait;
-            rb.velocity *= knockbackMultiplier;
-
-            Debug.Log("player" + idx + "knocked!!");
-
-        }
-    }
-    */
-
-    void ResetDefaultStats()
+    public virtual void ResetDefaultStats()
     {
         transform.localScale = defaultScale;
         chargeStrength = defaultChargeStrength;
@@ -249,7 +228,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //REWORK NEEDED
-    public void Deactivate()
+    public virtual void Deactivate()
     {
         ResetDefaultStats();
 
@@ -266,7 +245,8 @@ public class PlayerController : MonoBehaviour
         this.GetComponent<SpriteRenderer>().enabled = false;
         GetComponentInChildren<TrailRenderer>().Clear();
 
-        tg = FindObjectOfType<CinemachineTargetGroup>();
+
+        tg = FindFirstObjectByType<CinemachineTargetGroup>();
         if(tg != null)
         {
             tg.RemoveMember(this.transform);
@@ -275,7 +255,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //REWORK THIS
-    public void Reactivate()
+    public virtual void Reactivate()
     {
         ResetDefaultStats();
 
@@ -291,7 +271,7 @@ public class PlayerController : MonoBehaviour
         this.GetComponent<SpriteRenderer>().enabled = true;
         GetComponentInChildren<TrailRenderer>().Clear();
         
-        tg = FindObjectOfType<CinemachineTargetGroup>();
+        tg = FindFirstObjectByType<CinemachineTargetGroup>();
         if(tg != null)
         {
             tg.AddMember(this.transform, 1, 1);
@@ -311,7 +291,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //called when move (stick) input received
-    public void OnMove(InputAction.CallbackContext ctx)
+    public virtual void OnMove(InputAction.CallbackContext ctx)
     {
         //save move input
         if(ctx.ReadValue<Vector2>().magnitude != 0 && gm.battleStarted)
@@ -341,7 +321,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void RotateSprite(Vector2 dir)
+    public void RotateSprite(Vector2 dir)
     {
         rb.angularVelocity = 0;
         float angle = Vector2.SignedAngle(Vector2.up, dir);
@@ -349,7 +329,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //called when charge (button) input received
-    public void OnCharge(InputAction.CallbackContext ctx)
+    public virtual void OnCharge(InputAction.CallbackContext ctx)
     {
         //Debug.Log(ctx.phase);
         if(ctx.performed && pm.playerList[idx].isInBounds) //charging
@@ -373,7 +353,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //called when OnCharge() performed - handles player charging
-    IEnumerator Charge()
+    public virtual IEnumerator Charge()
     {
         if(gm.battleStarted && pm.playerList[idx].isActive && pm.playerList[idx].isAlive)
         {
@@ -450,7 +430,7 @@ public class PlayerController : MonoBehaviour
 
     //type of movement - 0:normal 1:special
     //^^stupid workaround for demo sprint MUST FIX LATER
-    public Vector2 calcMoveForce(int type)
+    public virtual Vector2 CalcMoveForce(int type)
     {
         float charge;
         switch (type)
@@ -672,7 +652,7 @@ public class PlayerController : MonoBehaviour
 
     //processes player movement
     //called in FixedUpdate()
-    void MovementTick()
+    public virtual void MovementTick()
     {
         if(moveTimer <= moveTime)
         {
@@ -730,6 +710,12 @@ public class PlayerController : MonoBehaviour
 
         }
 
+        //failsafe
+        if(!isMoving && !isKnockback)
+        {
+            rb.velocity = Vector2.zero;
+        }
+
     }
 
     //basic movement function
@@ -737,7 +723,7 @@ public class PlayerController : MonoBehaviour
     //pauses during hitstop -> continues after stop is over
     //type 0 -> player-inputted movement
     //type 1 -> attack knockback/launching    
-    void ApplyMove(int type, Vector2 direction, float charge)
+    public virtual void ApplyMove(int type, Vector2 direction, float charge)
     {
         Debug.Log("player" + idx + " moving!");
         Debug.Log("type = " + type);
@@ -776,7 +762,7 @@ public class PlayerController : MonoBehaviour
 
 
     //coroutine applies hitstop for specified time
-    IEnumerator HitStop(float time)
+    public IEnumerator HitStop(float time)
     {
         if(!isHitStop)
         {
@@ -808,7 +794,7 @@ public class PlayerController : MonoBehaviour
 
     //applies knockback effects to this player - does nothing to other colliding player
     //called in OnCollisionEnter2D when colliding with opponent
-    public IEnumerator ApplyKnockback(float otherPower, Rigidbody2D otherRB)
+    public virtual IEnumerator ApplyKnockback(float otherPower, Rigidbody2D otherRB)
     {
         Debug.Log("ApplyKnockback!");
 
@@ -919,7 +905,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    void EmitBubbles(float time)
+    public void EmitBubbles(float time)
     {
         //Debug.Log("bubbles emitting");
         bubblePart.Stop();
@@ -927,12 +913,6 @@ public class PlayerController : MonoBehaviour
         main.duration = time;
         bubblePart.Play();
     }
-
-
-
-
- 
-
 
 
 }

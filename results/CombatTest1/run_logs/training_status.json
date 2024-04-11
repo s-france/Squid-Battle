@@ -1,0 +1,38 @@
+{
+    "MoveToGoal": {
+        "checkpoints": [
+            {
+                "steps": 499993,
+                "file_path": "results\\CombatTest1\\MoveToGoal\\MoveToGoal-499993.onnx",
+                "reward": null,
+                "creation_time": 1712525327.3318498,
+                "auxillary_file_paths": [
+                    "results\\CombatTest1\\MoveToGoal\\MoveToGoal-499993.pt"
+                ]
+            },
+            {
+                "steps": 500064,
+                "file_path": "results\\CombatTest1\\MoveToGoal\\MoveToGoal-500064.onnx",
+                "reward": -2.0,
+                "creation_time": 1712525327.5177157,
+                "auxillary_file_paths": [
+                    "results\\CombatTest1\\MoveToGoal\\MoveToGoal-500064.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 500064,
+            "file_path": "results\\CombatTest1\\MoveToGoal.onnx",
+            "reward": -2.0,
+            "creation_time": 1712525327.5177157,
+            "auxillary_file_paths": [
+                "results\\CombatTest1\\MoveToGoal\\MoveToGoal-500064.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

@@ -122,6 +122,7 @@ public class PlayerManager : MonoBehaviour
         //playerList[idx].input.ActivateInput();
         playerList[idx].isAlive = true;
         playerList[idx].isInBounds = true;
+        playerList[idx].playerScript.isInBounds = true;
 
         if(gm.lc.GetLevelType() == 0)
         {
@@ -142,6 +143,7 @@ public class PlayerManager : MonoBehaviour
         playerList[idx].isReady = false;
         playerList[idx].isAlive = false;
         playerList[idx].isInBounds = true;
+        playerList[idx].playerScript.isInBounds = true;
 
         if(gm.lc.GetLevelType() == 0)
         {
