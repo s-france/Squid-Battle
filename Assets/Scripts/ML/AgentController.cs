@@ -18,6 +18,9 @@ public class AgentController : PlayerController
 {
     [SerializeField] MLAgent mla;
     [SerializeField] Sprite[] agentSprites;
+
+    WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
+
     /*
     
     InputManager im;
@@ -264,10 +267,9 @@ public class AgentController : PlayerController
     //called when charge (button) input received
     public virtual void OnCharge(int Icharge)
     {
-        //Debug.Log(ctx.phase);
         if(Icharge == 1 && isInBounds) //charging
         {
-            Debug.Log("charging!!");
+            //Debug.Log("charging!!");
             if(!charging)
             {
                 chargeTime = 0;
@@ -285,19 +287,18 @@ public class AgentController : PlayerController
     //called when OnCharge() performed - handles player charging
     public override IEnumerator Charge()
     {
-
         StartCoroutine(rc.RenderReticle());
 
         //Charging
         while (charging)
         {
-            yield return null;
+            yield return fuWait;
 
             if (!isCoolingDown && isInBounds)
             {
                 sr.sprite = spriteSet[2]; //charging sprite
-                chargeTime += Time.deltaTime;
-
+                chargeTime += Time.fixedDeltaTime;
+                
                 if(chargeTime > maxChargeHoldTime)
                 {
                     charging = false;
@@ -419,6 +420,32 @@ public class AgentController : PlayerController
     //called in OnCollisionEnter2D when colliding with opponent
     public override IEnumerator ApplyKnockback(float otherPower, Rigidbody2D otherRB)
     {
+        //relative positions
+        //vector pointing from player's position to otherPlayer's position i.e. relative position (direction only)
+        Vector2 posDiff = (otherRB.position - rb.position).normalized;
+        //vector pointing from otherPlayer's position to this player's position
+        Vector2 otherPosDiff = (rb.position - otherRB.position).normalized;
+
+        float directness = 0;
+        if(rb.velocity != Vector2.zero)
+        {
+            directness = directnessKBCurve.Evaluate(Vector2.Angle(posDiff, rb.velocity) / 180);
+        }
+
+        float otherDirectness = 0;
+        if(otherRB.velocity != Vector2.zero)
+        {
+            otherDirectness = directnessKBCurve.Evaluate(Vector2.Angle(otherPosDiff, otherRB.velocity) / 180);
+        }
+
+        float strength = directness * movePower;
+        float otherStrength = otherDirectness * otherPower;
+
+        if(mla != null)
+        {
+            mla.KnockbackReward(strength-otherStrength);
+        }
+
         return base.ApplyKnockback(otherPower, otherRB);
     }
 
@@ -432,8 +459,8 @@ public class AgentController : PlayerController
             //add dying animation here
             
             
-            clock += Time.deltaTime;
-            yield return null;
+            clock += Time.fixedDeltaTime;
+            yield return fuWait;
         }
 
         if(!isInBounds)

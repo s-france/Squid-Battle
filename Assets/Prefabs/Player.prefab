@@ -38,6 +38,7 @@ Transform:
   - {fileID: 3349715349416888729}
   - {fileID: 20947205095912124}
   - {fileID: 4966566639551525388}
+  - {fileID: 194492634184046858}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5251562808165186445
@@ -348,6 +349,7 @@ MonoBehaviour:
   pi: {fileID: 4237179659672751331}
   rumbleCon: {fileID: 8285239400662830239}
   rc: {fileID: 0}
+  WarpPoint: {fileID: 0}
   rb: {fileID: -3142732938146884802}
   sr: {fileID: 0}
   bubblePart: {fileID: 6286807170148970422}
@@ -576,21 +578,21 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: -0
-      outSlope: -0
+      inSlope: 8.314355
+      outSlope: 8.314355
       tangentMode: 0
       weightedMode: 2
       inWeight: 0
-      outWeight: 0.18443134
+      outWeight: 0.028297437
     - serializedVersion: 3
-      time: 0.5660278
-      value: 0.44214368
-      inSlope: 1.2685802
-      outSlope: 1.2685802
+      time: 0.5226318
+      value: 0.5003407
+      inSlope: 0.7990774
+      outSlope: 0.7990774
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.13075346
+      outWeight: 0.18597464
     - serializedVersion: 3
       time: 1
       value: 1
@@ -606,7 +608,7 @@ MonoBehaviour:
   maxMoveSpeed: 34
   maxMoveTime: 0.28
   maxMovePower: 2.75
-  maxHitstop: 0.1
+  maxHitstop: 0.15
   moveTime: 0
   moveTimer: 0
   hitStopTimer: 0
@@ -617,16 +619,48 @@ MonoBehaviour:
   isHitStop: 0
   isCoolingDown: 0
   isGrown: 0
+  isInBounds: 0
   inventorySize: 1
   chargeStrength: 25
   maxChargeTime: 2
   minCharge: 0.125
   maxChargeHoldTime: 5
   knockbackMultiplier: 1.2
-  coolDownFactor: 0.25
-  moveCoolDown: 0.3
-  coolDownVelocity: 1
-  DIStrength: 0.05
+  DIStrength: 0
+  maxRumbleStrength: 0.55
+  rumbleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.05
+      value: 0
+      inSlope: Infinity
+      outSlope: 0.010530519
+      tangentMode: 7
+      weightedMode: 2
+      inWeight: 0.33333334
+      outWeight: 0.37272066
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2.2253187
+      outSlope: 2.2253187
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.051057603
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   defaultScale: {x: 0, y: 0, z: 0}
   defaultChargeStrength: 0
   defaultMaxMoveSpeed: 0
@@ -746,8 +780,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0, g: 0, b: 0, a: 1}
-      key1: {r: 0, g: 0, b: 0, a: 1}
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 1, g: 1, b: 1, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -770,8 +804,8 @@ LineRenderer:
       atime5: 0
       atime6: 0
       atime7: 0
-      m_Mode: 1
-      m_ColorSpace: -1
+      m_Mode: 0
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
@@ -797,23 +831,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b87ce69d26293224bbe462162e350e44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pc: {fileID: 8809073331192073115}
+  lr: {fileID: 5371809183366282524}
+  wr: {fileID: 194492634184046858}
+  warpSpeed: 5
   colorSet:
   - serializedVersion: 2
-    rgba: 4294901775
+    rgba: 3870883851
   - serializedVersion: 2
-    rgba: 4294115072
+    rgba: 3870868224
   - serializedVersion: 2
-    rgba: 4283301632
+    rgba: 3862411008
   - serializedVersion: 2
-    rgba: 4278228223
+    rgba: 3858789576
   - serializedVersion: 2
-    rgba: 4293656831
+    rgba: 3871146188
   - serializedVersion: 2
-    rgba: 4294901883
+    rgba: 3871866976
   - serializedVersion: 2
-    rgba: 4278845695
+    rgba: 3859218615
   - serializedVersion: 2
-    rgba: 4278254847
+    rgba: 3858812881
 --- !u!1 &5331742974187090821
 GameObject:
   m_ObjectHideFlags: 0
@@ -5803,3 +5841,141 @@ RotationConstraint:
   m_Active: 1
   m_IsLocked: 1
   m_Sources: []
+--- !u!1 &6880152501172513375
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 194492634184046858}
+  - component: {fileID: 8057401209555982923}
+  - component: {fileID: 5965774039379690953}
+  - component: {fileID: 3499062653954522850}
+  m_Layer: 6
+  m_Name: WarpPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &194492634184046858
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6880152501172513375}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.06, y: 0.06, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5251562808165186442}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &8057401209555982923
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6880152501172513375}
+  m_Enabled: 0
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 550400597
+  m_SortingLayer: 5
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: e3c93f082e19b104caf78e128e23c12b, type: 3}
+  m_Color: {r: 0, g: 1, b: 0, a: 0.62352943}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 16, y: 16}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!58 &5965774039379690953
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6880152501172513375}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 7
+--- !u!114 &3499062653954522850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6880152501172513375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e780ca8fda919e8418eef41d56c8dd31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shockPower: 0.6
+  hitstopRatio: 0.2

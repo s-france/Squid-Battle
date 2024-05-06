@@ -26,7 +26,7 @@ public class ArenaBoundary : MonoBehaviour
             pm.playerList[idx].isInBounds = false;
             pm.playerList[idx].playerScript.isInBounds = false;
 
-            StartCoroutine(pm.PlayerKillClock(idx, 1.0f));
+            StartCoroutine(pm.PlayerKillClock(idx, 3.0f));
 
         } else if (col.gameObject.layer == LayerMask.NameToLayer("ItemObjs"))
         {

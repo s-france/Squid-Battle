@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class ReticleController : MonoBehaviour
 {
-    PlayerController pc;
-    LineRenderer lr;
+    [SerializeField] PlayerController pc;
+    [SerializeField] LineRenderer lr;
+    [SerializeField] Transform wr;
+    [SerializeField] float warpSpeed;
+
+
+
 
     public Color32[] colorSet;
 
@@ -44,7 +49,8 @@ public class ReticleController : MonoBehaviour
 
     public void ChangeColor(int colorID)
     {
-        lr.material.SetColor("_Color", colorSet[colorID]);
+        lr.startColor = colorSet[colorID];
+        lr.endColor = colorSet[colorID];
     }
 
 
@@ -61,7 +67,7 @@ public class ReticleController : MonoBehaviour
 
         if(pc.charging)
         {
-            Debug.Log("normal charge rendering!");
+            //Debug.Log("normal charge rendering!");
             chargeType = 0;
         } else if(pc.specialCharging)
         {
@@ -76,7 +82,7 @@ public class ReticleController : MonoBehaviour
                 }
             } else
             {
-                Debug.Log("specialcharge Rendering!");
+                //Debug.Log("specialcharge Rendering!");
                 chargeType = 1;
             }
             
@@ -93,7 +99,6 @@ public class ReticleController : MonoBehaviour
             {
                 lr.enabled = true;
 
-                //SetReticle(pc.i_move);
                 SetReticle(chargeType, Vector2.up);
             } else
             {
@@ -118,6 +123,40 @@ public class ReticleController : MonoBehaviour
 
         lr.SetPosition(1, reticlePosition * reticleLength);
         //Debug.Log("reticlePosition: " + reticlePosition*reticleLength*.08f);
+    }
+
+
+    public IEnumerator RenderWarpReticle()
+    {
+        SpriteRenderer warpSR = wr.gameObject.GetComponent<SpriteRenderer>();
+
+        wr.SetParent(null);
+        //set reticle visible
+        warpSR.enabled = true;
+
+        while (pc.specialCharging)
+        {
+            if(pc.isCoolingDown)
+            {
+                warpSR.enabled = false;
+                wr.position = pc.transform.position;
+            } else
+            {
+                warpSR.enabled = true;
+                wr.position += (Vector3)pc.true_i_move * warpSpeed * Time.deltaTime;
+            }
+
+            yield return null;
+        }
+        //save warp position
+        pc.GetComponentInChildren<WarpBehavior>().warpPoint = wr.position;
+
+        //hide reticle
+        wr.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        wr.SetParent(pc.transform);
+        wr.localPosition = Vector3.zero;
+
+
     }
 
 }

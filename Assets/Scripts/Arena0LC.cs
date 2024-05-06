@@ -24,6 +24,8 @@ public class Arena0LC : MonoBehaviour, ILevelController
         pm = gm.GetComponentInChildren<PlayerManager>();
         im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
 
+        im.gm = gm;
+
         SpawnPoints = new List<Transform>();
 
         SpawnPoints.Add(transform.GetChild(0));
@@ -45,7 +47,7 @@ public class Arena0LC : MonoBehaviour, ILevelController
     IEnumerator ShrinkClock()
     {
         float timer = 0;
-        Debug.Log("COROUTINE STARTED");
+        //Debug.Log("COROUTINE STARTED");
         
         while(arena.localScale.magnitude > ArenaShrinks[2].magnitude)
         {

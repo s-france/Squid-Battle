@@ -1,0 +1,33 @@
+behaviors:
+  Charge:
+    trainer_type: sac
+    summary_freq: 50000
+    checkpoint_interval: 2500000
+    max_steps: 5000000
+    time_horizon: 2048
+    
+
+    hyperparameters:
+      learning_rate: 1.0e-4
+      batch_size: 1024
+      buffer_size: 3000000
+      
+      #sac params:
+      buffer_init_steps: 10000
+      init_entcoef: 0.4
+      save_replay_buffer: true
+      tau: .005
+      steps_per_update: 20
+
+      learning_rate_schedule: constant
+
+    network_settings:
+      normalize: false
+      hidden_units: 256
+      num_layers: 2
+
+    reward_signals:
+      extrinsic:
+        gamma: 0.9954
+        strength: 1.0
+    

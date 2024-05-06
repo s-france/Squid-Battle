@@ -37,6 +37,8 @@ public class Arena2LC : MonoBehaviour, ILevelController
         pm = gm.GetComponentInChildren<PlayerManager>();
         im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
 
+        im.gm = gm;
+
         SpawnPoints = new List<Transform>();
 
         SpawnPoints.Add(transform.GetChild(0));

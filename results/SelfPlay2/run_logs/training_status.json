@@ -1,0 +1,66 @@
+{
+    "1v1": {
+        "elo": 1287.5595217479545,
+        "checkpoints": [
+            {
+                "steps": 2649878,
+                "file_path": "results\\SelfPlay2\\1v1\\1v1-2649878.onnx",
+                "reward": null,
+                "creation_time": 1713303410.7122042,
+                "auxillary_file_paths": [
+                    "results\\SelfPlay2\\1v1\\1v1-2649878.pt"
+                ]
+            },
+            {
+                "steps": 3706646,
+                "file_path": "results\\SelfPlay2\\1v1\\1v1-3706646.onnx",
+                "reward": null,
+                "creation_time": 1713310078.9993703,
+                "auxillary_file_paths": [
+                    "results\\SelfPlay2\\1v1\\1v1-3706646.pt"
+                ]
+            },
+            {
+                "steps": 4735831,
+                "file_path": "results\\SelfPlay2\\1v1\\1v1-4735831.onnx",
+                "reward": null,
+                "creation_time": 1713316255.6202652,
+                "auxillary_file_paths": [
+                    "results\\SelfPlay2\\1v1\\1v1-4735831.pt"
+                ]
+            },
+            {
+                "steps": 4999431,
+                "file_path": "results\\SelfPlay2\\1v1\\1v1-4999431.onnx",
+                "reward": null,
+                "creation_time": 1713317479.2263403,
+                "auxillary_file_paths": [
+                    "results\\SelfPlay2\\1v1\\1v1-4999431.pt"
+                ]
+            },
+            {
+                "steps": 5003527,
+                "file_path": "results\\SelfPlay2\\1v1\\1v1-5003527.onnx",
+                "reward": null,
+                "creation_time": 1713317479.6128676,
+                "auxillary_file_paths": [
+                    "results\\SelfPlay2\\1v1\\1v1-5003527.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 5003527,
+            "file_path": "results\\SelfPlay2\\1v1.onnx",
+            "reward": null,
+            "creation_time": 1713317479.6128676,
+            "auxillary_file_paths": [
+                "results\\SelfPlay2\\1v1\\1v1-5003527.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

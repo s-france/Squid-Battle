@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using UnityEngine.Assertions.Must;
 using UnityEngine.Timeline;
 using UnityEngine.InputSystem.Switch;
+using System.Linq;
 //using System.Numerics;
 //using System.Numerics;
 
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] RumbleController rumbleCon;
 
     [SerializeField] public ReticleController rc;
+    [SerializeField] public Transform WarpPoint;
     public Rigidbody2D rb;
     [SerializeField] public SpriteRenderer sr;
     [SerializeField] public ParticleSystem bubblePart;
@@ -84,10 +86,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float minCharge;
     [SerializeField] public float maxChargeHoldTime;
     [SerializeField] public float knockbackMultiplier;
-    [SerializeField] float coolDownFactor;
-    [SerializeField] float moveCoolDown;
-    [SerializeField] float coolDownVelocity;
+    //[SerializeField] float coolDownFactor;
+    //[SerializeField] float moveCoolDown;
+    //[SerializeField] float coolDownVelocity;
     [SerializeField] float DIStrength;
+    [SerializeField] float maxRumbleStrength;
+    [SerializeField] AnimationCurve rumbleCurve;
 
     [HideInInspector] public Vector3 defaultScale;
     [HideInInspector] public float defaultChargeStrength;
@@ -193,13 +197,13 @@ public class PlayerController : MonoBehaviour
         FindFirstObjectByType<AudioManager>().PlayRandom("Impact");
 
 
-        Debug.Log("Player colliding! Collision LayerMask name: " + LayerMask.LayerToName(col.gameObject.layer));
+        //Debug.Log("Player colliding! Collision LayerMask name: " + LayerMask.LayerToName(col.gameObject.layer));
 
 
 
         if (LayerMask.LayerToName(col.gameObject.layer) == "Players")
         {
-            Debug.Log("Player" + idx + " collided with Player " + col.gameObject.GetComponent<PlayerController>().idx);
+            //Debug.Log("Player" + idx + " collided with Player " + col.gameObject.GetComponent<PlayerController>().idx);
 
             StartCoroutine(ApplyKnockback(col.gameObject.GetComponent<PlayerController>().movePower, col.gameObject.GetComponent<PlayerController>().rb));
 
@@ -232,8 +236,11 @@ public class PlayerController : MonoBehaviour
     {
         ResetDefaultStats();
 
-        bubblePart.gameObject.SetActive(false);
+        StopAllCoroutines();
+        
 
+        bubblePart.gameObject.SetActive(false);
+        
         rb.velocity = Vector2.zero;
         i_move = Vector2.zero;
         true_i_move = Vector2.zero;
@@ -243,7 +250,11 @@ public class PlayerController : MonoBehaviour
         ClearInventory();
         this.GetComponent<CircleCollider2D>().enabled = false;
         this.GetComponent<SpriteRenderer>().enabled = false;
+        GetComponentInChildren<TrailRenderer>().emitting = false;
         GetComponentInChildren<TrailRenderer>().Clear();
+        rc.DeactivateReticle();
+
+        gp.SetMotorSpeeds(0,0);
 
 
         tg = FindFirstObjectByType<CinemachineTargetGroup>();
@@ -269,8 +280,11 @@ public class PlayerController : MonoBehaviour
         
         this.GetComponent<CircleCollider2D>().enabled = true;
         this.GetComponent<SpriteRenderer>().enabled = true;
+        GetComponentInChildren<TrailRenderer>().emitting = false;
         GetComponentInChildren<TrailRenderer>().Clear();
-        
+        rc.DeactivateReticle();
+        gp.SetMotorSpeeds(0,0);
+
         tg = FindFirstObjectByType<CinemachineTargetGroup>();
         if(tg != null)
         {
@@ -297,6 +311,15 @@ public class PlayerController : MonoBehaviour
         if(ctx.ReadValue<Vector2>().magnitude != 0 && gm.battleStarted)
         {
             i_move = ctx.ReadValue<Vector2>();
+            
+            //inverts projectile aim
+            /*
+            if(specialCharging && !isCoolingDown && heldItems.Any() && heldItems[selectedItemIdx].GetItemType() != "Wall" && heldItems[selectedItemIdx].GetItemType() != "Grow")
+            {
+                i_move = -ctx.ReadValue<Vector2>();
+            }
+            */
+
         }
 
         true_i_move = ctx.ReadValue<Vector2>();
@@ -334,7 +357,7 @@ public class PlayerController : MonoBehaviour
         //Debug.Log(ctx.phase);
         if(ctx.performed && pm.playerList[idx].isInBounds) //charging
         {
-            Debug.Log("charging!!");
+            //Debug.Log("charging!!");
             
             if(!gm.battleStarted && !pm.playerList[idx].isActive && GameObject.Find("LevelController").GetComponent<ILevelController>().GetLevelType() != 1)
             {
@@ -358,7 +381,6 @@ public class PlayerController : MonoBehaviour
         if(gm.battleStarted && pm.playerList[idx].isActive && pm.playerList[idx].isAlive)
         {
             StartCoroutine(rc.RenderReticle());
-            gp.SetMotorSpeeds(.5f, .5f);
         }
 
         //Charging
@@ -368,6 +390,18 @@ public class PlayerController : MonoBehaviour
             {
                 sr.sprite = spriteSet[2]; //charging sprite
                 chargeTime += Time.deltaTime;
+
+                if(gm.battleStarted)
+                {
+                    if(chargeTime/maxChargeHoldTime >= .85f)
+                    {
+                        gp.SetMotorSpeeds(maxRumbleStrength * 7, maxRumbleStrength * 7);
+                    } else
+                    {
+                        gp.SetMotorSpeeds(rumbleCurve.Evaluate(Mathf.Clamp(chargeTime/maxChargeTime, 0, 1)) * maxRumbleStrength, rumbleCurve.Evaluate(Mathf.Clamp(chargeTime/maxChargeTime, 0, 1)) * maxRumbleStrength);
+                    }
+                }
+                
 
 
                 if(chargeTime > maxChargeHoldTime)
@@ -478,7 +512,7 @@ public class PlayerController : MonoBehaviour
     void CoolDown()
     {
         //TEMP FIX - NEEDS MORE SIGNIFICANT REWORKING
-        if(moveTimer/moveTime < .95f)
+        if(moveTimer/moveTime < .9f)
         {
             isCoolingDown = true;
         } else
@@ -511,7 +545,13 @@ public class PlayerController : MonoBehaviour
     {
         if(gm.battleStarted && pm.playerList[idx].isActive && pm.playerList[idx].isAlive)
         {
-            StartCoroutine(rc.RenderReticle());
+            if(heldItems.Any() && heldItems[selectedItemIdx].GetItemType() == "Warp")
+            {
+                StartCoroutine(rc.RenderWarpReticle());
+            } else
+            {
+                StartCoroutine(rc.RenderReticle());
+            }
         }
 
 
@@ -522,6 +562,18 @@ public class PlayerController : MonoBehaviour
             {
                 sr.sprite = spriteSet[2]; //charging sprite
                 specialChargeTime += Time.deltaTime;
+
+                if(gm.battleStarted)
+                {
+                    if(specialChargeTime/maxChargeHoldTime >= .85f)
+                    {
+                        gp.SetMotorSpeeds(maxRumbleStrength * 7, maxRumbleStrength * 7);
+                    } else
+                    {
+                        gp.SetMotorSpeeds(rumbleCurve.Evaluate(Mathf.Clamp(specialChargeTime/maxChargeTime, 0, 1)) * maxRumbleStrength, rumbleCurve.Evaluate(Mathf.Clamp(specialChargeTime/maxChargeTime, 0, 1)) * maxRumbleStrength);
+                    }
+                }
+
 
                 if(specialChargeTime > maxChargeHoldTime)
                 {
@@ -549,14 +601,14 @@ public class PlayerController : MonoBehaviour
             {
                 if(heldItems[selectedItemIdx].GetItemType() == "Wall")
                 {
-                    Debug.Log("WALL MOVEMENT");
+                    //Debug.Log("WALL MOVEMENT");
                     ApplyMove(0, i_move, specialChargeTime);
-                } else
+                } else if(heldItems[selectedItemIdx].GetItemType() != "Warp")
                 {
                     ApplyMove(0, i_move, .35f * Mathf.Clamp(specialChargeTime, 0, maxChargeTime));
                 }
                 
-            }else
+            }else if(isInBounds)
             {
                 ApplyMove(0, i_move, .35f * Mathf.Clamp(specialChargeTime, minCharge, maxChargeTime));
             }
@@ -567,6 +619,8 @@ public class PlayerController : MonoBehaviour
             sr.sprite = spriteSet[0];
         }
 
+        gp.SetMotorSpeeds(0, 0);
+
         //reset chargeTime
         specialChargeTime = 0;
     }
@@ -574,15 +628,18 @@ public class PlayerController : MonoBehaviour
     public void GainItem(IItemBehavior item)
     {
         heldItems.Add(item);
-        Debug.Log("player" + idx + " gained an item!");
+        //Debug.Log("player" + idx + " gained an item!");
         
     }
 
     //uses item in heldItems[idx]
     void UseItem(int idx)
     {
-        heldItems[idx].UseItem(specialChargeTime);
-        heldItems.RemoveAt(idx);
+        if(heldItems.Any())
+        {
+            heldItems[idx].UseItem(specialChargeTime);
+            heldItems.RemoveAt(idx);
+        }
     }
 
     void ClearInventory()
@@ -636,6 +693,8 @@ public class PlayerController : MonoBehaviour
         spriteSet = pm.playerSprites[color];
         sr.sprite = spriteSet[0];
 
+        rc.ChangeColor(color);
+
         pm.SetPlayerColor(idx, color);
     }
 
@@ -686,26 +745,19 @@ public class PlayerController : MonoBehaviour
             if(isMoving)
             {
                 isMoving = false;
-                moveTime = 0;
-                movePower = 0;
-                moveSpeed = 0;
-
-                //may cause problems in the future
-                rb.velocity = Vector2.zero;
-                sr.sprite = spriteSet[0];
             }
 
             if(isKnockback)
             {
                 isKnockback = false;
-                moveTime = 0;
-                movePower = 0;
-                moveSpeed = 0;
-
-                //may cause problems in the future
-                rb.velocity = Vector2.zero;
-                sr.sprite = spriteSet[0];
             }
+            moveTime = 0;
+            movePower = 0;
+            moveSpeed = 0;
+
+            //may cause problems in the future
+            rb.velocity = Vector2.zero;
+            sr.sprite = spriteSet[0];
 
 
         }
@@ -725,37 +777,39 @@ public class PlayerController : MonoBehaviour
     //type 1 -> attack knockback/launching    
     public virtual void ApplyMove(int type, Vector2 direction, float charge)
     {
-        Debug.Log("player" + idx + " moving!");
-        Debug.Log("type = " + type);
-        Debug.Log("direction = " + direction);
-        Debug.Log("charge = " + charge);
+        //Debug.Log("player" + idx + " moving!");
+        //Debug.Log("type = " + type);
+        //Debug.Log("direction = " + direction);
+        //Debug.Log("charge = " + charge);
 
         if(type == 0) //movement
-            {
-                isMoving = true;
-                sr.sprite = spriteSet[1];
-                charge = Mathf.Clamp(charge, minCharge, maxChargeTime);
-            } else if(type == 1) //knockback
-            {
-                isKnockback = true;
-                //SET SPRITE TO STUNNED
-                charge = Mathf.Clamp(charge, 0, maxChargeTime * 2);
-            }
+        {
+            FindFirstObjectByType<AudioManager>().PlayRandom("Move");
 
-            //max speed reached in this movement
-            moveSpeed = maxMoveSpeed * speedCurve.Evaluate(charge/maxChargeTime);
-            //total time to spend moving in this movement
-            moveTime = maxMoveTime * timeCurve.Evaluate(charge/maxChargeTime);
-            //knockback power of this movement
-            movePower = maxMovePower * powerCurve.Evaluate(charge/maxChargeTime);
+            isMoving = true;
+            sr.sprite = spriteSet[1];
+            charge = Mathf.Clamp(charge, minCharge, maxChargeTime);
+        } else if(type == 1) //knockback
+        {
+            isKnockback = true;
+            //SET SPRITE TO STUNNED
+            charge = Mathf.Clamp(charge, 0, maxChargeTime * 2);
+        }
 
-            //probably not needed in this context
-            rb.velocity = direction.normalized;
+        //max speed reached in this movement
+        moveSpeed = maxMoveSpeed * speedCurve.Evaluate(charge/maxChargeTime);
+        //total time to spend moving in this movement
+        moveTime = maxMoveTime * timeCurve.Evaluate(charge/maxChargeTime);
+        //knockback power of this movement
+        movePower = maxMovePower * powerCurve.Evaluate(charge/maxChargeTime);
 
-            //reset moveTimer to beginning
-            moveTimer = 0;
+        //probably not needed in this context
+        rb.velocity = direction.normalized;
 
-            EmitBubbles(.9f * moveTime);
+        //reset moveTimer to beginning
+        moveTimer = 0;
+
+        EmitBubbles(.9f * moveTime);
     }
 
 
@@ -766,7 +820,7 @@ public class PlayerController : MonoBehaviour
     {
         if(!isHitStop)
         {
-            Debug.Log("P" + idx + " entering hitstop for " + time + " seconds");
+            //Debug.Log("P" + idx + " entering hitstop for " + time + " seconds");
 
             WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
             //for collisions just in case
@@ -796,7 +850,7 @@ public class PlayerController : MonoBehaviour
     //called in OnCollisionEnter2D when colliding with opponent
     public virtual IEnumerator ApplyKnockback(float otherPower, Rigidbody2D otherRB)
     {
-        Debug.Log("ApplyKnockback!");
+        //Debug.Log("ApplyKnockback!");
 
         //REPLACE THIS WITH STUNNED SPRITE!!!!!!!!!!!!
         sr.sprite = spriteSet[0];
@@ -836,8 +890,8 @@ public class PlayerController : MonoBehaviour
 
         float directnessRatio = otherDirectness/directness;
 
-        Debug.Log("Player" + idx + " directness: " + directness);
-        Debug.Log("Player" + idx + " movePower: " + movePower);
+        //Debug.Log("Player" + idx + " directness: " + directness);
+        //Debug.Log("Player" + idx + " movePower: " + movePower);
 
 
         //overall strength: takes directness and power into account
@@ -888,13 +942,20 @@ public class PlayerController : MonoBehaviour
             if(otherRB.TryGetComponent<ShotObj>(out ShotObj shot))
             {
                 shot.StartCoroutine(shot.HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
-                GameObject part = Instantiate(hitPart, (transform.position + otherRB.transform.position)/2, Quaternion.identity);
-                part.GetComponent<HitEffect>().Init(.5f, maxHitstop * hitstopCurve.Evaluate(hitstop)*1.1f);
+
+                if(hitstop >= .3f)
+                {
+                    GameObject part = Instantiate(hitPart, (transform.position + otherRB.transform.position)/2, Quaternion.identity);
+                    part.GetComponent<HitEffect>().Init(.5f, maxHitstop * hitstopCurve.Evaluate(hitstop)*1.1f);
+                }
             }
         } else if(idx < otherRB.gameObject.GetComponent<PlayerController>().idx)
             {
-                GameObject part = Instantiate(hitPart, (transform.position + otherRB.transform.position)/2, Quaternion.identity);
-                part.GetComponent<HitEffect>().Init(.5f, maxHitstop * hitstopCurve.Evaluate(hitstop)*1.1f);
+                if(hitstop >=.3f)
+                {
+                    GameObject part = Instantiate(hitPart, (transform.position + otherRB.transform.position)/2, Quaternion.identity);
+                    part.GetComponent<HitEffect>().Init(.5f, maxHitstop * hitstopCurve.Evaluate(hitstop)*1.1f);
+                }
             }
 
         

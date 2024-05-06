@@ -59,10 +59,15 @@ public class DummyController : AgentController
 
     public void KillDummy()
     {
-        Debug.Log("+2 reward received");
-        agentTransform.GetComponent<MLAgent>().SetReward(2);
+        Debug.Log("+200 reward received");
+        agentTransform.GetComponent<MLAgent>().AddReward(200);
         agentTransform.GetComponent<MLAgent>().EndEpisode();
     }
+
+     public override IEnumerator ApplyKnockback(float otherPower, Rigidbody2D otherRB)
+     {
+        return base.ApplyKnockback(otherPower, otherRB);
+     }
 
 
 

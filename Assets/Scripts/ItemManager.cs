@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
-    InputManager im;
-    GameManager gm;
+    //public InputManager im;
+    [HideInInspector] public GameManager gm;
 
     public GameObject ItemPrefab;
     public List<GameObject> ItemObjs;
@@ -21,7 +21,7 @@ public class ItemManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
+        //im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         //TEST TEST TEST - for testing purposes
@@ -49,10 +49,10 @@ public class ItemManager : MonoBehaviour
             float rand = Random.value;
             if (rand <= .9f) //9/10 chance for shot+ink+wall
             {
-                type = Random.Range(0,3);
+                type = Random.Range(0,4);
             } else //1/10 chance for grow
             {
-                type = 3;
+                type = 4;
             }
         }
         
@@ -79,7 +79,13 @@ public class ItemManager : MonoBehaviour
                 Debug.Log("spawned wall at " + pos.position);
                 break;
             
-            case 3: //grow
+            case 3: //warp
+                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<WarpBehavior>() as WarpBehavior;
+                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[4];
+                Debug.Log("spawned warp at " + pos.position);
+                break;
+            
+            case 4: //grow
                 newItem.GetComponent<ItemController>().ib = newItem.AddComponent<GrowBehavior>() as GrowBehavior;
                 newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[2];
                 Debug.Log("spawned grow at " + pos.position);
@@ -106,7 +112,6 @@ public class ItemManager : MonoBehaviour
 
         while(gm.battleStarted)
         {
-            //if(!im.gameStarted) {break;}
             timer += Time.deltaTime;
 
             if(timer >= spawnRate)
