@@ -4,10 +4,10 @@ using System;
 
 public class AudioManager : MonoBehaviour
 {
-    public Sound[] sounds;
+    /*[SerializeField]*/ public Sound[] sounds;
 
 
-    void Awake()
+    public void Awake()
     {
         foreach (Sound s in sounds)
         {
@@ -17,6 +17,9 @@ public class AudioManager : MonoBehaviour
             s.source.pitch = s.pitch;
             s.source.loop = s.loop;
         }
+
+        //Play("MenuTheme1");
+        
     }
 
     void Start()
@@ -27,9 +30,14 @@ public class AudioManager : MonoBehaviour
     //plays sound of name
     public void Play (string name)
     {
+        if(name == "Menu")
+        {
+            return;
+        }
+
+        Debug.Log("playing sound: " + name);
         Sound s = Array.Find(sounds, sound => sound.name == name);
         s.source.Play();
-        Debug.Log("playing sound: " + name);
     }
 
     //plays random sound from designated type
@@ -48,7 +56,7 @@ public class AudioManager : MonoBehaviour
                 break;
 
             case "BattleTheme":
-                n = UnityEngine.Random.Range(1,3);
+                n = UnityEngine.Random.Range(1,4);
                 break;
 
             default:
@@ -62,7 +70,21 @@ public class AudioManager : MonoBehaviour
 
     public void Stop (string name)
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
+        if(name == "Menu")
+        {
+            return;
+        }
+
+        Sound s = Array.Find(sounds, sound => sound.name == name);        
+
+        if(s == null)
+        {
+            Debug.Log("ERROR sound not found!");
+        }
+
         s.source.Stop();
+
+        Debug.Log("stopping sound: " + s.name);
+        Debug.Log("s.source = " + s.source.name);
     }
 }

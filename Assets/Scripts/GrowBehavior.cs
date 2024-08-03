@@ -4,10 +4,8 @@ using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class GrowBehavior : MonoBehaviour, IItemBehavior
+public class GrowBehavior : ItemBehavior
 {
-    ItemManager im;
-    PlayerController pc;
     Rigidbody2D rb;
 
     float minSize = 1.5f;
@@ -33,27 +31,20 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
 
 
     // Start is called before the first frame update
-    void Start()
+    public override void Start()
     {
-        im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
+        base.Start();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
-    public string GetItemType()
+    public override string GetItemType()
     {
         return "Grow";
     }
 
 
-    public void UseItem(float chargeTime)
+    public override void UseItem(float chargeTime)
     {
-        pc = GetComponentInParent<PlayerController>();
+        //pc = GetComponentInParent<PlayerController>();
         rb = pc.GetComponent<Rigidbody2D>();
 
         defaultScale = pc.defaultScale;
@@ -64,14 +55,15 @@ public class GrowBehavior : MonoBehaviour, IItemBehavior
         defaultMaxMovePower = pc.defaultMaxMovePower;
         defaultMaxHitstop = pc.defaultMaxHitstop;
         
-
+        HideSprite();
+        
         StartCoroutine(GrowPlayer(chargeTime));
 
     }
 
-    public void DestroyItem()
+    public override void DestroyItem()
     {
-        pc = GetComponentInParent<PlayerController>();
+        //pc = GetComponentInParent<PlayerController>();
         rb = pc.GetComponent<Rigidbody2D>();
 
         //failsafes

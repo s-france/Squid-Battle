@@ -3,37 +3,30 @@ using System.Collections.Generic;
 //using UnityEditor.U2D.Path;
 using UnityEngine;
 
-public class WallBehavior : MonoBehaviour, IItemBehavior
+public class WallBehavior : ItemBehavior
 {
-    ItemManager im;
     GameObject WallPrefab;
 
     // Start is called before the first frame update
-    void Start()
+    public override void Start()
     {
-        im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
+        base.Start();
+
         WallPrefab = im.ItemObjs[2]; //wall prefab in slot 2
-
     }
 
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public string GetItemType()
+    public override string GetItemType()
     {
         return "Wall";
     }
 
 
-    public void UseItem(float charge)
+    public override void UseItem(float charge)
     {
         GameObject Wall = Instantiate(WallPrefab, Vector3.zero, Quaternion.identity);
-        Wall.GetComponent<WallObj>().pc = GetComponentInParent<PlayerController>();
-        Wall.GetComponent<WallObj>().tr = GetComponentInParent<PlayerController>().GetComponentInChildren<TrailRenderer>();
+        Wall.GetComponent<WallObj>().pc = pc;
+        Wall.GetComponent<WallObj>().tr = pc.GetComponentInChildren<TrailRenderer>();
         Wall.GetComponent<WallObj>().tr.emitting = true;
 
         DestroyItem();
@@ -41,9 +34,9 @@ public class WallBehavior : MonoBehaviour, IItemBehavior
 
 
     
-    public void DestroyItem()
+    public override void DestroyItem()
     {
-        GameObject.Destroy(gameObject);
+        base.DestroyItem();
     }
 
 

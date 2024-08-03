@@ -45,6 +45,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
+  - name: Menu
+    clip: {fileID: 8300000, guid: 6424c94b396211c4695927fb080129e3, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
   - name: BattleTheme1
     clip: {fileID: 8300000, guid: 05f345b324ea69a4ab2713b65da9273a, type: 3}
     volume: 0.5
@@ -53,6 +59,12 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: BattleTheme2
     clip: {fileID: 8300000, guid: 1e819a307aa51ed4fb48b18b6dacbeea, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: BattleTheme3
+    clip: {fileID: 8300000, guid: 022f9a42e22a98d42bff1fbe41dc41c8, type: 3}
     volume: 0.5
     pitch: 1
     loop: 1

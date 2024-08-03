@@ -49,10 +49,10 @@ public class ItemManager : MonoBehaviour
             float rand = Random.value;
             if (rand <= .9f) //9/10 chance for shot+ink+wall
             {
-                type = Random.Range(0,4);
+                type = Random.Range(0,5);
             } else //1/10 chance for grow
             {
-                type = 4;
+                type = 5;
             }
         }
         
@@ -85,7 +85,13 @@ public class ItemManager : MonoBehaviour
                 Debug.Log("spawned warp at " + pos.position);
                 break;
             
-            case 4: //grow
+            case 4: //rewind
+                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<RewindBehavior>() as RewindBehavior;
+                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[5];
+                Debug.Log("spawned rewind at " + pos.position);
+                break;
+            
+            case 5: //grow
                 newItem.GetComponent<ItemController>().ib = newItem.AddComponent<GrowBehavior>() as GrowBehavior;
                 newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[2];
                 Debug.Log("spawned grow at " + pos.position);
@@ -194,14 +200,14 @@ public class ItemManager : MonoBehaviour
 
 public class ItemConfig
 {
-    public ItemConfig(IItemBehavior item, int idx, int spawn)
+    public ItemConfig(ItemBehavior item, int idx, int spawn)
     {
         itemObj = item;
         playerIndex = -1;
         isActive = true;
     }
 
-    IItemBehavior itemObj {get; set;}
+    ItemBehavior itemObj {get; set;}
     public int itemType {get; set;}
     public int itemIndex {get; set;} //MANAGER MUST ASSIGN ON CREATION
     public int playerIndex {get; set;} //assigned player -> -1 for unassigned

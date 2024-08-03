@@ -3,43 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class ShotBehavior : MonoBehaviour, IItemBehavior
+public class ShotBehavior : ItemBehavior
 {
-    ItemManager im;
+
     GameObject ShotPrefab;
     
     // Start is called before the first frame update
-    void Start()
+    public override void Start()
     {
-        im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
+        base.Start();
+
         ShotPrefab = im.ItemObjs[0];
-
-
         Debug.Log("ShotBehavior added!");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
-    public string GetItemType()
+    public override string GetItemType()
     {
         return "Shot";
     }
     
 
-    public void UseItem(float chargeTime)
+    public override void UseItem(float chargeTime)
     {
-        GameObject shot = Instantiate(ShotPrefab, transform.parent.Find("ItemSpawn").position, transform.parent.Find("ItemSpawn").rotation);
+        GameObject shot = Instantiate(ShotPrefab, pc.transform.Find("ItemSpawn").position, pc.transform.Find("ItemSpawn").rotation);
         shot.GetComponent<ShotObj>().Shoot(chargeTime);
         DestroyItem();
     }
 
-    public void DestroyItem()
+    public override void DestroyItem()
     {
-        GameObject.Destroy(gameObject);
+        base.DestroyItem();
     }
 
 }

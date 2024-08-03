@@ -39,8 +39,8 @@ public class ShotObj : MonoBehaviour
     void FixedUpdate()
     {
         rb.velocity = rb.velocity.normalized * shotSpeed;
-        Debug.Log("shotspeed = " + shotSpeed);
-        Debug.Log("velocity = " + rb.velocity);
+        //Debug.Log("shotspeed = " + shotSpeed);
+        //Debug.Log("velocity = " + rb.velocity);
     }
 
 

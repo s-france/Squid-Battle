@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -12,6 +13,7 @@ public class InputManager : MonoBehaviour
     ItemManager itemMan;
     PlayerManager pm;
     GameManager gm;
+    [SerializeField] public PlayerInputManager pim;
 
 
     private void Awake()
@@ -27,6 +29,7 @@ public class InputManager : MonoBehaviour
         //itemMan = GameObject.Find("ItemManager").GetComponent<ItemManager>();
         pm = GetComponentInParent<PlayerManager>();
         gm = GetComponentInParent<GameManager>();
+        pim = GetComponent<PlayerInputManager>();
 
         //ui.HideAllPlayers();
     }
@@ -52,11 +55,17 @@ public class InputManager : MonoBehaviour
             pm.playerList[pi.playerIndex].playerScript.Init();
 
             pm.DeactivatePlayer(pi.playerIndex);
+            
             //only show new player if on Start Menu
+            /*
             if(SceneManager.GetActiveScene().name == "StartMenu")
             {
                 pm.ReactivatePlayer(pi.playerIndex);
             }
+            */
+
+            gm.lc.OnPlayerJoin(pi.playerIndex);
+        
         }
     }
 
@@ -74,7 +83,7 @@ public class InputManager : MonoBehaviour
     {
         pm.playerList[pi.playerIndex].isActive = true;
         //REWORK: use OnStartMenu - not battlestarted
-        if (SceneManager.GetActiveScene().name == "StartMenu")
+        if (gm.lc.GetLevelType() == 1)
         {
             pm.ReactivatePlayer(pi.playerIndex);
         }

@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject pmPrefab;
 
     PlayerManager pm;
-    [HideInInspector] public ILevelController lc;
+    [HideInInspector] public LevelController lc;
     [HideInInspector] public SceneLoader sl;
     [HideInInspector] public bool battleStarted;
 
@@ -27,17 +27,9 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(Instance);
             
-            GameObject PlayerManager = Instantiate(pmPrefab, transform.position, transform.rotation);
-            PlayerManager.transform.parent = this.transform;
-            pm = PlayerManager.GetComponent<PlayerManager>();
-            //pm = GetComponentInChildren<PlayerManager>();
-            pm.Init();
-
-            
-
 
             sl = GetComponentInChildren<SceneLoader>();
-            lc = GameObject.Find("LevelController").GetComponent<ILevelController>();
+            lc = GameObject.Find("LevelController").GetComponent<LevelController>();
 
             battleStarted = false;
 
@@ -62,7 +54,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("stopping music!!!");
         //turn off battle music
-        FindObjectOfType<AudioManager>().Stop("BattleTheme");
+        FindFirstObjectByType<AudioManager>().Stop("BattleTheme");
 
 
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Despawns"))
@@ -88,6 +80,15 @@ public class GameManager : MonoBehaviour
             Transform spawn = this.gameObject.transform.GetChild(p.playerIndex);
             p.input.gameObject.transform.position = spawn.position;
         }
+    }
+
+    //Instantiates pm
+    public void CreatePlayerManager()
+    {
+        GameObject PlayerManager = Instantiate(pmPrefab, transform.position, transform.rotation);
+        PlayerManager.transform.parent = this.transform;
+        pm = PlayerManager.GetComponent<PlayerManager>();
+        pm.Init();
     }
 
     

@@ -2,45 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InkBehavior : MonoBehaviour, IItemBehavior
+public class InkBehavior : ItemBehavior
 {
-    ItemManager im;
     GameObject InkPrefab;
 
     // Start is called before the first frame update
-    void Start()
+    public override void Start()
     {
-        im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
+        base.Start();
+
         InkPrefab = im.ItemObjs[1]; //ink prefab in slot 1
-
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
-    public string GetItemType()
+    public override string GetItemType()
     {
         return "Ink";
     }
 
 
 
-     public void UseItem(float chargeTime)
+     public override void UseItem(float chargeTime)
     {
         //MUST CHANGE SPAWN DISTANCE
       
         //Vector2 InkSpawn = transform.parent.position - 1.2f*transform.parent.up;
 
-        GameObject ink = Instantiate(InkPrefab, transform.parent.Find("ItemSpawn").position, transform.parent.Find("ItemSpawn").rotation);
+        GameObject ink = Instantiate(InkPrefab, pc.transform.Find("ItemSpawn").position, pc.transform.Find("ItemSpawn").rotation);
         ink.GetComponent<InkObj>().Deploy(chargeTime);
         DestroyItem();
     }
 
-    public void DestroyItem()
+    public override void DestroyItem()
     {
-        GameObject.Destroy(gameObject);
+        base.DestroyItem();
     }
 }

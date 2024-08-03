@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -11,11 +13,14 @@ using UnityEngine.SceneManagement;
 public class PlayerManager : MonoBehaviour
 {
     GameManager gm;
+    [HideInInspector] public InputManager im;
 
     //REWORK!!!
     [HideInInspector] public List<PlayerConfig> playerList {get; private set;}
     
     /*[HideInInspector]*/ public int colorsCount;
+    int[] TakenColors;
+
     public Sprite[] blueSprites;
     public Sprite[] cyanSprites;
     public Sprite[] greenSprites;
@@ -40,6 +45,7 @@ public class PlayerManager : MonoBehaviour
     public void Init()
     {
         gm = GetComponentInParent<GameManager>();
+        im = GetComponentInChildren<InputManager>();
 
         playerList = new List<PlayerConfig>();
         
@@ -57,7 +63,10 @@ public class PlayerManager : MonoBehaviour
 
         colorsCount = playerSprites.Length - 1;
 
-        GetComponentInChildren<InputManager>().Init();
+        TakenColors = new int[colorsCount+1];
+        Array.Clear(TakenColors, 0, TakenColors.Length);
+
+        im.Init();
 
         winnerIdx = -1;
     }
@@ -72,7 +81,59 @@ public class PlayerManager : MonoBehaviour
     //sets player color
     public void SetPlayerColor(int idx, int color)
     {
+        if(TakenColors[playerList[idx].color] > 0)
+        {
+            TakenColors[playerList[idx].color]--;
+        }
+
         playerList[idx].color = color;
+
+        TakenColors[playerList[idx].color]++;
+
+        //updates player's UI colors
+        gm.lc.SetUIColors(idx);
+
+    }
+
+
+    //finds first available colorID after/including idx
+    //LeftRight = -1 -> search to the left
+    //LefRight = 1 -> searchto the right
+    public int FindFirstAvailableColorID(int idx, int LeftRight)
+    {
+        if(LeftRight != -1 && LeftRight != 1)
+        {
+            Debug.Log("ERROR: LeftRight input must be = -1 or 1");
+            return -1;
+        }
+        
+        int result = idx;
+
+        if(result < 0)
+        {
+            result = colorsCount;
+        } else if(result > colorsCount)
+        {
+            result = 0;
+        }
+
+        
+        //loop through colors starting at idx
+        while(TakenColors[result] > 0)
+        {
+            result += LeftRight;
+
+            if(result < 0)
+            {
+                result = colorsCount;
+            } else if(result > colorsCount)
+            {
+                result = 0;
+            }
+        }
+
+        //return first "available" color
+        return result;
     }
 
 
@@ -81,19 +142,8 @@ public class PlayerManager : MonoBehaviour
         playerList[idx].isReady = true;
         Debug.Log("player" + playerList[idx].playerIndex + " is ready: " + playerList[idx].isReady);
 
-        if(gm.lc.GetLevelType() == 0)
-        {
-            UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
-            ui.ReadyPlayer(idx);
-        }
-
-        //start game if all active players are ready && more than 1 player
-        if((playerList.TrueForAll(p => (p.isReady || !p.isActive))) && playerList.Count(p => p.isActive) > 1 && SceneManager.GetActiveScene().name == "StartMenu")
-        {
-            //load map select
-            gm.sl.LoadScene("MapSelect");
-            
-        }
+        //handled in CharacterSelectLC
+        gm.lc.ReadyPlayer(idx);
     }
 
 
@@ -103,8 +153,8 @@ public class PlayerManager : MonoBehaviour
 
         if(gm.lc.GetLevelType() == 0)
         {
-            UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
-            ui.UnReadyPlayer(idx);
+            //UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
+            //ui.UnReadyPlayer(idx);
         }
 
         //start game if all active players are ready && more than 1 player
@@ -126,8 +176,8 @@ public class PlayerManager : MonoBehaviour
 
         if(gm.lc.GetLevelType() == 0)
         {
-            UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
-            ui.ShowPlayerUI(idx);
+            //UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
+            //ui.ShowPlayerUI(idx);
         }
 
         Debug.Log("player" + idx + " reactivated!");
@@ -147,8 +197,8 @@ public class PlayerManager : MonoBehaviour
 
         if(gm.lc.GetLevelType() == 0)
         {
-            UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
-            ui.HidePlayerUI(idx);
+            //UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
+            //ui.HidePlayerUI(idx);
         }
         
 
@@ -207,14 +257,17 @@ public class PlayerConfig
         input = pi;
         playerIndex = pi.playerIndex;
         playerScript = pi.GetComponentInParent<PlayerController>();
+        playerManager = UnityEngine.Object.FindFirstObjectByType<PlayerManager>();
         isReady = false;
         isActive = true;
         isAlive = true;
         isInBounds = true;
-        color = pi.playerIndex;
+        //color = pi.playerIndex;
+        color = playerManager.FindFirstAvailableColorID(pi.playerIndex, 1);
     }
 
     public PlayerController playerScript {get; set;} //player prefab object
+    public PlayerManager playerManager {get; set;}
     public PlayerInput input {get; set;}
     public int playerIndex {get; set;}
     public bool isReady {get; set;}

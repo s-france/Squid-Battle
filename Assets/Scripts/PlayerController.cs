@@ -12,12 +12,15 @@ using UnityEngine.Assertions.Must;
 using UnityEngine.Timeline;
 using UnityEngine.InputSystem.Switch;
 using System.Linq;
+using UnityEngine.InputSystem.UI;
+using System.Runtime.InteropServices;
+using Unity.Barracuda;
 //using System.Numerics;
 //using System.Numerics;
 
 public class PlayerController : MonoBehaviour
 {
-    GameManager gm;
+    [HideInInspector] public GameManager gm;
     [HideInInspector] public PlayerManager pm;
     [HideInInspector] public InputManager im;
     [SerializeField] public PlayerInput pi;
@@ -40,12 +43,16 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public int idx;
     [HideInInspector] public int colorID;
-    [HideInInspector] public List<IItemBehavior> heldItems;
+    [HideInInspector] public List<ItemBehavior> heldItems;
     [HideInInspector] public int selectedItemIdx;
     [HideInInspector] public bool charging;
     [HideInInspector] public float chargeTime;
     [HideInInspector] public bool specialCharging;
     [HideInInspector] public float specialChargeTime;
+
+    float staticTimer = 0;
+    [SerializeField] public int rewindSize;
+    [HideInInspector] public Queue<PlayerState> prevStates;
 
     //NEW movement system
     [SerializeField] public AnimationCurve moveCurve; //speed:time movement curve
@@ -77,6 +84,7 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public bool isCoolingDown;
     [HideInInspector] public bool isGrown;
+    [HideInInspector] public bool isRewind;
     [HideInInspector] public bool isInBounds; //copy of pm.playerList[idx].isInBounds
 
 
@@ -85,6 +93,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float maxChargeTime;
     [SerializeField] public float minCharge;
     [SerializeField] public float maxChargeHoldTime;
+    [SerializeField] public float specialMoveMod;
+    [SerializeField] public float OOBMoveMod;
+
     [SerializeField] public float knockbackMultiplier;
     //[SerializeField] float coolDownFactor;
     //[SerializeField] float moveCoolDown;
@@ -136,10 +147,12 @@ public class PlayerController : MonoBehaviour
             Debug.Log("device type: " + gp.GetType().ToString());
         }
 
+        //pi.uiInputModule = FindFirstObjectByType<InputSystemUIInputModule>();
+
         transform.parent = gm.transform.GetChild(0);
 
         idx = pm.playerList.FindIndex(i => i.input == this.gameObject.GetComponent<PlayerInput>());
-        colorID = idx;
+        colorID = pm.FindFirstAvailableColorID(idx, 1);
         Debug.Log("player idx (from playercontroller): " + idx);
 
 
@@ -150,7 +163,9 @@ public class PlayerController : MonoBehaviour
         }
         rc = this.GetComponentInChildren<ReticleController>();
 
-        heldItems = new List<IItemBehavior>();
+        heldItems = new List<ItemBehavior>();
+
+        prevStates = new Queue<PlayerState>(rewindSize);
 
         ChangeColor(colorID);
 
@@ -159,6 +174,8 @@ public class PlayerController : MonoBehaviour
         i_move = Vector2.zero;
         true_i_move = Vector2.zero;
         rotation = Vector3.zero;
+
+        isRewind = false;
 
         //set default stats
         defaultScale = transform.localScale;
@@ -187,6 +204,11 @@ public class PlayerController : MonoBehaviour
 
     public virtual void FixedUpdate()
     {
+        if(gm.battleStarted)
+        {
+            TrackStatesTick();
+        }
+
         MovementTick();
     }
 
@@ -236,6 +258,8 @@ public class PlayerController : MonoBehaviour
     {
         ResetDefaultStats();
 
+        prevStates.Clear();
+
         StopAllCoroutines();
         
 
@@ -247,12 +271,14 @@ public class PlayerController : MonoBehaviour
         chargeTime = 0;
         charging = false;
         specialCharging = false;
+        isRewind = false;
         ClearInventory();
         this.GetComponent<CircleCollider2D>().enabled = false;
         this.GetComponent<SpriteRenderer>().enabled = false;
         GetComponentInChildren<TrailRenderer>().emitting = false;
         GetComponentInChildren<TrailRenderer>().Clear();
         rc.DeactivateReticle();
+        
 
         gp.SetMotorSpeeds(0,0);
 
@@ -296,12 +322,16 @@ public class PlayerController : MonoBehaviour
     public void OnControllerDisconnect(PlayerInput pi)
     {
         im.OnPlayerLeave(pi);
+
+        gm.lc.OnPlayerLeave(idx);
     }
 
     //runs when d/c controller reconnected
     public void OnControllerReconnect(PlayerInput pi)
     {
         im.OnPlayerReconnect(pi);
+        
+        gm.lc.OnPlayerReconnect(idx);
     }
 
     //called when move (stick) input received
@@ -354,16 +384,13 @@ public class PlayerController : MonoBehaviour
     //called when charge (button) input received
     public virtual void OnCharge(InputAction.CallbackContext ctx)
     {
+        
+
         //Debug.Log(ctx.phase);
         if(ctx.performed && pm.playerList[idx].isInBounds) //charging
         {
             //Debug.Log("charging!!");
             
-            if(!gm.battleStarted && !pm.playerList[idx].isActive && GameObject.Find("LevelController").GetComponent<ILevelController>().GetLevelType() != 1)
-            {
-                Debug.Log("Reconnect!!");
-                OnControllerReconnect(GetComponent<PlayerInput>());
-            }
 
             chargeTime = 0;
             charging = true;
@@ -393,6 +420,9 @@ public class PlayerController : MonoBehaviour
 
                 if(gm.battleStarted)
                 {
+                    
+                    RotateSprite(i_move);
+
                     if(chargeTime/maxChargeHoldTime >= .85f)
                     {
                         gp.SetMotorSpeeds(maxRumbleStrength * 7, maxRumbleStrength * 7);
@@ -417,11 +447,6 @@ public class PlayerController : MonoBehaviour
             }
             
 
-            //readyUp if held for 1 secs before game
-            if(chargeTime > 1 && !gm.battleStarted && !pm.playerList[idx].isReady)
-            {
-                ReadyUp();
-            }
             yield return null;
         }
 
@@ -429,8 +454,6 @@ public class PlayerController : MonoBehaviour
         if(gm.battleStarted && !isCoolingDown && pm.playerList[idx].isInBounds /*&& !specialCharging*/) //perform movement during match
         {
             ApplyMove(0, i_move, chargeTime);
-
-
         } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
         {
             sr.sprite = spriteSet[0];
@@ -498,7 +521,7 @@ public class PlayerController : MonoBehaviour
         if (type == 1) //cut special move length
         {
             //return moveForce * .35f;
-            return moveVector * .35f;
+            return moveVector * specialMoveMod;
 
         } else
         {
@@ -512,7 +535,7 @@ public class PlayerController : MonoBehaviour
     void CoolDown()
     {
         //TEMP FIX - NEEDS MORE SIGNIFICANT REWORKING
-        if(moveTimer/moveTime < .9f)
+        if(moveTimer/moveTime < .9f || isRewind)
         {
             isCoolingDown = true;
         } else
@@ -548,6 +571,9 @@ public class PlayerController : MonoBehaviour
             if(heldItems.Any() && heldItems[selectedItemIdx].GetItemType() == "Warp")
             {
                 StartCoroutine(rc.RenderWarpReticle());
+            } else if(heldItems.Any() && heldItems[selectedItemIdx].GetItemType() == "Rewind")
+            {
+                StartCoroutine(rc.RenderRewindReticle());
             } else
             {
                 StartCoroutine(rc.RenderReticle());
@@ -585,11 +611,6 @@ public class PlayerController : MonoBehaviour
                 specialChargeTime = 0;
             }
 
-            //drop out if held for 1 secs before game
-            if(specialChargeTime > 1 && !gm.battleStarted && GameObject.Find("LevelController").GetComponent<ILevelController>().GetLevelType() != 1)
-            {
-                OnControllerDisconnect(gameObject.GetComponent<PlayerInput>());
-            }
 
             yield return null;
         }
@@ -602,15 +623,15 @@ public class PlayerController : MonoBehaviour
                 if(heldItems[selectedItemIdx].GetItemType() == "Wall")
                 {
                     //Debug.Log("WALL MOVEMENT");
-                    ApplyMove(0, i_move, specialChargeTime);
+                    ApplyMove(0, i_move, Mathf.Clamp(specialChargeTime, 0, maxChargeTime));
                 } else if(heldItems[selectedItemIdx].GetItemType() != "Warp")
                 {
-                    ApplyMove(0, i_move, .35f * Mathf.Clamp(specialChargeTime, 0, maxChargeTime));
+                    ApplyMove(0, i_move, specialMoveMod * Mathf.Clamp(specialChargeTime, 0, maxChargeTime));
                 }
                 
             }else if(isInBounds)
             {
-                ApplyMove(0, i_move, .35f * Mathf.Clamp(specialChargeTime, minCharge, maxChargeTime));
+                ApplyMove(0, i_move, specialMoveMod * Mathf.Clamp(specialChargeTime, minCharge, maxChargeTime));
             }
 
             UseItem(selectedItemIdx);
@@ -625,7 +646,7 @@ public class PlayerController : MonoBehaviour
         specialChargeTime = 0;
     }
 
-    public void GainItem(IItemBehavior item)
+    public void GainItem(ItemBehavior item)
     {
         heldItems.Add(item);
         //Debug.Log("player" + idx + " gained an item!");
@@ -645,9 +666,12 @@ public class PlayerController : MonoBehaviour
     void ClearInventory()
     {
         
-        foreach (IItemBehavior item in heldItems)
+        foreach (ItemBehavior item in heldItems)
         {
-            item.DestroyItem();
+            if(item != null)
+            {
+                item.DestroyItem();
+            }
         }
         heldItems.Clear();
         
@@ -655,41 +679,24 @@ public class PlayerController : MonoBehaviour
 
     public void OnSelectL(InputAction.CallbackContext ctx)
     {
-        if(ctx.performed)
-        {
-            if(!gm.battleStarted) //change color only before match
-            {
-                colorID = (colorID - 1);
-                if(colorID < 0) {colorID = pm.colorsCount;}
-                ChangeColor(colorID);
-            } else
-            {
-                //whatever L does during gameplay
-                //maybe swaps between items idk
-            }
-        }
+
+        //whatever L does during gameplay
+        //maybe swaps between items idk
+
     }
 
     public void OnSelectR(InputAction.CallbackContext ctx)
     {
-        if(ctx.performed)
-        {
-            if(!gm.battleStarted) //change color only before match
-            {
-                colorID = (colorID + 1);
-                if(colorID > pm.colorsCount) {colorID = 0;}
-                ChangeColor(colorID);
-            } else
-            {
-                //whatever R does during gameplay
-                //maybe swaps between items idk
-            }
-        }
+        //whatever R does during gameplay
+        //maybe swaps between items idk
+      
     }
 
     //change color - updates sprite
     public void ChangeColor(int color)
     {
+        colorID = color;
+
         spriteSet = pm.playerSprites[color];
         sr.sprite = spriteSet[0];
 
@@ -729,7 +736,7 @@ public class PlayerController : MonoBehaviour
                 rb.velocity = moveCurve.Evaluate(moveTimer/moveTime) * moveSpeed * (rb.velocity.normalized + DIMod);
 
                 //ADD THIS: should only rotate sprite if in player-inputted movement, i.e. NOT in knockback state
-                if(isMoving && !isKnockback)
+                if(isMoving && !isKnockback && isCoolingDown)
                 {
                     RotateSprite(rb.velocity.normalized);
                     //not a great fix but it works
@@ -752,18 +759,22 @@ public class PlayerController : MonoBehaviour
                 isKnockback = false;
             }
             moveTime = 0;
-            movePower = 0;
             moveSpeed = 0;
 
+            if(!isRewind)
+            {
+                movePower = 0;
+                rb.velocity = Vector2.zero;
+            }
+
             //may cause problems in the future
-            rb.velocity = Vector2.zero;
             sr.sprite = spriteSet[0];
 
 
         }
 
         //failsafe
-        if(!isMoving && !isKnockback)
+        if(!isMoving && !isKnockback && !isRewind)
         {
             rb.velocity = Vector2.zero;
         }
@@ -918,9 +929,13 @@ public class PlayerController : MonoBehaviour
             direction = rb.velocity.normalized;
         }
         */
+        //apply hitstop
+        float hitstop = (strength > otherStrength) ? (strength/maxMovePower) : (otherStrength/maxMovePower);
+        StartCoroutine(HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
 
         Vector2 otherImpactDirection = otherRB.velocity.normalized;
         yield return new WaitForFixedUpdate();
+
         //direction = (otherStrength * pre-impact otherPlayer.direction) + (strenght * post-impact thisPlayer.direction)
         //direction = ((movePower * rb.velocity.normalized) + (otherStrength * otherImpactDirection)).normalized;
         direction = rb.velocity.normalized;
@@ -929,14 +944,12 @@ public class PlayerController : MonoBehaviour
 
 
 
-        //apply hitstop
-        float hitstop = (strength > otherStrength) ? (strength/maxMovePower) : (otherStrength/maxMovePower);
-        StartCoroutine(HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
+        
 
         //impact particle effect
         
 
-        //behavior for non-player hitstop collisions
+        //particle behavior for non-player hitstop collisions
         if(LayerMask.LayerToName(otherRB.gameObject.layer) != "Players")
         {
             if(otherRB.TryGetComponent<ShotObj>(out ShotObj shot))
@@ -959,9 +972,13 @@ public class PlayerController : MonoBehaviour
             }
 
         
-        //apply movement - type 1
-        //need to calculate direction and charge
-        ApplyMove(1, direction, knockbackMultiplier * otherStrength);
+        if(!isRewind)
+        {
+            //apply movement - type 1
+            //need to calculate direction and charge
+            ApplyMove(1, direction, knockbackMultiplier * otherStrength);
+        }
+        
 
     }
 
@@ -973,6 +990,37 @@ public class PlayerController : MonoBehaviour
         var main = bubblePart.main;
         main.duration = time;
         bubblePart.Play();
+    }
+
+    //called in FixedUpdate if gm.gamestarted
+    void TrackStatesTick()
+    {
+        //always store state if moving
+        if(isMoving || isKnockback || isRewind)
+        {
+            staticTimer = 0;
+
+            PlayerState s = new PlayerState(transform.position.x, transform.position.y, movePower);
+            prevStates.Enqueue(s);
+        } else
+        {
+            //store .2s of states when stationary
+            if(staticTimer <= .25f)
+            {
+                PlayerState s = new PlayerState(transform.position.x, transform.position.y, movePower);
+                prevStates.Enqueue(s);
+            }
+            staticTimer += Time.fixedDeltaTime;
+        }
+
+        //prevent overfilling
+        while(prevStates.Count > rewindSize)
+        {
+            prevStates.Dequeue();
+        }
+
+        //Debug.Log("prevStates.Count: " + prevStates.Count);
+        //Debug.Log("prevStates: " + prevStates);
     }
 
 

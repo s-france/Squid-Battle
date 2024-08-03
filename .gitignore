@@ -13,6 +13,9 @@
 #ignore python venv libraries (mlagents)
 /[Mm][Ll]venv/[Ll]ib
 
+#ignore machine learning results
+/[Rr]esults/
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/

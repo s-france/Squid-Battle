@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 025fc8b57e2723c488cb1016234d6784, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gm: {fileID: 0}
   ItemPrefab: {fileID: 8962942876037893872, guid: ac33492e8e85ffa49bb3cbbf493ba07d, type: 3}
   ItemObjs:
   - {fileID: 7046570537419428875, guid: 6489b33c6d5cbc44dbef07b9062962db, type: 3}
@@ -55,6 +56,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 155a964163ff88a4389d888da83de41f, type: 3}
   - {fileID: 21300000, guid: 17f6546a1d5f34243b68df84b7aca603, type: 3}
   - {fileID: 21300000, guid: b442b87872ad5464386e2f83fe4712e3, type: 3}
+  - {fileID: 21300000, guid: 659a5333d26168e4c8f669281946c59e, type: 3}
   ItemSpawners: []
   itemTypesCount: 4
   spawnedItemsCount: 0

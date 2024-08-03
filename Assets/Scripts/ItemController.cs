@@ -7,9 +7,12 @@ public class ItemController : MonoBehaviour
     [HideInInspector] public Transform spawn;
 
     SpriteRenderer sr;
-    public IItemBehavior ib;
+    public ItemBehavior ib;
     ItemManager im;
-    PlayerController pc; //player that owns this item -> null until picked up
+    [HideInInspector] public PlayerController pc; //player that owns this item -> null until picked up
+
+    [SerializeField] float followSpeed;
+    [SerializeField] float accelRate;
 
     int itemType;
     int idx;
@@ -51,12 +54,17 @@ public class ItemController : MonoBehaviour
         {
             spawn.GetComponent<ItemSpawn>().isFull = false;
 
-            transform.SetParent(player);
+            //transform.SetParent(player);
+
             pc = playerPC;
-            sr.enabled = false; //hide sprite after pickup
+            ib.pc = playerPC;
+            //sr.enabled = false; //hide sprite after pickup
+            transform.localScale = new Vector3(.25f, .25f, 1);
             GetComponent<Collider2D>().enabled = false; //disable future collision
             
             pc.GainItem(ib);
+
+            StartCoroutine(Follow());
 
             Debug.Log("Item assigned to player" + pc.idx);
         } else
@@ -78,4 +86,18 @@ public class ItemController : MonoBehaviour
         }
 
     }
+
+
+    IEnumerator Follow()
+    {
+        float acceleration;
+        while (true)
+        {
+            acceleration = accelRate * (transform.position - pc.transform.Find("FollowPoint").position).magnitude;
+
+            transform.position = Vector2.MoveTowards(transform.position, pc.transform.Find("FollowPoint").position, followSpeed * acceleration * Time.deltaTime);
+            yield return null;
+        }
+    }
+
 }

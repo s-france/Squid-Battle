@@ -3,36 +3,32 @@ using System.Collections.Generic;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
-public class WarpBehavior : MonoBehaviour, IItemBehavior
+public class WarpBehavior : ItemBehavior
 {
-    PlayerController pc;
     [HideInInspector] public Vector2 warpPoint;
 
     // Start is called before the first frame update
-    void Start()
+    public override void Start()
     {
-        
+        base.Start();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
-    public string GetItemType()
+    public override string GetItemType()
     {
         return "Warp";
     }
 
-    public void UseItem(float chargeTime)
+    public override void UseItem(float chargeTime)
     {
         Debug.Log("Warping!!");
-        pc = GetComponentInParent<PlayerController>();
+        
+        HideSprite();
+
         StartCoroutine(Warp(chargeTime));
     }
 
-    public void DestroyItem()
+    public override void DestroyItem()
     {
         GameObject.Destroy(gameObject);
     }
