@@ -11,7 +11,7 @@
 /[Uu]ser[Ss]ettings/
 
 #ignore python venv libraries (mlagents)
-/[Mm][Ll]venv/[Ll]ib
+/[Mm][Ll]venv/
 
 #ignore machine learning results
 /[Rr]esults/
