@@ -93,6 +93,29 @@ public class NewMainMenuLC : LevelController
         pm.playerList[pm.playerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
     }
 
+    public void LoadMenu(int type)
+    {
+        SceneLoader sl = gm.GetComponentInChildren<SceneLoader>();
+
+        switch (type)
+        {
+            case 0: //Play
+                sl.LoadScene("ModeSelect");
+                break;
+            case 1: //Options
+                //LOAD OPTIONS MENU HERE!!
+                break;
+            case 2: //How to Play
+                //LOAD HOW2PLAY HERE!!
+                break;
+            case 3: //Extras
+                //LOAD EXTRAS/CREDITS HERE!!
+                break;
+            default:
+                break;
+        }
+    }
+
 
     public override int GetLevelType()
     {

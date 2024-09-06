@@ -8,10 +8,12 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
     [SerializeField] GameObject pmPrefab;
+    
 
     PlayerManager pm;
     [HideInInspector] public LevelController lc;
     [HideInInspector] public SceneLoader sl;
+    [HideInInspector] public MatchSettings ms;
     [HideInInspector] public bool battleStarted;
 
     // Start is called before the first frame update
@@ -30,6 +32,7 @@ public class GameManager : MonoBehaviour
 
             sl = GetComponentInChildren<SceneLoader>();
             lc = GameObject.Find("LevelController").GetComponent<LevelController>();
+            ms = GetComponent<MatchSettings>();
 
             battleStarted = false;
 

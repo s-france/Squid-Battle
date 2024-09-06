@@ -685,6 +685,34 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: a8ad16fd-5a71-4509-8739-1b2c9efcf979
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5de931cc-3360-4d7c-bbc6-d3cf910ef190
+    m_ActionName: 'UI/Join[/SwitchProControllerHID/leftShoulder,/DualShock4GamepadHID/leftShoulder,/SwitchProControllerHID/rightShoulder,/DualShock4GamepadHID/rightShoulder,/SwitchProControllerHID/leftTrigger,/DualShock4GamepadHID/leftTrigger,/SwitchProControllerHID/rightTrigger,/DualShock4GamepadHID/rightTrigger]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f4dcda03-96a5-42c5-b16d-eaedb2da758a
+    m_ActionName: 'UI/Back[/DualShock4GamepadHID/buttonEast,/SwitchProControllerHID/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7de12c66-e6cf-45d4-847a-75a387430655
+    m_ActionName: 'Menu/Confirm[/SwitchProControllerHID/buttonEast,/DualShock4GamepadHID/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 60248800-5eb6-43a0-b8d5-e36fc9dc61f9
+    m_ActionName: 'Menu/Back[/DualShock4GamepadHID/buttonEast,/SwitchProControllerHID/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0019131f-7c6b-466b-8dd5-da7a29c5254d
+    m_ActionName: 'Menu/Join[/SwitchProControllerHID/leftShoulder,/DualShock4GamepadHID/leftShoulder,/SwitchProControllerHID/rightShoulder,/DualShock4GamepadHID/rightShoulder,/SwitchProControllerHID/leftTrigger,/DualShock4GamepadHID/leftTrigger,/SwitchProControllerHID/rightTrigger,/DualShock4GamepadHID/rightTrigger]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0f5e5d9a-cae9-4667-8280-bf70eb516aba
+    m_ActionName: 'Menu/Select R[/SwitchProControllerHID/rightShoulder,/DualShock4GamepadHID/rightShoulder,/SwitchProControllerHID/rightTrigger,/DualShock4GamepadHID/rightTrigger]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: debd2828-4e77-4d24-8762-37f7bde7facf
+    m_ActionName: 'Menu/Select L[/SwitchProControllerHID/leftShoulder,/DualShock4GamepadHID/leftShoulder,/SwitchProControllerHID/leftTrigger,/DualShock4GamepadHID/leftTrigger]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: UI
@@ -773,10 +801,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 820123007}
-        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: LoadScene
-        m_Mode: 5
+      - m_Target: {fileID: 1864953011}
+        m_TargetAssemblyTypeName: NewMainMenuLC, Assembly-CSharp
+        m_MethodName: LoadMenu
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -833,6 +861,7 @@ GameObject:
   m_Component:
   - component: {fileID: 618565068}
   - component: {fileID: 618565067}
+  - component: {fileID: 618565069}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -855,6 +884,7 @@ MonoBehaviour:
   pmPrefab: {fileID: 7482079153633654983, guid: cf99134eb7372f14d8654a5f24d147ad, type: 3}
   lc: {fileID: 0}
   sl: {fileID: 0}
+  ms: {fileID: 0}
   battleStarted: 0
 --- !u!4 &618565068
 Transform:
@@ -874,6 +904,20 @@ Transform:
   - {fileID: 820123006}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &618565069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 618565066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be4c7a6fea5bbac47a471fec448cb3da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pointsToWin: 10
+  ActiveItems: 010101010101
 --- !u!1001 &704223514
 PrefabInstance:
   m_ObjectHideFlags: 0

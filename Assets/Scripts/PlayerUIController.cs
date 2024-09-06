@@ -47,11 +47,12 @@ public class PlayerUIController : MonoBehaviour
         {
             if(pm.playerList[pc.idx].isActive && !pm.playerList[pc.idx].isReady)
             {
-                pc.ReadyUp();
+                pm.ReadyPlayer(pc.idx);
+                //pc.ReadyUp();
             } else if (pm.playerList.TrueForAll(p => p.isReady || !p.isActive) && pm.playerList.Count(p => p.isActive) > 1)
             {
                 //load map select
-                gm.sl.LoadScene("PreMatch");
+                gm.sl.LoadScene("MatchSettings");
             }
 
         }
@@ -63,22 +64,60 @@ public class PlayerUIController : MonoBehaviour
     {
         //Debug.Log("Back action performed!!");
 
-        if(ctx.performed && gm.lc.GetLevelType() == 1)
+        Debug.Log("OnBack Called!");
+        
+
+        if(ctx.performed)
         {
-            //drop out if held for 1 secs before game
-            if(pc.pm.playerList[pc.idx].isActive && !gm.battleStarted)
+            Debug.Log("Back Performed!");
+
+            switch(gm.lc.GetLevelType())
             {
-                pc.OnControllerDisconnect(gameObject.GetComponent<PlayerInput>());
-                //(^^this calls lc.OnPlayerLeave)
-            } else if(!pc.pm.playerList[pc.idx].isActive)
-            {
-                //go to previous screen (mode select)
-                gm.sl.LoadScene("ModeSelect");
+                case 1:
+                    if(pc.pm.playerList[pc.idx].isActive && !gm.battleStarted)
+                    {
+                        if(pm.playerList[pc.idx].isReady)
+                        {
+                            //unReady player
+                            pm.UnReadyPlayer(pc.idx);
+                        } else //drop out if held for 1 secs before game
+                        {
+                            pc.OnControllerDisconnect(gameObject.GetComponent<PlayerInput>());
+                            //(^^this calls lc.OnPlayerLeave)
+                        }
+
+                        
+                    } else if(!pc.pm.playerList[pc.idx].isActive)
+                    {
+                        //go to previous screen (mode select)
+
+                        //TRY destroy playermanager here
+                        //GameObject.Destroy(pm.gameObject);
+                        pm.im.pim.DisableJoining();
+
+                        gm.sl.LoadScene("ModeSelect");
+
+                    }
+
+                    break;
+
+                case 2:
+                    //go to previous screen (main menu)
+                    gm.sl.LoadScene("MainMenu");
+                    break;
+
+                case 3:
+                    gm.lc.OnBack();
+                    break;
+
+                default:
+                    break;
+
 
             }
-            
-         
+
         }
+        
 
         
 

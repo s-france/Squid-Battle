@@ -41,7 +41,6 @@ public class InputManager : MonoBehaviour
         Debug.Log("Player joined!");
         Debug.Log("Index: " + pi.playerIndex);
         
-
         //make sure player index is not already added (not that that should ever happen)
         if(!pm.playerList.Any(p => p.playerIndex == pi.playerIndex))
         {

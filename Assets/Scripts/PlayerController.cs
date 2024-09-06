@@ -705,11 +705,12 @@ public class PlayerController : MonoBehaviour
         pm.SetPlayerColor(idx, color);
     }
 
-    public void ReadyUp()
+    //This is reduntant.  Use pm.ReadyPlayer(idx)
+    /*public void ReadyUp()
     {
         sr.sprite = spriteSet[2]; //charging sprite doubles as ready sprite
         pm.ReadyPlayer(idx);
-    }
+    }*/
 
 
 

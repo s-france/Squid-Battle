@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 
 
 public class ModeSelectLC : LevelController
 {
     [SerializeField] InputSystemUIInputModule SharedUI;
+    [SerializeField] PlayerInput menuPI;
     Transform Players;
 
     // Start is called before the first frame update
@@ -55,6 +57,8 @@ public class ModeSelectLC : LevelController
                 GameObject.Destroy(child.gameObject);
             }
         }
+
+        menuPI.enabled = true;
     }
 
 
@@ -117,6 +121,19 @@ public class ModeSelectLC : LevelController
         }
 
 
+    }
+
+    public void OnBack(InputAction.CallbackContext ctx)
+    {
+
+        if(ctx.performed)
+        {
+            SceneLoader sl = gm.GetComponentInChildren<SceneLoader>();
+
+            sl.LoadScene("MainMenu");
+        }
+
+        
     }
 
 

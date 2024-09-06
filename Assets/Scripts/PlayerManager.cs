@@ -151,18 +151,8 @@ public class PlayerManager : MonoBehaviour
     {
         playerList[idx].isReady = false;
 
-        if(gm.lc.GetLevelType() == 0)
-        {
-            //UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
-            //ui.UnReadyPlayer(idx);
-        }
-
-        //start game if all active players are ready && more than 1 player
-        if((playerList.TrueForAll(p => (p.isReady || !p.isActive))) && playerList.Count(p => p.isActive) > 1 && !gm.battleStarted)
-        {
-            //REWORK: load map select scene
-            //StartGame();
-        }
+        //handled in CharacterSelectLC
+        gm.lc.UnReadyPlayer(idx);
     }
 
 

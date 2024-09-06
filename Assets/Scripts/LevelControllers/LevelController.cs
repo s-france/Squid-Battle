@@ -30,6 +30,12 @@ public class LevelController : MonoBehaviour
 
     }
 
+    public virtual void OnBack()
+    {
+        
+        return;
+    }
+
 
     public virtual void OnPlayerJoin(int idx)
     {
@@ -56,6 +62,11 @@ public class LevelController : MonoBehaviour
     public virtual void ReadyPlayer(int idx)
     {
 
+        return;
+    }
+
+    public virtual void UnReadyPlayer(int idx)
+    {
         return;
     }
 

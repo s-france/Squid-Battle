@@ -71,7 +71,7 @@ public class CharacterSelectLC : LevelController
         {
             foreach (PlayerConfig p in pm.playerList)
             {
-                pm.DeactivatePlayer(p.playerIndex);
+                //pm.DeactivatePlayer(p.playerIndex);
 
                 pm.UnReadyPlayer(p.playerIndex);
 
@@ -80,6 +80,12 @@ public class CharacterSelectLC : LevelController
 
 
                 p.input.SwitchCurrentActionMap("Menu");
+
+                //set colors
+                SetUIColors(p.playerIndex);
+
+                //set UI to be active
+                ActivatePlayerUI(p.playerIndex);
 
                 //Debug.Log("Action Map: " + p.input.currentActionMap);
                 Debug.Log("P" + p.playerIndex + " devices: " + p.input.devices);
@@ -167,7 +173,32 @@ public class CharacterSelectLC : LevelController
             //show ready to start UI
             ready2StartUI.gameObject.SetActive(true);
 
+        }else
+        {
+            ready2StartUI.gameObject.SetActive(false);
         }
+    }
+
+    public override void UnReadyPlayer(int idx)
+    {
+        //base.UnReadyPlayer(idx);
+        
+        //do ui stuff
+        PlayersUI[idx][0].GetComponent<Image>().sprite = pm.playerSprites[pm.playerList[idx].color][0];
+        PlayersUI[idx][2].gameObject.SetActive(true);
+        PlayersUI[idx][5].gameObject.SetActive(true);
+        PlayersUI[idx][6].gameObject.SetActive(false);
+
+        //allow starting game if all active players are ready && more than 1 player
+        if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+        {
+            //show ready to start UI
+            ready2StartUI.gameObject.SetActive(true);
+        }else
+        {
+            ready2StartUI.gameObject.SetActive(false);
+        }
+
     }
 
 
