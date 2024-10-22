@@ -3,17 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Unity.VisualScripting.FullSerializer;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.UI;
+using TMPro;
 
 public class Arena0LC : LevelController
 {
-    //GameManager gm;
-    //PlayerManager pm;
-    
-    //List<Transform> SpawnPoints;
-
+    //Arena stuff
     [SerializeField] List<Vector2> ArenaShrinks;
     [SerializeField] float shrinkSpeed;
     Transform arena;
+
+    //post-game UI stuff
+    [SerializeField] Transform resultsScreen;
+    [SerializeField] Transform mapVoteMenu;
+    [SerializeField] Transform finalResultMenu;
+    [SerializeField] InputSystemUIInputModule[] UIInputModules;
+    [SerializeField] Image[] TokenSprites;
+    [SerializeField] GameObject Map1Button;
+    [SerializeField] GameObject ReturnButton;
+    [SerializeField] TextMeshProUGUI nextRoundText;
+    [SerializeField] Image winnerSprite;
+    [SerializeField] TextMeshProUGUI winnerText;
+    [SerializeField] ScoreBoard sb;
 
 
     // Start is called before the first frame update
@@ -32,6 +45,8 @@ public class Arena0LC : LevelController
         SpawnPoints.Add(transform.GetChild(1));
         SpawnPoints.Add(transform.GetChild(2));
         SpawnPoints.Add(transform.GetChild(3));
+        SpawnPoints.Add(transform.GetChild(4));
+        SpawnPoints.Add(transform.GetChild(5));
 
         arena = GameObject.Find("Arena").transform;
         
@@ -89,7 +104,7 @@ public class Arena0LC : LevelController
 
         Debug.Log("playing music!!!");
         //play music
-        FindObjectOfType<AudioManager>().PlayRandom("BattleTheme");
+        FindFirstObjectByType<AudioManager>().PlayRandom("BattleTheme");
 
         //move players to spawn positions
         foreach (PlayerConfig p in pm.playerList.Where(p => p.isActive))
@@ -97,10 +112,29 @@ public class Arena0LC : LevelController
             pm.DeactivatePlayer(p.playerIndex);
             pm.ReactivatePlayer(p.playerIndex);
 
+            //enable Player actions for gameplay instances
+            p.input.SwitchCurrentActionMap("Player");
+
             Transform start = GetSpawnPoints()[p.playerIndex];
             p.input.gameObject.transform.position = start.position;
 
             p.isAlive = true;
+
+            //prepare post-game UI:
+            //assign players to UI input modules
+            UIInputModules[p.playerIndex].gameObject.SetActive(true);
+            UIInputModules[p.playerIndex].actionsAsset = pm.playerList[pm.playerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.actions;
+            pm.playerList[pm.playerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.uiInputModule = UIInputModules[p.playerIndex];
+
+            //activate player token UI
+            TokenSprites[p.playerIndex].enabled = true;
+            //TokenSprites[p.playerIndex+6].enabled = false;
+            //initialize token position to Map1
+            TokenSprites[p.playerIndex].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex].position;
+            TokenSprites[p.playerIndex+6].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex+6].position;
+
+            //set player UI colors
+            SetUIColors(p.playerIndex);
         }
 
         //REWORK
@@ -176,8 +210,216 @@ public class Arena0LC : LevelController
     }
 
 
+    public override void SetUIColors(int idx)
+    {
+        //base.SetUIColors(idx);
+
+        //set token color
+        TokenSprites[idx].sprite = pm.playerList[idx].playerScript.spriteSet[0];
+
+        //set confirmed token colors
+        TokenSprites[idx+6].sprite = pm.playerList[idx].playerScript.spriteSet[2];
+
+        //set scoreboard colors
+        sb.SetColor(idx);
+
+    }
+
+
+    //shows results + mapvote after round ends
+    public override void ShowResults()
+    {
+        //assign points
+        pm.placements.Reverse();
+        int idx = 0;
+        foreach(int i in pm.placements)
+        {
+            Debug.Log("placements[idx] = " + i);
+
+            switch (idx)
+            {
+                case 0:
+                {
+                    pm.playerList[i].score += 3; //1st +3
+                    break;
+                }
+                case 1:
+                {
+                    pm.playerList[i].score += 2; //2nd +2
+                    break;
+                }
+                case 2:
+                {
+                    pm.playerList[i].score += 1; //3rd +1
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+
+            idx++;
+        }
+
+        pm.placements.Clear();
+
+        //update scoreboard
+        sb.SetScores();
+
+        resultsScreen.gameObject.SetActive(true);
+
+        //if there is a winner show end screen
+        if(pm.playerList.Exists(p => p.score >= gm.ms.pointsToWin))
+        {
+            int winner = pm.playerList.Find(p => p.score >= gm.ms.pointsToWin).playerIndex;
+            
+            //set winner sprite
+            winnerSprite.sprite = pm.playerList.Find(p => p.playerIndex == winner).playerScript.spriteSet[0];
+            //set winner text
+            winnerText.text = "Player " + winner + " Wins!";
+
+            mapVoteMenu.gameObject.SetActive(false);
+            finalResultMenu.gameObject.SetActive(true);
+
+            //switch P1 input to menu
+            pm.playerList[0].input.SwitchCurrentActionMap("Menu");
+            //P1 select results menu
+            UIInputModules[0].GetComponent<MultiplayerEventSystem>().SetSelectedGameObject(ReturnButton);
+
+
+        } else
+        {
+            //update next round text
+            nextRoundText.text = "Round " + ++gm.ms.roundsPlayed + " Incoming!";
+
+            finalResultMenu.gameObject.SetActive(false);
+            mapVoteMenu.gameObject.SetActive(true);
+
+            foreach(PlayerConfig p in pm.playerList)
+            {
+                //switch to menu input action map
+                p.input.SwitchCurrentActionMap("Menu");
+
+                //initialize token position to Map1
+                TokenSprites[p.playerIndex].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex].position;
+                TokenSprites[p.playerIndex+6].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex+6].position;
+            }
+
+        }
+
+    }
+
+
+    public void PlayAgain()
+    {
+        //reset game stats
+        gm.ResetGame();
+
+
+        //deactivate finalResults
+        finalResultMenu.gameObject.SetActive(false);
+        //activate MapVote
+        mapVoteMenu.gameObject.SetActive(true);
+
+        foreach(PlayerConfig p in pm.playerList)
+            {
+                //switch to menu input action map
+                p.input.SwitchCurrentActionMap("Menu");
+
+                UIInputModules[p.playerIndex].GetComponent<MultiplayerEventSystem>().SetSelectedGameObject(Map1Button);
+                
+                //initialize token position to Map1
+                TokenSprites[p.playerIndex].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex].position;
+                TokenSprites[p.playerIndex+6].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex+6].position;
+            }
+    }
+
+
+    public override void OnConfirm(int playerID, InputAction.CallbackContext ctx)
+    {
+        base.OnConfirm(playerID, ctx);
+
+        if(ctx.performed)
+        {
+            //start game if all players ready
+            if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+            {
+                //assign value randomly selected from gm.ms.MapPool
+                int map = gm.ms.PickMap();
+
+                gm.StartMatch(map);
+            }
+
+
+            if(!pm.playerList[playerID].isReady)
+            {
+                pm.ReadyPlayer(playerID); //calls lc.ReadyPlayer
+            }
+        }
+
+        
+        
+
+    }
+
+
+    public override void OnBack(int playerID, InputAction.CallbackContext ctx)
+    {
+        //base.OnBack(ctx);
+
+        if(ctx.started)
+        {
+            if (pm.playerList[playerID].isReady)
+            {
+                pm.UnReadyPlayer(playerID);
+            }
+        }
+        
+        if (ctx.performed)
+        {
+            //nothing to do here rn
+        }
+    }
+
+    public override void UnReadyPlayer(int idx)
+    {
+        base.UnReadyPlayer(idx);
+
+        //reactivate player's mapselect token
+        UITokenTracker token = UIInputModules[idx].GetComponent<UITokenTracker>();
+
+        //cancel map vote
+        gm.ms.UnVoteMap(token.selectionID);
+        
+        //deactivate confirmed icon
+        token.confPos.GetComponent<Image>().enabled = false;
+        //selections.positions[6 + token.idx].gameObject.SetActive(true);
+
+        //reactivate selecting icon
+        token.tokenPos.GetComponent<Image>().enabled = true;
+
+        //reenable player selection
+        UIInputModules[idx].gameObject.SetActive(true);
+
+
+        //allow starting game if all active players are ready && more than 1 player
+        if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+        {
+            //show ready to start UI
+            //COME BACK AND RESOLVE THIS!!!!!!!!!
+            //ready2StartUI.gameObject.SetActive(true);
+
+        }else
+        {
+            //ready2StartUI.gameObject.SetActive(false);
+        }
+    }
+
+
     public override void OnPlayerJoin(int idx)
     {
+        //players should not be able to join during game
         //deactivate until next round
     }
 

@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms;
 
 public class GameManager : MonoBehaviour
 {
@@ -51,39 +53,17 @@ public class GameManager : MonoBehaviour
     }
 
 
-    //REWORK:  LevelController.EndBattle should call this -> leads back to start menu
-    //declare winner and end/reset game
-    public void ResetGame(int winnerIdx)
+    //resets accumulated Match stats (player points, rounds played, etc)
+    public void ResetGame()
     {
-        Debug.Log("stopping music!!!");
-        //turn off battle music
-        FindFirstObjectByType<AudioManager>().Stop("BattleTheme");
+        ms.roundsPlayed = 1;
 
-
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Despawns"))
+        foreach(PlayerConfig p in pm.playerList)
         {
-            Destroy(obj);
-        }
-
-        //REWORK
-        //camCon.StartCamOn();
-
-        battleStarted = false;
-
-        //reactivate() all isactive players
-        //move players to spawn points
-        foreach (PlayerConfig p in pm.playerList)
-        {
-            if(p.isActive)
-            {
-                pm.DeactivatePlayer(p.playerIndex);
-                pm.ReactivatePlayer(p.playerIndex);
-            }
-
-            Transform spawn = this.gameObject.transform.GetChild(p.playerIndex);
-            p.input.gameObject.transform.position = spawn.position;
+            p.score = 0;
         }
     }
+    
 
     //Instantiates pm
     public void CreatePlayerManager()
@@ -92,6 +72,20 @@ public class GameManager : MonoBehaviour
         PlayerManager.transform.parent = this.transform;
         pm = PlayerManager.GetComponent<PlayerManager>();
         pm.Init();
+    }
+
+    //starts a match on the inputted map
+    public void StartMatch(int mapID)
+    {
+        //number of players
+        int pcount = pm.playerList.Count(p => p.isActive);
+
+        string sceneName = "BattleArena" + mapID;
+
+        sl.LoadScene(sceneName);
+
+        
+
     }
 
     

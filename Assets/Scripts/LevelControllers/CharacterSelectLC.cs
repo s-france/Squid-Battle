@@ -38,6 +38,8 @@ public class CharacterSelectLC : LevelController
         SpawnPoints.Add(transform.GetChild(1));
         SpawnPoints.Add(transform.GetChild(2));
         SpawnPoints.Add(transform.GetChild(3));
+        SpawnPoints.Add(transform.GetChild(4));
+        SpawnPoints.Add(transform.GetChild(5));
 
         PlayersUI = new Transform[6][];
         PlayersUI[0] = P1UI;
@@ -103,8 +105,11 @@ public class CharacterSelectLC : LevelController
 
     public override void EndLevel()
     {
+        //stop players from joining outside of this menu
+        pm.im.pim.DisableJoining();
+
         //run any kind of outro/transition stuff here
-        Debug.Log("ending main menu");
+        Debug.Log("character select");
     }
 
 
@@ -261,6 +266,42 @@ public class CharacterSelectLC : LevelController
         }
     }
 
-    
+    public override void OnBack(int playerID, InputAction.CallbackContext ctx)
+    {
+        //base.OnBack(ctx);
+        if(ctx.performed)
+        {
+            if(pm.playerList[playerID].isActive && !gm.battleStarted)
+            {
+                if(pm.playerList[playerID].isReady)
+                {
+                    //unReady player
+                    pm.UnReadyPlayer(playerID);
+                } else //drop out if held for 1 secs before game
+                {
+                    pm.playerList[playerID].playerScript.OnControllerDisconnect(pm.playerList[playerID].input);
+                    //(^^this calls lc.OnPlayerLeave)
+                }
+
+                
+            } else if(!pm.playerList[playerID].isActive)
+            {
+                //go to previous screen (mode select)
+
+                //TRY destroy playermanager here
+                //GameObject.Destroy(pm.gameObject);
+                pm.im.pim.DisableJoining();
+
+                gm.sl.LoadScene("ModeSelect");
+
+            }
+        }
+
+        
+        
+
+    }
+
+
 
 }

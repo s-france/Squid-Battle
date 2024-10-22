@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
-    //public InputManager im;
     [HideInInspector] public GameManager gm;
 
     public GameObject ItemPrefab;
@@ -17,12 +16,16 @@ public class ItemManager : MonoBehaviour
     [HideInInspector] public int spawnedItemsCount;
     [HideInInspector] public int[] spawnedItems;
 
+    //Default item spawn probabilities - MOVED TO MATCHSETTINGS
+    //[SerializeField] int[] ItemProbs;
+
 
     // Start is called before the first frame update
     void Awake()
     {
-        //im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        
 
         //TEST TEST TEST - for testing purposes
         //uncomment for testing items
@@ -35,10 +38,44 @@ public class ItemManager : MonoBehaviour
         
     }
 
-    //spawns (creates) an item-pickup of type at position pos
+    //picks random item using MatchSettings.ItemProbs
+    int pickItem()
+    {
+        int sum = 0;
+        foreach (int i in gm.ms.ItemProbs)
+        {
+            sum += i;
+        }
+
+        //pick random value in votes
+        float r = Random.value * sum;
+        float bottom = 0;
+        float top = 0;
+
+        int itemID = 0;
+
+        //find which item corresponds to r value
+        foreach (int i in gm.ms.ItemProbs)
+        {
+            top += i;
+
+            if(bottom <= r && r <= top)
+            {
+                return itemID;
+            }
+            
+            itemID += 1;
+            bottom += i;
+        }
+
+        return itemID;
+    }
+
+    //spawns an item-pickup of type at position pos
+    //type == -1 => random item
     public void SpawnItem(int type, Transform pos)
     {
-        Debug.Log("spawning item");
+        //Debug.Log("spawning item");
         
         //instantiate new ItemPrefab
         GameObject newItem = Instantiate(ItemPrefab, pos.position, pos.rotation);
@@ -46,18 +83,9 @@ public class ItemManager : MonoBehaviour
         //Random Item
         if (type == -1)
         {
-            float rand = Random.value;
-            if (rand <= .9f) //9/10 chance for shot+ink+wall
-            {
-                type = Random.Range(0,5);
-            } else //1/10 chance for grow
-            {
-                type = 5;
-            }
+            type = pickItem();
         }
         
-
-
         //set item type
         switch (type)
         {
@@ -137,58 +165,6 @@ public class ItemManager : MonoBehaviour
         }
 
     }
-
-    /*
-    public IEnumerator RandomSpawns(float spawnRate)
-    {
-        float rand;
-
-        float timer = 0;
-        int type;
-        Transform pos = new GameObject().transform;
-
-        //spawn at start of match
-        rand = Random.value;
-        if (rand <= .9f) //9/10 chance for shot+ink+wall
-        {
-            type = Random.Range(0,3);
-        } else //1/10 chance for grow
-        {
-            type = 3;
-        }
-
-        pos.position = Random.insideUnitCircle * 7;
-        SpawnItem(type, pos);
-
-        while(gm.battleStarted)
-        {
-            //if(!im.gameStarted) {break;}
-            timer += Time.deltaTime;
-
-            if(timer >= spawnRate)
-            {
-                rand = Random.value;
-                if (rand <= .9f) //9/10 chance for shot+ink
-                {
-                    type = Random.Range(0,2);
-                } else //1/10 chance for grow
-                {
-                    type = 2;
-                }
-                pos.position = Random.insideUnitCircle * 7;
-
-                SpawnItem(type, pos);
-
-                timer = 0;
-            }
-            
-            yield return null;
-        }
-
-        Destroy(pos.gameObject);
-    }
-    */
-
 
     void DestroyAllItemObjs()
     {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UIController : MonoBehaviour
@@ -10,7 +11,7 @@ public class UIController : MonoBehaviour
     void Start()
     {
         pm = GameObject.Find("GameManager").GetComponentInChildren<PlayerManager>();
-        HighlightWinner(pm.winnerIdx);
+        HighlightWinner(pm.placements.Last());
 
         ShowAll();
     }

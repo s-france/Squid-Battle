@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public ReticleController rc;
     [SerializeField] public Transform WarpPoint;
     public Rigidbody2D rb;
-    [SerializeField] public SpriteRenderer sr;
+    [HideInInspector] public SpriteRenderer sr;
     [SerializeField] public ParticleSystem bubblePart;
     [SerializeField] public GameObject hitPart;
 
@@ -386,7 +386,7 @@ public class PlayerController : MonoBehaviour
     {
         
 
-        //Debug.Log(ctx.phase);
+        Debug.Log("charge: " + ctx.phase);
         if(ctx.performed && pm.playerList[idx].isInBounds) //charging
         {
             //Debug.Log("charging!!");

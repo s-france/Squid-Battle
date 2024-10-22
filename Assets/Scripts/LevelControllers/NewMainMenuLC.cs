@@ -23,6 +23,8 @@ public class NewMainMenuLC : LevelController
         SpawnPoints.Add(transform.GetChild(1));
         SpawnPoints.Add(transform.GetChild(2));
         SpawnPoints.Add(transform.GetChild(3));
+        SpawnPoints.Add(transform.GetChild(4));
+        SpawnPoints.Add(transform.GetChild(5));
 
         StartLevel();
     }
@@ -55,11 +57,6 @@ public class NewMainMenuLC : LevelController
 
                 Transform spawn = this.gameObject.transform.GetChild(p.playerIndex);
                 p.input.gameObject.transform.position = spawn.position;
-                //}
-                //else
-                //{
-                //    ui.HidePlayerUI(p.playerIndex);
-                //}
             }
         }
         

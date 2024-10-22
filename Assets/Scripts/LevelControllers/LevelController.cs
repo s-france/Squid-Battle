@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 
@@ -30,7 +31,13 @@ public class LevelController : MonoBehaviour
 
     }
 
-    public virtual void OnBack()
+    public virtual void OnConfirm(int playerID, InputAction.CallbackContext ctx)
+    {
+
+        return;
+    }
+
+    public virtual void OnBack(int playerID, InputAction.CallbackContext ctx)
     {
         
         return;
@@ -70,6 +77,12 @@ public class LevelController : MonoBehaviour
         return;
     }
 
+    //used in battle arenas to show score + initiate next round map vote
+    public virtual void ShowResults()
+    {
+        return;
+    }
+
 
     public virtual int GetLevelType()
     {
@@ -94,5 +107,10 @@ public class LevelController : MonoBehaviour
     public List<Transform> GetSpawnPoints()
     {
         return SpawnPoints;
+    }
+
+    public void LoadScene(string sceneName)
+    {
+        gm.sl.LoadScene(sceneName);
     }
 }

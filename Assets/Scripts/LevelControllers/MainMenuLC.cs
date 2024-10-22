@@ -69,7 +69,7 @@ public class MainMenuLC : LevelController
             }
         }
 
-        ui.HighlightWinner(pm.winnerIdx);
+        ui.HighlightWinner(pm.placements.Last());
     }
 
 

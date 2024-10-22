@@ -55,7 +55,12 @@ public class PlayerUIController : MonoBehaviour
                 gm.sl.LoadScene("MatchSettings");
             }
 
+        } else
+        {
+            gm.lc.OnConfirm(pc.idx, ctx);
         }
+
+        
 
     }
 
@@ -65,61 +70,8 @@ public class PlayerUIController : MonoBehaviour
         //Debug.Log("Back action performed!!");
 
         Debug.Log("OnBack Called!");
-        
 
-        if(ctx.performed)
-        {
-            Debug.Log("Back Performed!");
-
-            switch(gm.lc.GetLevelType())
-            {
-                case 1:
-                    if(pc.pm.playerList[pc.idx].isActive && !gm.battleStarted)
-                    {
-                        if(pm.playerList[pc.idx].isReady)
-                        {
-                            //unReady player
-                            pm.UnReadyPlayer(pc.idx);
-                        } else //drop out if held for 1 secs before game
-                        {
-                            pc.OnControllerDisconnect(gameObject.GetComponent<PlayerInput>());
-                            //(^^this calls lc.OnPlayerLeave)
-                        }
-
-                        
-                    } else if(!pc.pm.playerList[pc.idx].isActive)
-                    {
-                        //go to previous screen (mode select)
-
-                        //TRY destroy playermanager here
-                        //GameObject.Destroy(pm.gameObject);
-                        pm.im.pim.DisableJoining();
-
-                        gm.sl.LoadScene("ModeSelect");
-
-                    }
-
-                    break;
-
-                case 2:
-                    //go to previous screen (main menu)
-                    gm.sl.LoadScene("MainMenu");
-                    break;
-
-                case 3:
-                    gm.lc.OnBack();
-                    break;
-
-                default:
-                    break;
-
-
-            }
-
-        }
-        
-
-        
+        gm.lc.OnBack(pc.idx, ctx);        
 
     }
 

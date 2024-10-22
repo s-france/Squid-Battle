@@ -27,6 +27,8 @@ public class ModeSelectLC : LevelController
         SpawnPoints.Add(transform.GetChild(1));
         SpawnPoints.Add(transform.GetChild(2));
         SpawnPoints.Add(transform.GetChild(3));
+        SpawnPoints.Add(transform.GetChild(4));
+        SpawnPoints.Add(transform.GetChild(5));
 
         Players = gm.transform.Find("Players");
 
@@ -125,14 +127,10 @@ public class ModeSelectLC : LevelController
 
     public void OnBack(InputAction.CallbackContext ctx)
     {
-
         if(ctx.performed)
         {
-            SceneLoader sl = gm.GetComponentInChildren<SceneLoader>();
-
-            sl.LoadScene("MainMenu");
+            gm.sl.LoadScene("MainMenu");
         }
-
         
     }
 

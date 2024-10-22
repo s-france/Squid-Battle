@@ -61,3 +61,4 @@ MonoBehaviour:
   itemTypesCount: 4
   spawnedItemsCount: 0
   spawnedItems: 
+  ItemProbs: 050000000500000005000000050000000500000001000000

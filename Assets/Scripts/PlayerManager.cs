@@ -31,7 +31,10 @@ public class PlayerManager : MonoBehaviour
     public Sprite[] yellowSprites;
     public Sprite[][] playerSprites;
 
-    [HideInInspector] public int winnerIdx;
+    //[HideInInspector] public int winnerIdx;
+
+    [HideInInspector] public List<int> placements;
+    //i.e. placements[0] = last place, placements[playercount] = first place
 
 
     // Start is called before the first frame update
@@ -68,7 +71,8 @@ public class PlayerManager : MonoBehaviour
 
         im.Init();
 
-        winnerIdx = -1;
+        placements = new List<int>();
+        placements.Clear();
     }
 
     // Update is called once per frame
@@ -164,11 +168,8 @@ public class PlayerManager : MonoBehaviour
         playerList[idx].isInBounds = true;
         playerList[idx].playerScript.isInBounds = true;
 
-        if(gm.lc.GetLevelType() == 0)
-        {
-            //UIController ui = GameObject.Find("MenuUI").GetComponent<UIController>();
-            //ui.ShowPlayerUI(idx);
-        }
+        
+
 
         Debug.Log("player" + idx + " reactivated!");
     }
@@ -200,16 +201,27 @@ public class PlayerManager : MonoBehaviour
     //kills player - ONLY CALL THIS WHEN gameStarted == true
     public void KillPlayer(int idx)
     {
-        DeactivatePlayer(idx);
-        FindObjectOfType<AudioManager>().Play("Fall");
+        DeactivatePlayer(idx); //sets isalive = false
+        FindFirstObjectByType<AudioManager>().Play("Fall");
 
+        //track player's placement
+        
+        placements.Add(idx);
+        
 
         //if only one remaining player alive end/reset the game
         if (playerList.Count(p => p.isAlive) == 1 && gm.battleStarted)
         {
-            winnerIdx = playerList.FindIndex(p => p.isAlive);
-            Debug.Log("winner: " + winnerIdx);
-            gm.lc.EndLevel();
+            int winner = playerList.FindIndex(p => p.isAlive);
+            placements.Add(winner);
+            Debug.Log("winner: " + winner);
+
+            //NEW STUFF HERE
+            //open results screen + map select
+            gm.lc.ShowResults();
+
+
+            //gm.lc.EndLevel();
         }
     }
 
@@ -252,7 +264,7 @@ public class PlayerConfig
         isActive = true;
         isAlive = true;
         isInBounds = true;
-        //color = pi.playerIndex;
+        score = 0;
         color = playerManager.FindFirstAvailableColorID(pi.playerIndex, 1);
     }
 
@@ -265,4 +277,5 @@ public class PlayerConfig
     public bool isAlive {get; set;}
     public bool isInBounds {get; set;}
     public int color {get; set;} //color idx
+    public int score {get; set;}
 }

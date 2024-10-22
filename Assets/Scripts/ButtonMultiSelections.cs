@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ButtonMultiSelections : MonoBehaviour
 {
-    [SerializeField] Transform[] positions;
+    [SerializeField] public int buttonID;
+    [SerializeField] public Transform[] positions;
     [SerializeField] Transform[] UITokens;
 
     // Start is called before the first frame update
@@ -18,4 +19,6 @@ public class ButtonMultiSelections : MonoBehaviour
     {
         
     }
+
+    
 }

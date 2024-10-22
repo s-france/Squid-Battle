@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 public class InputManager : MonoBehaviour
 {
     CamController camCon;
-    //UIController ui;
     ItemManager itemMan;
     PlayerManager pm;
     GameManager gm;
