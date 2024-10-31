@@ -47,6 +47,8 @@ public class PlayerUIController : MonoBehaviour
         {
             if(pm.playerList[pc.idx].isActive && !pm.playerList[pc.idx].isReady)
             {
+                FindFirstObjectByType<AudioManager>().Play("UINav1");
+
                 pm.ReadyPlayer(pc.idx);
                 //pc.ReadyUp();
             } else if (pm.playerList.TrueForAll(p => p.isReady || !p.isActive) && pm.playerList.Count(p => p.isActive) > 1)
@@ -85,6 +87,8 @@ public class PlayerUIController : MonoBehaviour
         //change color if on character select and not ready
         if(ctx.performed && gm.lc.GetLevelType() == 1 && !pm.playerList[pc.idx].isReady) //change color only before match
         {
+            FindFirstObjectByType<AudioManager>().Play("UINav3");
+
             //Debug.Log("updating colors from L input!");
 
             int color = pm.FindFirstAvailableColorID(pc.colorID - 1, -1);
@@ -109,6 +113,8 @@ public class PlayerUIController : MonoBehaviour
         //change color if on character select and not ready
         if(ctx.performed && gm.lc.GetLevelType() == 1 && !pm.playerList[pc.idx].isReady) //change color only before match
         {
+            FindFirstObjectByType<AudioManager>().Play("UINav3");
+
             //Debug.Log("updating colors from R input!");
 
             int color = pm.FindFirstAvailableColorID(pc.colorID + 1, 1);

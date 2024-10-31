@@ -43,6 +43,8 @@ public class SliderButton : Button
 
     public void OnSliderValueChanged()
     {
+        FindFirstObjectByType<AudioManager>().Play("UINav3");
+
         //update slider visuals
         int idx = 0;
 

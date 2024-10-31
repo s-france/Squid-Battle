@@ -1,43 +1,64 @@
 using UnityEngine.Audio;
 using UnityEngine;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
     /*[SerializeField]*/ public Sound[] sounds;
 
+    [HideInInspector] public bool initialized = false;
+
+    //currently active/playing sounds
+    [HideInInspector] public List<String> SoundsPlaying;
+
 
     public void Awake()
     {
-        foreach (Sound s in sounds)
+        Init();
+    }
+
+    public void Init()
+    {
+        if (!initialized)
         {
-            s.source = gameObject.AddComponent<AudioSource>();
-            s.source.clip = s.clip;
-            s.source.volume = s.volume;
-            s.source.pitch = s.pitch;
-            s.source.loop = s.loop;
+            SoundsPlaying = new List<String>();
+
+            foreach (Sound s in sounds)
+            {
+                s.source = gameObject.AddComponent<AudioSource>();
+                s.source.clip = s.clip;
+                s.source.volume = s.volume;
+                s.source.pitch = s.pitch;
+                s.source.loop = s.loop;
+            }
+
+            initialized = true;
         }
 
-        //Play("MenuTheme1");
         
+
     }
 
     void Start()
     {
-        //Play("BattleTheme");
+        Init();
     }
 
     //plays sound of name
     public void Play (string name)
     {
-        if(name == "Menu")
-        {
-            return;
-        }
-
         Debug.Log("playing sound: " + name);
         Sound s = Array.Find(sounds, sound => sound.name == name);
-        s.source.Play();
+
+        if (s != null)
+        {
+            s.source.Play();
+            SoundsPlaying.Append(name);
+        }
+
+        
     }
 
     //plays random sound from designated type
@@ -62,7 +83,7 @@ public class AudioManager : MonoBehaviour
             default:
                 n = -1;
                 Debug.Log("ERROR: invalid audio type!!");
-                break;
+                return;
         }
 
         Play(type+n);
@@ -70,21 +91,29 @@ public class AudioManager : MonoBehaviour
 
     public void Stop (string name)
     {
-        if(name == "Menu")
-        {
-            return;
-        }
-
         Sound s = Array.Find(sounds, sound => sound.name == name);        
 
-        if(s == null)
+        if(s != null)
         {
-            Debug.Log("ERROR sound not found!");
+            s.source.Stop();
+
+            SoundsPlaying.Remove(name);
+
+            Debug.Log("stopping sound: " + s.name);
+            Debug.Log("s.source = " + s.source.name);
+        } else
+        {
+            Debug.Log("ERROR sound " + name + " not found!");
         }
 
-        s.source.Stop();
+    }
 
-        Debug.Log("stopping sound: " + s.name);
-        Debug.Log("s.source = " + s.source.name);
+    public void StopAll()
+    {
+        foreach(Sound s in sounds)
+        {
+            Stop(s.name);
+        }
+
     }
 }

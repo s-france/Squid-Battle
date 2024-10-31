@@ -12,6 +12,8 @@ public class ModeSelectLC : LevelController
     [SerializeField] PlayerInput menuPI;
     Transform Players;
 
+    [SerializeField] Transform[] Descs;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -46,6 +48,13 @@ public class ModeSelectLC : LevelController
 
     public override void StartLevel()
     {
+        AudioManager am = FindFirstObjectByType<AudioManager>();
+        am.Init();
+        if(!am.SoundsPlaying.Contains("Menu"))
+        {
+            am.Play("Menu");
+        }
+
         //this works...
         if(pm != null)
         {
@@ -99,6 +108,8 @@ public class ModeSelectLC : LevelController
 
     public void SelectMode(int modeID)
     {
+        FindFirstObjectByType<AudioManager>().Play("UINav1");
+
         SceneLoader sl = gm.GetComponentInChildren<SceneLoader>();
 
         switch(modeID)

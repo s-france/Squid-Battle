@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MapButton : Button
+public class MapButton : MenuButton
 {
 
     ButtonMultiSelections selections;
@@ -53,6 +53,8 @@ public class MapButton : Button
     public override void OnSubmit(BaseEventData eventData)
     {
         base.OnSubmit(eventData);
+
+        FindFirstObjectByType<AudioManager>().Play("UINav1");
 
         //Debug.Log("Button Submitted!");
         

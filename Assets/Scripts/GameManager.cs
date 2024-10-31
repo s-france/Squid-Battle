@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
     [SerializeField] GameObject pmPrefab;
+    [SerializeField] AudioManager am;
     
 
     PlayerManager pm;
@@ -77,6 +78,10 @@ public class GameManager : MonoBehaviour
     //starts a match on the inputted map
     public void StartMatch(int mapID)
     {
+        am.StopAll();
+
+        ms.ClearMapPool();
+
         //number of players
         int pcount = pm.playerList.Count(p => p.isActive);
 

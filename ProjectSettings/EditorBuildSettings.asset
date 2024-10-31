@@ -9,9 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/DemoScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: bfcfc59225209264db014d1b2ae6e890
+  - enabled: 0
     path: Assets/Scenes/StartMenu.unity
     guid: dfe54f44e979e7e46ae3dde23cea06cb
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MapSelect.unity
     guid: 45f546df7c6b0784195d69b5f2a4f1cf
   - enabled: 1
@@ -30,12 +33,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MLTraining.unity
     guid: ffbe8848b20413e4087df8e32614e5bf
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
-    guid: bfcfc59225209264db014d1b2ae6e890
-  - enabled: 1
     path: Assets/Scenes/ModeSelect.unity
     guid: 76aa08a85dbe6d24cbfa50165d4deb9e
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/PreMatch.unity
     guid: f87c3150ec852be4aadd5756544ec3c4
   - enabled: 1

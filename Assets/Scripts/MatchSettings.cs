@@ -62,6 +62,18 @@ public class MatchSettings : MonoBehaviour
         }
     }
 
+    public void ClearMapPool()
+    {
+        int idx = 0;
+        foreach (int m in MapPool)
+        {
+            MapPool[idx] = 0;
+
+            idx++;
+        }
+
+    }
+
     public int PickMap()
     {
         //store all votes

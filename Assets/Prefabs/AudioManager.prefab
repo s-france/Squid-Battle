@@ -135,3 +135,23 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - name: UINav1
+    clip: {fileID: 8300000, guid: 6ccf770cf750bed498249c770be8cd52, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: UINav2
+    clip: {fileID: 8300000, guid: 285a5b929ab345149a3b4f145fcec0c1, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: UINav3
+    clip: {fileID: 8300000, guid: a4e7fa73d01f83b4a8b4a4dc591b7010, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  initialized: 0
+  SoundsPlaying: []

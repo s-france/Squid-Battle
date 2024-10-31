@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem.UI;
 using Unity.VisualScripting.Antlr3.Runtime;
 using System;
+using TMPro;
 
 public class MatchSettingsLC : LevelController
 {
@@ -29,6 +30,10 @@ public class MatchSettingsLC : LevelController
     [SerializeField] Canvas leftCanvas;
     [SerializeField] Canvas rightCanvas;
     [SerializeField] Transform ready2StartUI;
+
+
+    //stuff to show/hide when switching from the settings menu
+    [SerializeField] Transform[] LeftUIElements;
 
     int p1MenuState; //0 = settings, 1 = mapvote
 
@@ -69,6 +74,14 @@ public class MatchSettingsLC : LevelController
 
     public override void StartLevel()
     {
+        //play menu music
+        AudioManager am = FindFirstObjectByType<AudioManager>();
+        am.Init();
+        if(!am.SoundsPlaying.Contains("Menu"))
+        {
+            am.Play("Menu");
+        }
+
         //basic menuLC stuff
         if(pm == null)
         {
@@ -158,6 +171,8 @@ public class MatchSettingsLC : LevelController
             //start game if all players ready
             if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
             {
+                FindFirstObjectByType<AudioManager>().Play("UINav1");
+
                 //assign value randomly selected from gm.ms.MapPool
                 int map = gm.ms.PickMap();
 
@@ -168,6 +183,8 @@ public class MatchSettingsLC : LevelController
 
             if(!pm.playerList[playerID].isReady)
             {
+                //FindFirstObjectByType<AudioManager>().Play("UINav1");
+
                 if(playerID != 0)
                 {
                     pm.ReadyPlayer(playerID); //calls lc.ReadyPlayer
@@ -194,14 +211,21 @@ public class MatchSettingsLC : LevelController
         {
             if(SliderButton1.sliderSelected)
             {
+                FindFirstObjectByType<AudioManager>().Play("UINav3");
+
                 SliderButton1.sliderSelected = false;
                 slider1.interactable = false;
                 SliderButton1.Select();
             } else if (pm.playerList[playerID].isReady)
             {
+                FindFirstObjectByType<AudioManager>().Play("UINav2");
                 pm.UnReadyPlayer(playerID);
             } else if (playerID == 0 && p1MenuState == 1)
             {
+                FindFirstObjectByType<AudioManager>().Play("UINav2");
+
+                ActivateSettingsMenu();
+
                 //transition from mapselect panel to matchsettings panel
                 //update p1 menu state
                 p1MenuState = 0;
@@ -211,7 +235,7 @@ public class MatchSettingsLC : LevelController
                 evSys.playerRoot = leftCanvas.gameObject;
                 evSys.SetSelectedGameObject(ShotToggle);
 
-                //show P1 map select token
+                //hide P1 map select token
                 TokenSprites[0].enabled = false;
 
             }
@@ -219,6 +243,7 @@ public class MatchSettingsLC : LevelController
         
         if (ctx.performed)
         {
+            FindFirstObjectByType<AudioManager>().Play("UINav2");
             gm.sl.LoadScene("CharacterSelect");
         }
     }
@@ -315,9 +340,39 @@ public class MatchSettingsLC : LevelController
 
         //ADD THIS!!!!:
         //disable settings menu
+        DeactivateSettingsMenu();
+    }
 
+    //shows settings menu visuals
+    void ActivateSettingsMenu()
+    {
+        //show player1 text
+        LeftUIElements[0].gameObject.SetActive(true);
 
+        //replace game rules text
+        LeftUIElements[1].GetComponent<TextMeshProUGUI>().text = "Set Game Rules";
 
+        //show done button
+        LeftUIElements[2].gameObject.SetActive(true);
+
+        //hide shade cover
+        LeftUIElements[3].gameObject.SetActive(false);
+    }
+
+    //hides settings menu panel
+    void DeactivateSettingsMenu()
+    {
+        //hide player1 text
+        LeftUIElements[0].gameObject.SetActive(false);
+
+        //replace game rules text
+        LeftUIElements[1].GetComponent<TextMeshProUGUI>().text = "Game Rules:";
+
+        //hide done button
+        LeftUIElements[2].gameObject.SetActive(false);
+
+        //shade out
+        LeftUIElements[3].gameObject.SetActive(true);
     }
     
 

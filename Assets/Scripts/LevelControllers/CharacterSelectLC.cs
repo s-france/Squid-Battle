@@ -58,6 +58,13 @@ public class CharacterSelectLC : LevelController
 
     public override void StartLevel()
     {
+        AudioManager am = FindFirstObjectByType<AudioManager>();
+        am.Init();
+        if(!am.SoundsPlaying.Contains("Menu"))
+        {
+            am.Play("Menu");
+        }
+
         //reactivate players
         Players.gameObject.SetActive(true);
 
@@ -271,6 +278,8 @@ public class CharacterSelectLC : LevelController
         //base.OnBack(ctx);
         if(ctx.performed)
         {
+            FindFirstObjectByType<AudioManager>().Play("UINav2");
+
             if(pm.playerList[playerID].isActive && !gm.battleStarted)
             {
                 if(pm.playerList[playerID].isReady)

@@ -9,7 +9,7 @@ public class NewMainMenuLC : LevelController
     void Awake()
     {
         //stupid emergency workaround
-        FindFirstObjectByType<AudioManager>().Awake();
+        FindFirstObjectByType<AudioManager>().Init();
 
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         gm.lc = this;
@@ -37,10 +37,13 @@ public class NewMainMenuLC : LevelController
 
     public override void StartLevel()
     {
-        if (FindAnyObjectByType<AudioManager>() != null)
+        AudioManager am = FindFirstObjectByType<AudioManager>();
+        if(!am.SoundsPlaying.Contains("Menu"))
         {
-            FindAnyObjectByType<AudioManager>().Play("Menu");
+            am.Play("Menu");
         }
+        
+        
         
         if(pm == null)
         {
@@ -92,6 +95,8 @@ public class NewMainMenuLC : LevelController
 
     public void LoadMenu(int type)
     {
+        FindFirstObjectByType<AudioManager>().Play("UINav1");
+
         SceneLoader sl = gm.GetComponentInChildren<SceneLoader>();
 
         switch (type)
