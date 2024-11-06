@@ -87,9 +87,9 @@ public class GameManager : MonoBehaviour
 
         string sceneName = "BattleArena" + mapID;
 
-        sl.LoadScene(sceneName);
+        Debug.Log("StartMAtch scene: " + sceneName);
 
-        
+        sl.LoadScene(sceneName);        
 
     }
 

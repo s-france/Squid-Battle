@@ -6,8 +6,8 @@ public class UITokenTracker : MonoBehaviour
 {
     [SerializeField] public int idx; //playerID basically
     [HideInInspector] public int selectionID = 0; //currently selected mapID
-    [SerializeField] public Transform tokenPos;
-    [SerializeField] public Transform confPos;
+    [HideInInspector] public Transform tokenPos;
+    [HideInInspector] public Transform confPos;
 
     // Start is called before the first frame update
     void Start()

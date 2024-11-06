@@ -8,7 +8,7 @@ public class ScoreBoard : MonoBehaviour
 {
     GameManager gm;
     PlayerManager pm;
-    [SerializeField] Transform mapVote;
+    //[SerializeField] Transform mapVote;
     [SerializeField] Transform finalResult;
     [SerializeField] Transform[] scores;
 

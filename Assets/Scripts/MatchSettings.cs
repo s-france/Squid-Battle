@@ -78,9 +78,13 @@ public class MatchSettings : MonoBehaviour
     {
         //store all votes
         int votes = 0;
+        int mapID = 0;
         foreach (int m in MapPool)
         {
+            Debug.Log("Map" + mapID + " votes: " + m);
             votes += m;
+
+            mapID++;
         }
 
 
@@ -89,7 +93,7 @@ public class MatchSettings : MonoBehaviour
         float bottom = 0;
         float top = 0;
 
-        int mapID = 0;
+        mapID = 0;
 
         //find which map corresponds to r value
         foreach (int m in MapPool)

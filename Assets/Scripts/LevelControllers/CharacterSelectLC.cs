@@ -28,6 +28,7 @@ public class CharacterSelectLC : LevelController
 
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         gm.lc = this;
+        gm.battleStarted = false; //lol
         pm = FindFirstObjectByType<PlayerManager>();
         //pm = GetGameManager().GetComponentInChildren<PlayerManager>();
         //pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
@@ -280,7 +281,7 @@ public class CharacterSelectLC : LevelController
         {
             FindFirstObjectByType<AudioManager>().Play("UINav2");
 
-            if(pm.playerList[playerID].isActive && !gm.battleStarted)
+            if(pm.playerList[playerID].isActive)
             {
                 if(pm.playerList[playerID].isReady)
                 {

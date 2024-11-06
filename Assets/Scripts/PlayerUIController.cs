@@ -43,7 +43,7 @@ public class PlayerUIController : MonoBehaviour
     public void OnConfirm(InputAction.CallbackContext ctx)
     {
         //readyUp if A pressed before game (on CSS)
-        if(ctx.performed && gm.lc.GetLevelType() == 1 && !gm.battleStarted)
+        if(ctx.performed && gm.lc.GetLevelType() == 1)
         {
             if(pm.playerList[pc.idx].isActive && !pm.playerList[pc.idx].isReady)
             {

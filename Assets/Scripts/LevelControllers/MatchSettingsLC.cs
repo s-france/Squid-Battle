@@ -17,14 +17,13 @@ public class MatchSettingsLC : LevelController
     //number of players
     //
 
+    [SerializeField] MapVote mv;
+
     [SerializeField] Slider slider1;
     [SerializeField] SliderButton SliderButton1;
 
     [SerializeField] InputSystemUIInputModule[] UIInputModules;
 
-    [SerializeField] Image[] TokenSprites;
-
-    [SerializeField] GameObject Map1Button;
     [SerializeField] GameObject ShotToggle;
 
     [SerializeField] Canvas leftCanvas;
@@ -82,6 +81,10 @@ public class MatchSettingsLC : LevelController
             am.Play("Menu");
         }
 
+        mv.InitMapVoteUI();
+        mv.ActivateMapVoteMenu();
+
+
         //basic menuLC stuff
         if(pm == null)
         {
@@ -97,6 +100,7 @@ public class MatchSettingsLC : LevelController
 
             pm.UnReadyPlayer(p.playerIndex);
 
+            //move to spawn
             Transform spawn = this.gameObject.transform.GetChild(p.playerIndex);
             p.input.gameObject.transform.position = spawn.position;
 
@@ -106,24 +110,16 @@ public class MatchSettingsLC : LevelController
             UIInputModules[p.playerIndex].actionsAsset = pm.playerList[pm.playerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.actions;
             pm.playerList[pm.playerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.uiInputModule = UIInputModules[p.playerIndex];
 
-            //activate player token UI
-            TokenSprites[p.playerIndex].enabled = true;
-            //TokenSprites[p.playerIndex+6].enabled = false;
-            //initialize token position to Map1
-            TokenSprites[p.playerIndex].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex].position;
-            TokenSprites[p.playerIndex+6].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex+6].position;
-
             //set player UI colors
             SetUIColors(p.playerIndex);
         }
+
 
         //initialize p1 menu state tracking
         p1MenuState = 0;
 
         //deactivate P1 sprite until done with settings - OnDone()
-        TokenSprites[0].enabled = false;
-        
-
+        mv.TokenSprites[0].enabled = false;
     }
 
 
@@ -236,7 +232,7 @@ public class MatchSettingsLC : LevelController
                 evSys.SetSelectedGameObject(ShotToggle);
 
                 //hide P1 map select token
-                TokenSprites[0].enabled = false;
+                mv.TokenSprites[0].enabled = false;
 
             }
         }
@@ -303,14 +299,7 @@ public class MatchSettingsLC : LevelController
     {
         //base.SetUIColors(idx);
 
-        //set token color
-        TokenSprites[idx].sprite = pm.playerList[idx].playerScript.spriteSet[0];
-
-        //set confirmed token colors
-        TokenSprites[idx+6].sprite = pm.playerList[idx].playerScript.spriteSet[2];
-
-
-
+        mv.SetUIColors(idx);
     }
 
     public void ToggleItem(int itemID)
@@ -332,13 +321,11 @@ public class MatchSettingsLC : LevelController
         //move P1 selection to map vote
         MultiplayerEventSystem evSys = UIInputModules[0].transform.GetComponent<MultiplayerEventSystem>();
         evSys.playerRoot = rightCanvas.gameObject;
-        evSys.SetSelectedGameObject(Map1Button);
+        evSys.SetSelectedGameObject(mv.Map1Button);
 
         //show P1 map select token
-        TokenSprites[0].enabled = true;
+        mv.TokenSprites[0].enabled = true;
 
-
-        //ADD THIS!!!!:
         //disable settings menu
         DeactivateSettingsMenu();
     }

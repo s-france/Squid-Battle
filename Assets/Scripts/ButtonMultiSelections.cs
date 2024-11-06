@@ -6,7 +6,6 @@ public class ButtonMultiSelections : MonoBehaviour
 {
     [SerializeField] public int buttonID;
     [SerializeField] public Transform[] positions;
-    [SerializeField] Transform[] UITokens;
 
     // Start is called before the first frame update
     void Start()

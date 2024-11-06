@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework.Constraints;
-using Unity.MLAgents.SideChannels;
+//using Unity.MLAgents.SideChannels;
 using UnityEngine;
 
 public class RewindBehavior : ItemBehavior

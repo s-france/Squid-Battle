@@ -42,7 +42,6 @@ public class MapButton : MenuButton
         token.selectionID = selections.buttonID;
 
         Debug.Log("player " + idx + "OnSelect!");
-
     }
 
     void OnClick()

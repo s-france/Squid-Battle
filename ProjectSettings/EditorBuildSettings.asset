@@ -44,6 +44,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MatchSettings.unity
     guid: 90d482b170297f44696e348ee3d37168
+  - enabled: 1
+    path: Assets/Scenes/BattleArena3.unity
+    guid: cb9e879249510d54c967c2ac1a5e2de1
+  - enabled: 1
+    path: Assets/Scenes/BattleArena4.unity
+    guid: 292aa5734c46d0442bea048a257c100b
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9642bdf4d655dc340acfb4d1485b1a8f, type: 2}
   m_UseUCBPForAssetBundles: 0

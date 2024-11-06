@@ -18,13 +18,13 @@ public class ArenaLevelController : LevelController
 
     //post-game UI stuff
     [SerializeField] Transform resultsScreen;
-    [SerializeField] Transform mapVoteMenu;
+    MapVote mv;
     [SerializeField] Transform finalResultMenu;
     [SerializeField] InputSystemUIInputModule[] UIInputModules;
-    [SerializeField] Image[] TokenSprites;
-    [SerializeField] GameObject Map1Button;
+    
+
     [SerializeField] GameObject ReturnButton;
-    [SerializeField] TextMeshProUGUI nextRoundText;
+    
     [SerializeField] Image winnerSprite;
     [SerializeField] TextMeshProUGUI winnerText;
     [SerializeField] ScoreBoard sb;
@@ -38,8 +38,9 @@ public class ArenaLevelController : LevelController
         gm.lc = this;
         pm = gm.GetComponentInChildren<PlayerManager>();
         im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
-
         im.gm = gm;
+
+        mv = resultsScreen.GetComponentInChildren<MapVote>();
 
         SpawnPoints = new List<Transform>();
 
@@ -92,6 +93,7 @@ public class ArenaLevelController : LevelController
     public override void StartLevel()
     {
         FindFirstObjectByType<AudioManager>().Init();
+        mv.InitMapVoteUI();
 
         Debug.Log("Starting LEvel arena");
         if(pm == null)
@@ -128,16 +130,11 @@ public class ArenaLevelController : LevelController
             UIInputModules[p.playerIndex].actionsAsset = pm.playerList[pm.playerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.actions;
             pm.playerList[pm.playerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.uiInputModule = UIInputModules[p.playerIndex];
 
-            //activate player token UI
-            TokenSprites[p.playerIndex].enabled = true;
-            //TokenSprites[p.playerIndex+6].enabled = false;
-            //initialize token position to Map1
-            TokenSprites[p.playerIndex].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex].position;
-            TokenSprites[p.playerIndex+6].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex+6].position;
-
             //set player UI colors
             SetUIColors(p.playerIndex);
         }
+
+        
 
         gm.battleStarted = true;
         Debug.Log("game started!");
@@ -162,11 +159,7 @@ public class ArenaLevelController : LevelController
     {
         //base.SetUIColors(idx);
 
-        //set token color
-        TokenSprites[idx].sprite = pm.playerList[idx].playerScript.spriteSet[0];
-
-        //set confirmed token colors
-        TokenSprites[idx+6].sprite = pm.playerList[idx].playerScript.spriteSet[2];
+        mv.SetUIColors(idx);
 
         //set scoreboard colors
         sb.SetColor(idx);
@@ -228,7 +221,8 @@ public class ArenaLevelController : LevelController
             //set winner text
             winnerText.text = "Player " + winner + " Wins!";
 
-            mapVoteMenu.gameObject.SetActive(false);
+            mv.DeactivateMapVoteMenu();
+            
             finalResultMenu.gameObject.SetActive(true);
 
             //switch P1 input to menu
@@ -239,21 +233,9 @@ public class ArenaLevelController : LevelController
 
         } else
         {
-            //update next round text
-            nextRoundText.text = "Round " + ++gm.ms.roundsPlayed + " Incoming!";
-
             finalResultMenu.gameObject.SetActive(false);
-            mapVoteMenu.gameObject.SetActive(true);
-
-            foreach(PlayerConfig p in pm.playerList)
-            {
-                //switch to menu input action map
-                p.input.SwitchCurrentActionMap("Menu");
-
-                //initialize token position to Map1
-                TokenSprites[p.playerIndex].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex].position;
-                TokenSprites[p.playerIndex+6].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex+6].position;
-            }
+            
+            mv.ActivateMapVoteMenu();
 
         }
 
@@ -267,20 +249,8 @@ public class ArenaLevelController : LevelController
 
         //deactivate finalResults
         finalResultMenu.gameObject.SetActive(false);
-        //activate MapVote
-        mapVoteMenu.gameObject.SetActive(true);
-
-        foreach(PlayerConfig p in pm.playerList)
-            {
-                //switch to menu input action map
-                p.input.SwitchCurrentActionMap("Menu");
-
-                UIInputModules[p.playerIndex].GetComponent<MultiplayerEventSystem>().SetSelectedGameObject(Map1Button);
-                
-                //initialize token position to Map1
-                TokenSprites[p.playerIndex].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex].position;
-                TokenSprites[p.playerIndex+6].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex+6].position;
-            }
+        
+        mv.ActivateMapVoteMenu();
     }
 
 
@@ -295,6 +265,8 @@ public class ArenaLevelController : LevelController
             {
                 //assign value randomly selected from gm.ms.MapPool
                 int map = gm.ms.PickMap();
+
+                Debug.Log("picked map" + map);
 
                 gm.StartMatch(map);
                 return;
@@ -391,6 +363,12 @@ public class ArenaLevelController : LevelController
     public override void SpawnPlayer(int idx)
     {
         pm.playerList[pm.playerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
+    }
+
+    public override int GetLevelType()
+    {
+        //print("generic ArenaLC leveltype = 10");
+        return 10;
     }
 
 
