@@ -9,29 +9,52 @@ public class ArenaBoundary : MonoBehaviour
     InputManager im;
     PlayerManager pm;
 
+    bool started;
+
     // Start is called before the first frame update
     void Start()
     {
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
-        pm = gm.GetComponentInChildren<PlayerManager>();  
+        pm = gm.GetComponentInChildren<PlayerManager>();
+
+        StartCoroutine(DelayStart());
+    }
+
+    IEnumerator DelayStart()
+    {
+        int delay = 0;
+        WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
+        
+        while(delay < 2)
+        {
+            delay++;
+            yield return fuWait;
+        }
+
+        started = true;
     }
 
     void OnTriggerExit2D(Collider2D col)
     {
-        if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
+        if(started)
         {
-            int idx = col.GetComponentInParent<PlayerController>().idx;
+            if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
+            {
+                int idx = col.GetComponentInParent<PlayerController>().idx;
 
-            pm.playerList[idx].isInBounds = false;
-            pm.playerList[idx].playerScript.isInBounds = false;
+                pm.playerList[idx].isInBounds = false;
+                pm.playerList[idx].playerScript.isInBounds = false;
 
-            StartCoroutine(pm.PlayerKillClock(idx, 3.0f));
+                StartCoroutine(pm.PlayerKillClock(idx, 3.0f));
 
-        } else if (col.gameObject.layer == LayerMask.NameToLayer("ItemObjs"))
-        {
-            StartCoroutine(KillClock(col.gameObject, 2));
+            } else if (col.gameObject.layer == LayerMask.NameToLayer("ItemObjs"))
+            {
+                StartCoroutine(KillClock(col.gameObject, 2));
+            }
+
         }
+        
     }
 
     void OnTriggerEnter2D(Collider2D col)

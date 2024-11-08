@@ -3711,7 +3711,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b04f9d4fc211904f8ee655e7c08eebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapVote: {fileID: 1742926080}
   finalResult: {fileID: 1635308254}
   scores:
   - {fileID: 508099983}
@@ -5069,7 +5068,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1119079211
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8367,6 +8366,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1799735946}
     m_Modifications:
+    - target: {fileID: 51872101743225771, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 3.9999962
+      objectReference: {fileID: 0}
+    - target: {fileID: 1926550139975981175, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1948387686724634611, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -99.660324
+      objectReference: {fileID: 0}
     - target: {fileID: 3759237942791758521, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
       propertyPath: m_Name
       value: MapVote
@@ -8401,7 +8412,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5599954951728748131, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1091.9
+      value: 875.0748
       objectReference: {fileID: 0}
     - target: {fileID: 5599954951728748131, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8437,7 +8448,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5599954951728748131, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 2.6739044
+      value: 27.1108
       objectReference: {fileID: 0}
     - target: {fileID: 5599954951728748131, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8451,9 +8462,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7685567322868511690, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
-      propertyPath: UIInputModules.Array.size
-      value: 6
+    - target: {fileID: 5769293245603817203, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 3.9999962
       objectReference: {fileID: 0}
     - target: {fileID: 7685567322868511690, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
       propertyPath: 'UIInputModules.Array.data[0]'

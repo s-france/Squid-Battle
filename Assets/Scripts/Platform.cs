@@ -4,20 +4,39 @@ using System.Collections.Generic;
 
 //using System.Numerics;
 using UnityEngine;
+using UnityEngine.Splines;
 
 public class Platform : MonoBehaviour
 {
+    bool started = false;
     List<Collider2D> contacts;
 
     Vector2 prevPos;
-    Vector2 diff = new Vector2(0,0);
+    Vector2 diff = Vector2.zero;
 
     // Start is called before the first frame update
     void Start()
     {
         contacts = new List<Collider2D>();
 
+
         prevPos = transform.position;
+
+        StartCoroutine(DelayStart());
+    }
+
+    IEnumerator DelayStart()
+    {
+        int delay = 0;
+        WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
+        
+        while(delay < 2)
+        {
+            delay++;
+            yield return fuWait;
+        }
+
+        started = true;
     }
 
     // Update is called once per frame
@@ -45,14 +64,17 @@ public class Platform : MonoBehaviour
     {
         diff = (Vector2)transform.position - prevPos;
 
-        foreach(Collider2D col in contacts)
+        if(started)
         {
-            col.transform.position += (Vector3)diff;
-            
+            foreach(Collider2D col in contacts)
+            {
+                col.transform.position += (Vector3)diff;
+                
+            }
         }
 
         prevPos = transform.position;
-
+        
     }
 
 }

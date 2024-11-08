@@ -47,6 +47,13 @@ public class ItemManager : MonoBehaviour
             sum += i;
         }
 
+        if(sum == 0)
+        {
+            Debug.Log("No Items enabled.");
+            return -1;
+        }
+
+
         //pick random value in votes
         float r = Random.value * sum;
         float bottom = 0;
@@ -79,6 +86,7 @@ public class ItemManager : MonoBehaviour
         
         //instantiate new ItemPrefab
         GameObject newItem = Instantiate(ItemPrefab, pos.position, pos.rotation);
+        newItem.transform.parent = pos;
 
         //Random Item
         if (type == -1)

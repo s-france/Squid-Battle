@@ -50,6 +50,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BattleArena4.unity
     guid: 292aa5734c46d0442bea048a257c100b
+  - enabled: 1
+    path: Assets/Scenes/BattleArena6.unity
+    guid: c6e9132caab555a4db3f55fa86576575
+  - enabled: 1
+    path: Assets/Scenes/BattleArena5.unity
+    guid: c2ef60d858aab044ca966e40dea216d3
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9642bdf4d655dc340acfb4d1485b1a8f, type: 2}
   m_UseUCBPForAssetBundles: 0

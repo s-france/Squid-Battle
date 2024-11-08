@@ -13817,6 +13817,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 813673804}
     m_Modifications:
+    - target: {fileID: 1948387686724634611, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -26
+      objectReference: {fileID: 0}
     - target: {fileID: 3759237942791758521, guid: 1e20dbfa644bbde47841b6faa2d11840, type: 3}
       propertyPath: m_Name
       value: MapVote

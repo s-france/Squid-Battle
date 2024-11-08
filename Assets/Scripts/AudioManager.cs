@@ -49,7 +49,7 @@ public class AudioManager : MonoBehaviour
     //plays sound of name
     public void Play (string name)
     {
-        Debug.Log("playing sound: " + name);
+        //Debug.Log("playing sound: " + name);
         Sound s = Array.Find(sounds, sound => sound.name == name);
 
         if (s != null)
@@ -99,8 +99,8 @@ public class AudioManager : MonoBehaviour
 
             SoundsPlaying.Remove(name);
 
-            Debug.Log("stopping sound: " + s.name);
-            Debug.Log("s.source = " + s.source.name);
+            //Debug.Log("stopping sound: " + s.name);
+            //Debug.Log("s.source = " + s.source.name);
         } else
         {
             Debug.Log("ERROR sound " + name + " not found!");
