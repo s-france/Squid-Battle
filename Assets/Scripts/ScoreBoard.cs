@@ -9,7 +9,7 @@ public class ScoreBoard : MonoBehaviour
     GameManager gm;
     PlayerManager pm;
     //[SerializeField] Transform mapVote;
-    [SerializeField] Transform finalResult;
+    //[SerializeField] Transform finalResult;
     [SerializeField] Transform[] scores;
 
 
@@ -52,6 +52,7 @@ public class ScoreBoard : MonoBehaviour
 
     public void SetScores()
     {
+
         foreach(PlayerConfig p in pm.playerList)
         {
             Debug.Log("P" + p.playerIndex + " score: " + p.score);
@@ -61,9 +62,8 @@ public class ScoreBoard : MonoBehaviour
             scores[p.playerIndex].GetComponentInChildren<Slider>().value = p.score;
             scores[p.playerIndex].GetComponentInChildren<TextMeshProUGUI>().text = p.score.ToString();
 
+        }        
 
-
-        }
     }
 
 

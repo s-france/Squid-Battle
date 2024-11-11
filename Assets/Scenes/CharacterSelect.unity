@@ -1198,6 +1198,34 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: a8ad16fd-5a71-4509-8739-1b2c9efcf979
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5de931cc-3360-4d7c-bbc6-d3cf910ef190
+    m_ActionName: 'UI/Join[/SwitchProControllerHID1/leftShoulder,/SwitchProControllerHID1/rightShoulder,/SwitchProControllerHID1/leftTrigger,/SwitchProControllerHID1/rightTrigger]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f4dcda03-96a5-42c5-b16d-eaedb2da758a
+    m_ActionName: 'UI/Back[/SwitchProControllerHID1/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7de12c66-e6cf-45d4-847a-75a387430655
+    m_ActionName: 'Menu/Confirm[/SwitchProControllerHID1/buttonEast]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 60248800-5eb6-43a0-b8d5-e36fc9dc61f9
+    m_ActionName: 'Menu/Back[/SwitchProControllerHID1/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0019131f-7c6b-466b-8dd5-da7a29c5254d
+    m_ActionName: 'Menu/Join[/SwitchProControllerHID1/leftShoulder,/SwitchProControllerHID1/rightShoulder,/SwitchProControllerHID1/leftTrigger,/SwitchProControllerHID1/rightTrigger]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0f5e5d9a-cae9-4667-8280-bf70eb516aba
+    m_ActionName: 'Menu/Select R[/SwitchProControllerHID1/rightShoulder,/SwitchProControllerHID1/rightTrigger]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: debd2828-4e77-4d24-8762-37f7bde7facf
+    m_ActionName: 'Menu/Select L[/SwitchProControllerHID1/leftShoulder,/SwitchProControllerHID1/leftTrigger]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: UI
@@ -2137,12 +2165,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 32
   m_ScaleFactor: 2
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.631
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2645,6 +2673,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pmPrefab: {fileID: 7482079153633654983, guid: cf99134eb7372f14d8654a5f24d147ad, type: 3}
+  am: {fileID: 0}
   lc: {fileID: 0}
   sl: {fileID: 0}
   ms: {fileID: 0}

@@ -8,11 +8,12 @@ public class ItemBehavior : MonoBehaviour
 {
     [HideInInspector] public ItemManager im;
     [HideInInspector] public PlayerController pc;
-    [HideInInspector] public SpriteRenderer sr;
+    [HideInInspector] public SpriteRenderer[] Sprites;
 
     public virtual void Start()
     {
-        sr = GetComponent<SpriteRenderer>();
+        Sprites = GetComponentsInChildren<SpriteRenderer>();
+
         im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
     }
 
@@ -29,7 +30,10 @@ public class ItemBehavior : MonoBehaviour
 
     public virtual void HideSprite()
     {
-        sr.enabled = false;
+        foreach(SpriteRenderer sr in Sprites)
+        {
+            sr.enabled = false;
+        }
     }
     
     public virtual void DestroyItem()

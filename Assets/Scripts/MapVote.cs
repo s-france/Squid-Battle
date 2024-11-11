@@ -40,8 +40,13 @@ public class MapVote : MonoBehaviour
 
         foreach(PlayerConfig p in pm.playerList)
         {
-            //activate player token UI
-            TokenSprites[p.playerIndex].enabled = true;
+            if(!(gm.lc.GetLevelType() == 3 && p.playerIndex == 0))
+            {
+                //activate player token UI
+                TokenSprites[p.playerIndex].enabled = true;
+            }
+            
+
             //TokenSprites[p.playerIndex+6].enabled = false;
             //initialize token position to Map1
             TokenSprites[p.playerIndex].transform.position = Map1Button.GetComponent<ButtonMultiSelections>().positions[p.playerIndex].position;

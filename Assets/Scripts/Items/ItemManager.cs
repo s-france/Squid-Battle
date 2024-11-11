@@ -9,6 +9,7 @@ public class ItemManager : MonoBehaviour
     public GameObject ItemPrefab;
     public List<GameObject> ItemObjs;
     [SerializeField] Sprite[] ItemPickupSprites;
+    [SerializeField] Color[] ItemPickupColors;
 
     [SerializeField] Transform[] ItemSpawners;
 
@@ -86,6 +87,8 @@ public class ItemManager : MonoBehaviour
         
         //instantiate new ItemPrefab
         GameObject newItem = Instantiate(ItemPrefab, pos.position, pos.rotation);
+        ItemController ic = newItem.GetComponent<ItemController>();
+
         newItem.transform.parent = pos;
 
         //Random Item
@@ -98,38 +101,37 @@ public class ItemManager : MonoBehaviour
         switch (type)
         {
             case 0: //shot
-                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<ShotBehavior>() as ShotBehavior;
-                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[0];
+                ic.ib = newItem.AddComponent<ShotBehavior>() as ShotBehavior;
                 Debug.Log("spawned shot at " + pos.position);
                 break;
 
             case 1: //ink
-                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<InkBehavior>() as InkBehavior;
-                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[1];
+                ic.ib = newItem.AddComponent<InkBehavior>() as InkBehavior;
+                //ic.itemSprite.sprite = ItemPickupSprites[1];
                 Debug.Log("spawned ink at " + pos.position);
                 break;
 
             case 2: //wall
-                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<WallBehavior>() as WallBehavior;
-                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[3];
+                ic.ib = newItem.AddComponent<WallBehavior>() as WallBehavior;
+                //ic.itemSprite.sprite = ItemPickupSprites[3];
                 Debug.Log("spawned wall at " + pos.position);
                 break;
             
             case 3: //warp
-                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<WarpBehavior>() as WarpBehavior;
-                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[4];
+                ic.ib = newItem.AddComponent<WarpBehavior>() as WarpBehavior;
+                //ic.itemSprite.sprite = ItemPickupSprites[4];
                 Debug.Log("spawned warp at " + pos.position);
                 break;
             
             case 4: //rewind
-                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<RewindBehavior>() as RewindBehavior;
-                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[5];
+                ic.ib = newItem.AddComponent<RewindBehavior>() as RewindBehavior;
+                //ic.itemSprite.sprite = ItemPickupSprites[5];
                 Debug.Log("spawned rewind at " + pos.position);
                 break;
             
             case 5: //grow
-                newItem.GetComponent<ItemController>().ib = newItem.AddComponent<GrowBehavior>() as GrowBehavior;
-                newItem.GetComponent<SpriteRenderer>().sprite = ItemPickupSprites[2];
+                ic.ib = newItem.AddComponent<GrowBehavior>() as GrowBehavior;
+                //ic.itemSprite.sprite = ItemPickupSprites[2];
                 Debug.Log("spawned grow at " + pos.position);
                 break;
             
@@ -137,6 +139,11 @@ public class ItemManager : MonoBehaviour
                 Debug.Log("ERROR: invalid item type!!");
                 break;
         }
+
+        ic.itemSprite.sprite = ItemPickupSprites[type];
+
+        ic.colorSprites[0].color = ItemPickupColors[type*2];
+        ic.colorSprites[1].color = ItemPickupColors[(type*2)+1];
 
         newItem.GetComponent<ItemController>().spawn = pos;
         pos.GetComponent<ItemSpawn>().isFull = true;

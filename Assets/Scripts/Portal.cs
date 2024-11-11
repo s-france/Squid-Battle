@@ -63,6 +63,13 @@ public class Portal : MonoBehaviour
         otherPortal.coolDown = otherPortal.defaultCoolDown;
 
         obj.transform.position = otherPortal.transform.position;
+
+        PlayerController pc = obj.GetComponent<PlayerController>();
+        if(pc != null)
+        {
+            pc.moveTime *= 1.5f;
+        }
+
     }
 
 }

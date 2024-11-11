@@ -8,6 +8,9 @@ public class ItemController : MonoBehaviour
 
     SpriteRenderer sr;
     public ItemBehavior ib;
+    public SpriteRenderer itemSprite;
+    public SpriteRenderer[] colorSprites;
+
     ItemManager im;
     [HideInInspector] public PlayerController pc; //player that owns this item -> null until picked up
 
@@ -59,7 +62,7 @@ public class ItemController : MonoBehaviour
             pc = playerPC;
             ib.pc = playerPC;
             //sr.enabled = false; //hide sprite after pickup
-            transform.localScale = new Vector3(.25f, .25f, 1);
+            transform.localScale = new Vector3(.025f, .025f, 1);
             GetComponent<Collider2D>().enabled = false; //disable future collision
             
             pc.GainItem(ib);
