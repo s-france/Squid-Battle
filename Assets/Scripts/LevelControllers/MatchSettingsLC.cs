@@ -19,8 +19,10 @@ public class MatchSettingsLC : LevelController
 
     [SerializeField] MapVote mv;
 
-    [SerializeField] Slider slider1;
-    [SerializeField] SliderButton SliderButton1;
+    [SerializeField] Slider slider;
+    int[] sliderIntervals = {10, 15, 20, 25, 30};
+    [SerializeField] Text sliderNumber;
+    //[SerializeField] SliderButton SliderButton1;
 
     [SerializeField] InputSystemUIInputModule[] UIInputModules;
 
@@ -114,6 +116,7 @@ public class MatchSettingsLC : LevelController
             SetUIColors(p.playerIndex);
         }
 
+        LeftUIElements[4].GetComponent<Image>().sprite = pm.playerList[0].playerScript.spriteSet[0];
 
         //initialize p1 menu state tracking
         p1MenuState = 0;
@@ -205,14 +208,7 @@ public class MatchSettingsLC : LevelController
 
         if(ctx.started)
         {
-            if(SliderButton1.sliderSelected)
-            {
-                FindFirstObjectByType<AudioManager>().Play("UINav3");
-
-                SliderButton1.sliderSelected = false;
-                slider1.interactable = false;
-                SliderButton1.Select();
-            } else if (pm.playerList[playerID].isReady)
+            if (pm.playerList[playerID].isReady)
             {
                 FindFirstObjectByType<AudioManager>().Play("UINav2");
                 pm.UnReadyPlayer(playerID);
@@ -309,7 +305,35 @@ public class MatchSettingsLC : LevelController
 
     public void SetPointsToWin()
     {
-        gm.ms.pointsToWin = (int)slider1.value;
+        gm.ms.pointsToWin = (int)slider.value;
+    }
+
+    public void OnSliderValueChanged()
+    {
+        FindFirstObjectByType<AudioManager>().Play("UINav3");
+
+        //update slider visuals
+        int idx = 0;
+
+        foreach (int i in sliderIntervals)
+        {
+            if(slider.value == i-1)
+            {
+                slider.value = sliderIntervals[idx-1];
+                break;
+            } else if(slider.value == i+1)
+            {
+                slider.value = sliderIntervals[idx+1];
+                break;
+            }
+
+            idx++;
+        }
+
+        SetPointsToWin();
+
+        sliderNumber.text = slider.value.ToString();
+        
     }
 
 
@@ -344,6 +368,9 @@ public class MatchSettingsLC : LevelController
 
         //hide shade cover
         LeftUIElements[3].gameObject.SetActive(false);
+
+        //show P1 icon
+        LeftUIElements[4].gameObject.SetActive(true);
     }
 
     //hides settings menu panel
@@ -360,6 +387,9 @@ public class MatchSettingsLC : LevelController
 
         //shade out
         LeftUIElements[3].gameObject.SetActive(true);
+
+        //hide P1 icon
+        LeftUIElements[4].gameObject.SetActive(false);
     }
     
 

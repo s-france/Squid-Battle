@@ -62,7 +62,8 @@ public class ItemController : MonoBehaviour
             pc = playerPC;
             ib.pc = playerPC;
             //sr.enabled = false; //hide sprite after pickup
-            transform.localScale = new Vector3(.025f, .025f, 1);
+            transform.SetParent(null);
+            transform.localScale = new Vector3(.3f, .3f, 1);
             GetComponent<Collider2D>().enabled = false; //disable future collision
             
             pc.GainItem(ib);
