@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public PlayerManager pm;
     [HideInInspector] public InputManager im;
     [SerializeField] public PlayerInput pi;
+    public CircleCollider2D SolidCol;
+    public CircleCollider2D HurtBoxTrigger;
     [HideInInspector] public Gamepad gp;
     [SerializeField] RumbleController rumbleCon;
 
@@ -69,7 +71,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float maxHitstop;
 
 
-    Vector2 DIMod = Vector2.zero;
+    [HideInInspector] public Vector2 DIMod = Vector2.zero;
 
     [HideInInspector] public float moveTime; //total time to spend in the current movement instance
     [HideInInspector] public float moveTimer; //timer counting time to spend moving
@@ -101,8 +103,8 @@ public class PlayerController : MonoBehaviour
     //[SerializeField] float moveCoolDown;
     //[SerializeField] float coolDownVelocity;
     [SerializeField] float DIStrength;
-    [SerializeField] float maxRumbleStrength;
-    [SerializeField] AnimationCurve rumbleCurve;
+    public float maxRumbleStrength;
+    public AnimationCurve rumbleCurve;
 
     [HideInInspector] public Vector3 defaultScale;
     [HideInInspector] public float defaultChargeStrength;
@@ -340,7 +342,8 @@ public class PlayerController : MonoBehaviour
         //save move input
         if(ctx.ReadValue<Vector2>().magnitude != 0 && gm.battleStarted)
         {
-            i_move = ctx.ReadValue<Vector2>();
+            //holds last non-zero input, normalized
+            i_move = ctx.ReadValue<Vector2>().normalized;
             
             //inverts projectile aim
             /*
@@ -352,6 +355,7 @@ public class PlayerController : MonoBehaviour
 
         }
 
+        //not normalized, can equal 0
         true_i_move = ctx.ReadValue<Vector2>();
 
         //Debug.Log(i_move);
@@ -384,8 +388,6 @@ public class PlayerController : MonoBehaviour
     //called when charge (button) input received
     public virtual void OnCharge(InputAction.CallbackContext ctx)
     {
-        
-
         Debug.Log("charge: " + ctx.phase);
         if(ctx.performed && pm.playerList[idx].isInBounds) //charging
         {
@@ -407,7 +409,7 @@ public class PlayerController : MonoBehaviour
     {
         if(gm.battleStarted && pm.playerList[idx].isActive && pm.playerList[idx].isAlive)
         {
-            StartCoroutine(rc.RenderReticle());
+            //StartCoroutine(rc.RenderReticle());
         }
 
         //Charging
@@ -514,7 +516,7 @@ public class PlayerController : MonoBehaviour
         float calcTime = maxMoveTime * timeCurve.Evaluate(charge/maxChargeTime);
 
 
-        Vector2 moveVector = i_move * calcSpeed * calcTime;
+        Vector2 moveVector = i_move.normalized * calcSpeed * calcTime;
         
         //Debug.Log("MOVEFORCE: " + moveForce.magnitude);
 
@@ -550,7 +552,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void OnSpecial(InputAction.CallbackContext ctx)
+    public virtual void OnSpecial(InputAction.CallbackContext ctx)
     {
         if(ctx.performed) //special charging
         {
@@ -771,13 +773,21 @@ public class PlayerController : MonoBehaviour
             //may cause problems in the future
             sr.sprite = spriteSet[0];
 
-
         }
 
         //failsafe
         if(!isMoving && !isKnockback && !isRewind)
         {
             rb.velocity = Vector2.zero;
+
+            //strafing test
+            if(true_i_move.magnitude > 0)
+            {
+                //add strafe speed var here
+                rb.velocity = true_i_move * .5f;
+
+            }
+
         }
 
     }
@@ -1022,6 +1032,11 @@ public class PlayerController : MonoBehaviour
 
         //Debug.Log("prevStates.Count: " + prevStates.Count);
         //Debug.Log("prevStates: " + prevStates);
+    }
+
+    public virtual void OnHurtboxTriggerEnter(Collider2D col)
+    {
+        return;
     }
 
 

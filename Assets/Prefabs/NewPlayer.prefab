@@ -88,11 +88,11 @@ GameObject:
   - component: {fileID: -3142732938146884802}
   - component: {fileID: 6982298533544845101}
   - component: {fileID: 4237179659672751331}
-  - component: {fileID: 8809073331192073115}
+  - component: {fileID: 1687167956417677184}
   - component: {fileID: 8285239400662830239}
   - component: {fileID: 4977600058233834703}
   m_Layer: 6
-  m_Name: Player
+  m_Name: NewPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111,6 +111,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7662443152363485237}
   - {fileID: 5894637164420444278}
   - {fileID: 3349715349416888729}
   - {fileID: 20947205095912124}
@@ -163,7 +164,7 @@ SpriteRenderer:
   m_SortingLayerID: 1810327131
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 41370ee188022d84ca3ed867e61a317c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ab12ff48f46d8954e99ab3b040ad39a9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -217,7 +218,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -227,7 +228,7 @@ CircleCollider2D:
     m_Bits: 4294967295
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4023
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -236,7 +237,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.32
+  m_Radius: 0.15
 --- !u!114 &4237179659672751331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,7 +256,7 @@ MonoBehaviour:
   m_DeviceLostEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8809073331192073115}
+      - m_Target: {fileID: 1687167956417677184}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnControllerDisconnect
         m_Mode: 0
@@ -270,7 +271,7 @@ MonoBehaviour:
   m_DeviceRegainedEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8809073331192073115}
+      - m_Target: {fileID: 1687167956417677184}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnControllerReconnect
         m_Mode: 0
@@ -288,8 +289,8 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8809073331192073115}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+      - m_Target: {fileID: 1687167956417677184}
+        m_TargetAssemblyTypeName: PlayerController3, Assembly-CSharp
         m_MethodName: OnMove
         m_Mode: 0
         m_Arguments:
@@ -304,7 +305,7 @@ MonoBehaviour:
     m_ActionName: 'Player/Move[/DualSenseGamepadHID/leftStick,/XInputControllerWindows/leftStick]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8809073331192073115}
+      - m_Target: {fileID: 1687167956417677184}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnCharge
         m_Mode: 0
@@ -320,7 +321,7 @@ MonoBehaviour:
     m_ActionName: 'Player/Charge[/DualSenseGamepadHID/buttonSouth,/XInputControllerWindows/buttonSouth]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8809073331192073115}
+      - m_Target: {fileID: 1687167956417677184}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnSpecial
         m_Mode: 0
@@ -336,7 +337,7 @@ MonoBehaviour:
     m_ActionName: 'Player/Special[/DualSenseGamepadHID/buttonEast,/XInputControllerWindows/buttonEast]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8809073331192073115}
+      - m_Target: {fileID: 1687167956417677184}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnSelectL
         m_Mode: 0
@@ -352,7 +353,7 @@ MonoBehaviour:
     m_ActionName: 'Player/Select L[/XInputControllerWindows/leftShoulder,/XInputControllerWindows/leftTrigger]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8809073331192073115}
+      - m_Target: {fileID: 1687167956417677184}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnSelectR
         m_Mode: 0
@@ -499,7 +500,7 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &8809073331192073115
+--- !u!114 &1687167956417677184
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -508,15 +509,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 5251562808165186444}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39c203cea7045a94d924916b3723aa1a, type: 3}
+  m_Script: {fileID: 11500000, guid: 87c074a0d6ffd8a42a337ea486969a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 0}
   pm: {fileID: 0}
   im: {fileID: 0}
   pi: {fileID: 4237179659672751331}
+  SolidCol: {fileID: 6982298533544845101}
+  HurtBoxTrigger: {fileID: 3110805048132046526}
   rumbleCon: {fileID: 8285239400662830239}
-  rc: {fileID: 0}
+  rc: {fileID: 5870986944590643462}
   WarpPoint: {fileID: 0}
   rb: {fileID: -3142732938146884802}
   sr: {fileID: 0}
@@ -557,22 +560,31 @@ MonoBehaviour:
       inWeight: 0.98101526
       outWeight: 0.60677975
     - serializedVersion: 3
-      time: 0.6088749
-      value: 0.29661566
+      time: 0.6698499
+      value: 0.34321913
       inSlope: -2.5294917
-      outSlope: -2.3472636
+      outSlope: -2.3689845
       tangentMode: 1
       weightedMode: 3
       inWeight: 0.17310554
-      outWeight: 0.15968394
+      outWeight: 0.182538
     - serializedVersion: 3
       time: 1
-      value: 0
-      inSlope: -0.41196567
-      outSlope: -0.41196567
+      value: 0.1
+      inSlope: -0.04718016
+      outSlope: -0.04718016
       tangentMode: 0
       weightedMode: 1
       inWeight: 0.3356753
+      outWeight: 0.24139452
+    - serializedVersion: 3
+      time: 2
+      value: 0
+      inSlope: -0.009739984
+      outSlope: -0.009739984
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.22319472
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -779,6 +791,7 @@ MonoBehaviour:
   maxMoveTime: 0.28
   maxMovePower: 2.75
   maxHitstop: 0.15
+  DIMod: {x: 0, y: 0}
   moveTime: 0
   moveTimer: 0
   hitStopTimer: 0
@@ -793,14 +806,14 @@ MonoBehaviour:
   isInBounds: 0
   inventorySize: 1
   chargeStrength: 25
-  maxChargeTime: 1.75
+  maxChargeTime: 1.5
   minCharge: 0.105
   maxChargeHoldTime: 3.25
   specialMoveMod: 0.3
   OOBMoveMod: 0.1
   knockbackMultiplier: 1.2
   DIStrength: 0
-  maxRumbleStrength: 0.55
+  maxRumbleStrength: 0
   rumbleCurve:
     serializedVersion: 2
     m_Curve:
@@ -852,7 +865,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be38e79597bf4104090e87fcab06625f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pc: {fileID: 8809073331192073115}
+  pc: {fileID: 1687167956417677184}
 --- !u!114 &4977600058233834703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -865,7 +878,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecd8c150bc69dd843b9b42bf7282a3c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pc: {fileID: 8809073331192073115}
+  pc: {fileID: 1687167956417677184}
 --- !u!1 &5322126026401388776
 GameObject:
   m_ObjectHideFlags: 0
@@ -1017,10 +1030,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b87ce69d26293224bbe462162e350e44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pc: {fileID: 8809073331192073115}
+  pc: {fileID: 1687167956417677184}
   lr: {fileID: 5371809183366282524}
   wr: {fileID: 194492634184046858}
-  rlr: {fileID: 0}
   warpSpeed: 5
   warpSR: {fileID: 8057401209555982923}
   colorSet:
@@ -6198,3 +6210,86 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5251562808165186442}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7642598574887081296
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7662443152363485237}
+  - component: {fileID: 3110805048132046526}
+  - component: {fileID: 7018324264388061876}
+  m_Layer: 6
+  m_Name: Hurtbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7662443152363485237
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7642598574887081296}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5251562808165186442}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &3110805048132046526
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7642598574887081296}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 512
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 3575
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.3
+--- !u!114 &7018324264388061876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7642598574887081296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 611417f9c779db14eb30e147f8745223, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hb: {fileID: 0}
+  pushOutPower: 0

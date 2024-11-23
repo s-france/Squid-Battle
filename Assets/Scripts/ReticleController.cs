@@ -10,7 +10,7 @@ public class ReticleController : MonoBehaviour
     [SerializeField] PlayerController pc;
     [SerializeField] LineRenderer lr; //default linerenderer reticle
     [SerializeField] Transform wr; //warp reticle
-    [SerializeField] LineRenderer rlr; //rewind reticle
+    //[SerializeField] LineRenderer rlr; //rewind reticle
     [SerializeField] float warpSpeed;
     [SerializeField] SpriteRenderer warpSR;
 
@@ -36,6 +36,7 @@ public class ReticleController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        RenderNormalReticle();
 
     }
 
@@ -59,6 +60,41 @@ public class ReticleController : MonoBehaviour
 
         lr.startColor = colorSet[colorID];
         lr.endColor = colorSet[colorID];
+    }
+
+    public void RenderNormalReticle()
+    {
+        if(pc.charging)
+        {
+            if(pc.chargeTime > pc.minCharge)
+            {
+                ActivateReticle();
+                lr.positionCount = 2;
+
+                //int chargeType = 0;
+
+                if(!pc.isCoolingDown && pc.isInBounds)
+                {
+                    lr.enabled = true;
+
+                    SetReticle(0, Vector2.up);
+                } else
+                {
+                    lr.enabled = false;
+                    DeactivateReticle();
+                }
+
+            } else
+            {
+                DeactivateReticle();
+            }
+        } else
+        {
+            DeactivateReticle();
+        }
+        
+
+
     }
 
 

@@ -79,7 +79,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 136053f723efd974eb08b648a7a88d5e, type: 3}
   - {fileID: 21300000, guid: 27c2baed93a7b67408021f2ef63378b9, type: 3}
   - {fileID: 21300000, guid: b5b870b0c3b992d4daf7e44751437c1a, type: 3}
-  winnerIdx: 0
+  placements: 
 --- !u!1 &8935075569676198549
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,7 +171,7 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 2605481108470959299, guid: a628b33e3aed2ab4897d5bb760502929, type: 3}
-  m_PlayerPrefab: {fileID: 5251562808165186444, guid: 8bc975856c76cbf449d0e9ac040fd1cd, type: 3}
+  m_PlayerPrefab: {fileID: 5251562808165186444, guid: 2f5f212fb144e774ebd2e4dfc08d170e, type: 3}
   m_SplitScreen: 0
   m_MaintainAspectRatioInSplitScreen: 0
   m_FixedNumberOfSplitScreens: -1
