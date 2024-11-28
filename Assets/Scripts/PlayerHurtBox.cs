@@ -26,6 +26,7 @@ public class PlayerHurtBox : MonoBehaviour
         
     }
 
+
     void OnTriggerEnter2D(Collider2D col)
     {
         if (!Collisions.Contains(col))

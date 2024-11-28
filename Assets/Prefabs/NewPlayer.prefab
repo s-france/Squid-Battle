@@ -218,7 +218,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 12352
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -6222,7 +6222,7 @@ GameObject:
   - component: {fileID: 3110805048132046526}
   - component: {fileID: 7018324264388061876}
   m_Layer: 6
-  m_Name: Hurtbox
+  m_Name: TriggerHurtbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6256,7 +6256,7 @@ CircleCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 512
@@ -6269,7 +6269,7 @@ CircleCollider2D:
     m_Bits: 4294967295
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 3575
+    m_Bits: 15863
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -6292,4 +6292,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hb: {fileID: 0}
-  pushOutPower: 0
+  pushOutPower: 0.05

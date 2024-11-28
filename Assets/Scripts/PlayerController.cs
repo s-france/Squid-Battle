@@ -55,6 +55,7 @@ public class PlayerController : MonoBehaviour
     float staticTimer = 0;
     [SerializeField] public int rewindSize;
     [HideInInspector] public Queue<PlayerState> prevStates;
+    [HideInInspector] public List<Vector2> prevPos; //this is redundant idgaf
 
     //NEW movement system
     [SerializeField] public AnimationCurve moveCurve; //speed:time movement curve
@@ -81,7 +82,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool isMoving;
     [HideInInspector] public bool isKnockback;
     [HideInInspector] public bool isHitStop;
-    Coroutine MoveCR;
+
 
 
     [HideInInspector] public bool isCoolingDown;
@@ -168,6 +169,7 @@ public class PlayerController : MonoBehaviour
         heldItems = new List<ItemBehavior>();
 
         prevStates = new Queue<PlayerState>(rewindSize);
+        prevPos = new List<Vector2>(3);
 
         ChangeColor(colorID);
 
@@ -846,7 +848,7 @@ public class PlayerController : MonoBehaviour
 
             WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
             //for collisions just in case
-            yield return fuWait;
+            //yield return fuWait;
 
             isHitStop = true;
             Vector2 initialVelocity = rb.velocity;
@@ -859,9 +861,10 @@ public class PlayerController : MonoBehaviour
                 timer += Time.fixedDeltaTime;
                 yield return fuWait;
             }
+            rb.velocity = initialVelocity;
             isHitStop = false;
 
-            rb.velocity = initialVelocity;
+            
         
         
         }

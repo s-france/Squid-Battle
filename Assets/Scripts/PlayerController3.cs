@@ -1,5 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
+
+
+//using System.Numerics;
 using System.Runtime.Serialization;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,6 +15,7 @@ public class PlayerController3 : PlayerController
     bool chargePressed = false;
     int movePriority = 0;
     int movePhase = 0;
+
 
     bool isGliding = false;
     float glideTimer = 0;
@@ -31,6 +38,16 @@ public class PlayerController3 : PlayerController
 
     public override void FixedUpdate()
     {
+        //storing previous position for use in trigger collision corrections
+        //prevent overfilling
+        while(prevPos.Count >= 2)
+        {
+            prevPos.RemoveAt(0);
+        }
+        //save previous position
+        prevPos.Add(transform.position);
+       
+        
 
         ChargeTick();
         MovementTick();
@@ -177,8 +194,17 @@ public class PlayerController3 : PlayerController
 
     public override void MovementTick()
     {
+        /*
+        if(isHitStop)
+        {
+            return;
+        }
+        */
+
         if(!isHitStop)
         {
+            Vector2 direction = rb.velocity.normalized;
+
             if(moveTimer <= moveTime)
             {
                 isMoving = true;
@@ -407,6 +433,7 @@ public class PlayerController3 : PlayerController
 
         direction = otherPosDiff; //replicates movement2.0 style knockback
 
+        //wait one tick so other player's knockback calculations can finish
         yield return new WaitForFixedUpdate();
 
         //direction = (otherStrength * pre-impact otherPlayer.direction) + (strenght * post-impact thisPlayer.direction)
@@ -456,8 +483,10 @@ public class PlayerController3 : PlayerController
             ApplyMove(1, direction, knockbackMultiplier * otherStrength);
         }
 
-        //temporary
-        //yield return null;
+        //apply hitstop
+        //FIX THIS!!
+        //float hitstop = (strength > otherStrength) ? (strength/maxMovePower) : (otherStrength/maxMovePower);
+        StartCoroutine(HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
     }
 
 
@@ -483,6 +512,39 @@ public class PlayerController3 : PlayerController
                 {
                     Debug.Log("Player" + idx + " collided with Player " + col.gameObject.GetComponentInParent<PlayerController>().idx);
 
+                    //DO THIS NEXT:
+                    //insert positional collision hack here
+                    
+                    //previous position
+                    Vector2 prev = transform.position;
+                    if(prevPos[1] != (Vector2)transform.position)
+                    {
+                        prev = prevPos[1];
+                    } else if(prevPos[0] != (Vector2)transform.position)
+                    {
+                        prev = prevPos[0];
+                    }
+
+                    PlayerController otherPC = col.GetComponentInParent<PlayerController>();
+                    Vector2 otherPrev = otherPC.transform.position;
+                    if(otherPC.prevPos[1] != (Vector2)otherPC.transform.position)
+                    {
+                        otherPrev = otherPC.prevPos[1];
+                    } else if(otherPC.prevPos[0] != (Vector2)otherPC.transform.position)
+                    {
+                        otherPrev = otherPC.prevPos[0];
+                    }
+
+                    var (pos, otherPos) = EstimateCircleTriggerCollision(HurtBoxTrigger.radius, transform.position, prev, otherPC.transform.position, otherPrev);
+
+                    transform.position = pos;
+
+
+
+
+
+
+
                     StartCoroutine(ApplyKnockback(col.gameObject.GetComponentInParent<PlayerController>().movePower, col.gameObject.GetComponentInParent<PlayerController>().rb));
 
                 }
@@ -496,13 +558,38 @@ public class PlayerController3 : PlayerController
 
     }
 
-    void OnTriggerStay2D(Collider2D col)
+    (Vector2 pos, Vector2 otherPos) EstimateCircleTriggerCollision(float radius, Vector2 pos, Vector2 prev, Vector2 otherPos, Vector2 otherPrev)
     {
-        //push players away from each other
+        //exit condition
+        if(((2*radius)+.001f >= (prev-otherPrev).magnitude) && ((prev-otherPrev).magnitude >= (2 * radius)-.001f))
+        {
+            return(prev, otherPrev);
+        }
 
 
+        //recursive divide + conquer loop
+        Vector2 dist = pos - prev; //dist points toward pos
+        Vector2 otherDist = otherPos - otherPrev;
+
+        //Vector2 newPrev;
+        //Vector2 otherNewPrev;
+
+        //plus 1/2 or -1/2 for closer or farther
+        if((prev-otherPrev).magnitude > 2*radius)
+        {
+            prev += (.5f * dist);
+            otherPrev += (.5f * otherDist);
+        }else if((prev-otherPrev).magnitude < 2*radius)
+        {
+            prev -= (.5f * dist);
+            otherPrev -= (.5f * otherDist);
+        }
+
+        //repeat loop
+        return EstimateCircleTriggerCollision(radius, pos, prev, otherPos, otherPrev);
 
     }
+
 
 
 
