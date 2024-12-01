@@ -103,7 +103,9 @@ public class PlayerController : MonoBehaviour
     //[SerializeField] float coolDownFactor;
     //[SerializeField] float moveCoolDown;
     //[SerializeField] float coolDownVelocity;
-    [SerializeField] float DIStrength;
+    public float DIStrength;
+    public float forwardDIStrength;
+    public float lateralDIStrength;
     public float maxRumbleStrength;
     public AnimationCurve rumbleCurve;
 

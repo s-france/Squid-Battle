@@ -205,22 +205,33 @@ public class PlayerController3 : PlayerController
         {
             Vector2 direction = rb.velocity.normalized;
 
+            //DI stuff
+            Vector2 lateralDI;
+            Vector2 forwardDI;
+            if(true_i_move != Vector2.zero)
+            {
+                lateralDI = Vector2.Perpendicular(rb.velocity).normalized * Mathf.Sin(Mathf.Deg2Rad * Vector2.SignedAngle(rb.velocity, true_i_move));
+                forwardDI = rb.velocity.normalized * Mathf.Cos(Mathf.Deg2Rad * Vector2.SignedAngle(rb.velocity, true_i_move));
+            } else
+            {
+                lateralDI = Vector2.zero;
+                forwardDI = Vector2.zero;
+            }
+            
+            if(isKnockback)
+            {
+                DIMod = 1.1f * DIStrength * ((lateralDIStrength * lateralDI) + (forwardDIStrength * forwardDI)) /*true_i_move*/;
+            } else
+            {
+                DIMod = (lateralDIStrength * lateralDI) * DIStrength;
+            }
+
             if(moveTimer <= moveTime)
             {
                 isMoving = true;
                 movePhase = 2;
-
-                /*
-                if(isKnockback)
-                {
-                    DIMod = 1.1f * DIStrength * true_i_move;
-                } else
-                {
-                    DIMod = true_i_move * DIStrength;
-                }
-                */
                 
-                rb.velocity = moveCurve.Evaluate(moveTimer/moveTime) * moveSpeed * (rb.velocity.normalized /*+ DIMod*/);
+                rb.velocity = moveCurve.Evaluate(moveTimer/moveTime) * moveSpeed * (rb.velocity.normalized + DIMod);
 
                 if(isMoving && !isKnockback && isCoolingDown)
                 {
@@ -463,13 +474,13 @@ public class PlayerController3 : PlayerController
                 }
             }
         } else if(idx < otherRB.gameObject.GetComponent<PlayerController>().idx)
+        {
+            if(hitstop >=.3f)
             {
-                if(hitstop >=.3f)
-                {
-                    GameObject part = Instantiate(hitPart, (transform.position + otherRB.transform.position)/2, Quaternion.identity);
-                    part.GetComponent<HitEffect>().Init(.5f, maxHitstop * hitstopCurve.Evaluate(hitstop)*1.1f);
-                }
+                GameObject part = Instantiate(hitPart, (transform.position + otherRB.transform.position)/2, Quaternion.identity);
+                part.GetComponent<HitEffect>().Init(.5f, maxHitstop * hitstopCurve.Evaluate(hitstop)*1.1f);
             }
+        }
 
         
         if(!isRewind)
@@ -484,8 +495,6 @@ public class PlayerController3 : PlayerController
         }
 
         //apply hitstop
-        //FIX THIS!!
-        //float hitstop = (strength > otherStrength) ? (strength/maxMovePower) : (otherStrength/maxMovePower);
         StartCoroutine(HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
     }
 
@@ -534,19 +543,13 @@ public class PlayerController3 : PlayerController
                     {
                         otherPrev = otherPC.prevPos[0];
                     }
-
+                    
+                    //correct collision position
                     var (pos, otherPos) = EstimateCircleTriggerCollision(HurtBoxTrigger.radius, transform.position, prev, otherPC.transform.position, otherPrev);
-
                     transform.position = pos;
-
-
-
-
-
-
+                    otherPC.transform.position = otherPos; //is this needed?
 
                     StartCoroutine(ApplyKnockback(col.gameObject.GetComponentInParent<PlayerController>().movePower, col.gameObject.GetComponentInParent<PlayerController>().rb));
-
                 }
             }
             

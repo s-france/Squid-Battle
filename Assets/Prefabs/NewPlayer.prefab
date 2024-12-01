@@ -218,7 +218,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 12352
+    m_Bits: 12480
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -538,6 +538,7 @@ MonoBehaviour:
   specialCharging: 0
   specialChargeTime: 0
   rewindSize: 100
+  prevPos: []
   moveCurve:
     serializedVersion: 2
     m_Curve:
@@ -812,8 +813,10 @@ MonoBehaviour:
   specialMoveMod: 0.3
   OOBMoveMod: 0.1
   knockbackMultiplier: 1.2
-  DIStrength: 0
-  maxRumbleStrength: 0
+  DIStrength: 0.012
+  forwardDIStrength: 10
+  lateralDIStrength: 1
+  maxRumbleStrength: 0.55
   rumbleCurve:
     serializedVersion: 2
     m_Curve:
