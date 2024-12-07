@@ -30,7 +30,7 @@ public class Platform : MonoBehaviour
         int delay = 0;
         WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
         
-        while(delay < 2)
+        while(delay < 4)
         {
             delay++;
             yield return fuWait;

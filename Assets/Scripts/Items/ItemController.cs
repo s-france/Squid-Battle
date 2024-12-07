@@ -47,7 +47,7 @@ public class ItemController : MonoBehaviour
 
     public void AssignPlayer(Transform player)
     {
-        PlayerController playerPC = player.gameObject.GetComponent<PlayerController>();
+        PlayerController playerPC = player.gameObject.GetComponentInParent<PlayerController>();
 
         //Debug.Log("CHECK heldItems.Length = " + playerPC.heldItems.Length);
         //Debug.Log("CHECK inventorySize = " + playerPC.inventorySize);
@@ -86,7 +86,7 @@ public class ItemController : MonoBehaviour
         if (LayerMask.LayerToName(col.gameObject.layer) == "Players" && pc == null)
         {
             AssignPlayer(col.gameObject.transform);
-            Debug.Log("Item" + idx + " collided with Player " + col.gameObject.GetComponent<PlayerController>().idx);
+            Debug.Log("Item" + idx + " collided with Player " + col.gameObject.GetComponentInParent<PlayerController>().idx);
         }
 
     }

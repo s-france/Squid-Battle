@@ -50,7 +50,7 @@ public class ShotObj : MonoBehaviour
         {
             PlayerController pc = col.gameObject.GetComponent<PlayerController>();
 
-            pc.StartCoroutine(pc.ApplyKnockback(shotPower, rb));
+            pc.StartCoroutine(pc.ApplyKnockback(2, shotPower, rb));
             //StartCoroutine(HitStop());
         }
     }

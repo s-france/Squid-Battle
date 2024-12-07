@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6722709210208248888}
   - component: {fileID: 6886993208704616494}
-  m_Layer: 9
+  m_Layer: 7
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_Size: {x: 16, y: 16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &5830503491155496944
@@ -96,7 +96,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5830503491155496945}
   - component: {fileID: 5830503491155496946}
-  m_Layer: 9
+  m_Layer: 7
   m_Name: ItemSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}

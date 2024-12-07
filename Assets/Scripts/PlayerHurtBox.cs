@@ -54,7 +54,7 @@ public class PlayerHurtBox : MonoBehaviour
 
                     Vector2 away = (col.transform.parent.position - transform.parent.position).normalized;
 
-                    col.transform.parent.position = (Vector2)col.transform.parent.position + (pushOutPower * away);
+                    col.transform.parent.position = (Vector2)col.transform.parent.position + (pushOutPower * Time.fixedDeltaTime * away);
                 }
             }
             

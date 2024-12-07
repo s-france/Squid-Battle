@@ -26,7 +26,7 @@ public class ArenaBoundary : MonoBehaviour
         int delay = 0;
         WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
         
-        while(delay < 2)
+        while(delay < 4)
         {
             delay++;
             yield return fuWait;
@@ -37,6 +37,8 @@ public class ArenaBoundary : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D col)
     {
+        Debug.Log("Arena TriggerExit!: " + col.gameObject.name);
+
         if(started)
         {
             if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
@@ -59,6 +61,8 @@ public class ArenaBoundary : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
+        Debug.Log("Arena TriggerEnter!: " + col.gameObject.name);
+
         if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
         {
             int idx = col.GetComponentInParent<PlayerController>().idx;

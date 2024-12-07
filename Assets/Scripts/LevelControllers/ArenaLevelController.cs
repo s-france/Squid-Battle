@@ -15,6 +15,7 @@ public class ArenaLevelController : LevelController
     [SerializeField] List<Vector2> ArenaShrinks;
     [SerializeField] float shrinkSpeed;
     Transform arena;
+    Transform arenaAnchor;
 
     //post-game UI stuff
     [SerializeField] Transform resultsScreen;
@@ -52,6 +53,9 @@ public class ArenaLevelController : LevelController
         SpawnPoints.Add(transform.GetChild(5));
 
         arena = GameObject.Find("Arena").transform;
+        arenaAnchor = GameObject.Find("ArenaAnchor").transform;
+
+        arenaAnchor.transform.localScale = arena.transform.localScale;
         
         StartLevel();
     }
@@ -73,14 +77,17 @@ public class ArenaLevelController : LevelController
             {
                 //Debug.Log("SHRINKING 0");
                 arena.localScale = Vector2.MoveTowards(arena.localScale, ArenaShrinks[0], shrinkSpeed * Time.deltaTime);
+                arenaAnchor.localScale = Vector2.MoveTowards(arenaAnchor.localScale, ArenaShrinks[0], shrinkSpeed * Time.deltaTime);
             } else if (timer >= 70 && arena.localScale.magnitude > ArenaShrinks[1].magnitude)
             {
                 //Debug.Log("SHRINKING 1");
                 arena.localScale = Vector2.MoveTowards(arena.localScale, ArenaShrinks[1], shrinkSpeed * Time.deltaTime);
+                arenaAnchor.localScale = Vector2.MoveTowards(arenaAnchor.localScale, ArenaShrinks[1], shrinkSpeed * Time.deltaTime);
             } else if (timer >= 105 && arena.localScale.magnitude > ArenaShrinks[2].magnitude)
             {
                 //Debug.Log("SHRINKING 2");
                 arena.localScale = Vector2.MoveTowards(arena.localScale, ArenaShrinks[2], shrinkSpeed * Time.deltaTime);
+                arenaAnchor.localScale = Vector2.MoveTowards(arenaAnchor.localScale, ArenaShrinks[2], shrinkSpeed * Time.deltaTime);
             }
             timer = timer + Time.deltaTime;
             yield return null;

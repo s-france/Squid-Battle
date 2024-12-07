@@ -218,7 +218,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 12480
+    m_Bits: 10432
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -228,7 +228,7 @@ CircleCollider2D:
     m_Bits: 4294967295
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 4023
+    m_Bits: 6071
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -237,7 +237,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.15
+  m_Radius: 0.2
 --- !u!114 &4237179659672751331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -526,6 +526,7 @@ MonoBehaviour:
   bubblePart: {fileID: 6286807170148970422}
   hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
   spriteSet: []
+  storedVelocity: {x: 0, y: 0}
   i_move: {x: 0, y: 0}
   true_i_move: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
@@ -788,17 +789,20 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxMoveSpeed: 34
+  maxMoveSpeed: 33
   maxMoveTime: 0.28
   maxMovePower: 2.75
   maxHitstop: 0.15
   DIMod: {x: 0, y: 0}
+  movePriority: 0
   moveTime: 0
   moveTimer: 0
   hitStopTimer: 0
   moveSpeed: 0
   movePower: 0
+  glidePower: 0
   isMoving: 0
+  isGliding: 0
   isKnockback: 0
   isHitStop: 0
   isCoolingDown: 0
@@ -856,6 +860,42 @@ MonoBehaviour:
   defaultMaxMoveTime: 0
   defaultMaxMovePower: 0
   defaultMaxHitstop: 0
+  OverpowerPeerPrioTable: []
+  IntangiblePeerPrioTable: []
+  wallTechFrameWindow: 6
+  glideDeccelDICurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.25
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &8285239400662830239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6259,10 +6299,10 @@ CircleCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 4608
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -6272,7 +6312,7 @@ CircleCollider2D:
     m_Bits: 4294967295
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 15863
+    m_Bits: 11767
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -6295,4 +6335,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hb: {fileID: 0}
-  pushOutPower: 0.05
+  pushOutPower: 0.2

@@ -39,6 +39,9 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public Sprite[] spriteSet;
     CinemachineTargetGroup tg;
 
+    //saved "real" velocity value for when velocity is temporarily modified (hitstop)
+    [HideInInspector] public Vector2 storedVelocity;
+
     [HideInInspector] public Vector2 i_move;
     [HideInInspector] public Vector2 true_i_move;
     [HideInInspector] public Vector3 rotation;
@@ -74,14 +77,26 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public Vector2 DIMod = Vector2.zero;
 
+    [HideInInspector] public int movePriority = 0;
+
     [HideInInspector] public float moveTime; //total time to spend in the current movement instance
     [HideInInspector] public float moveTimer; //timer counting time to spend moving
     [HideInInspector] public float hitStopTimer; //timer counting time to spend in hitstop
+    [HideInInspector] public float hitStopTime; //total hitstop time
     [HideInInspector] public float moveSpeed; //speed of movement
     [HideInInspector] public float movePower; //knockback to apply on collision
+    [HideInInspector] public float glidePower;
     [HideInInspector] public bool isMoving;
+    [HideInInspector] public bool isGliding;
     [HideInInspector] public bool isKnockback;
     [HideInInspector] public bool isHitStop;
+
+    [HideInInspector] public float lastChargePress = 0;
+    public int wallTechFrameWindow; //frame data for open wallTechWindow
+    [HideInInspector] public bool canWallTech = false; //wallTech window open/closed bool
+
+
+
 
 
 
@@ -116,6 +131,11 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float defaultMaxMoveTime;
     [HideInInspector] public float defaultMaxMovePower;
     [HideInInspector] public float defaultMaxHitstop;
+
+
+    //priority tables
+    [HideInInspector] public float[] OverpowerPeerPrioTable; //overpower priority
+    [HideInInspector] public float[] IntangiblePeerPrioTable; //intangible priority
 
     
 
@@ -167,6 +187,9 @@ public class PlayerController : MonoBehaviour
             Debug.Log("got SR!!");
         }
         rc = this.GetComponentInChildren<ReticleController>();
+
+        OverpowerPeerPrioTable = new float[6];
+        IntangiblePeerPrioTable = new float[6];
 
         heldItems = new List<ItemBehavior>();
 
@@ -233,7 +256,7 @@ public class PlayerController : MonoBehaviour
         {
             //Debug.Log("Player" + idx + " collided with Player " + col.gameObject.GetComponent<PlayerController>().idx);
 
-            StartCoroutine(ApplyKnockback(col.gameObject.GetComponent<PlayerController>().movePower, col.gameObject.GetComponent<PlayerController>().rb));
+            StartCoroutine(ApplyKnockback(col.gameObject.GetComponent<PlayerController>().movePriority, col.gameObject.GetComponent<PlayerController>().movePower, col.gameObject.GetComponent<PlayerController>().rb));
 
         } /*else if(LayerMask.LayerToName(col.gameObject.layer) == "Items")
         {
@@ -846,14 +869,14 @@ public class PlayerController : MonoBehaviour
     {
         if(!isHitStop)
         {
-            //Debug.Log("P" + idx + " entering hitstop for " + time + " seconds");
+            Debug.Log("P" + idx + " entering hitstop for " + time + " seconds");
 
             WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
             //for collisions just in case
             //yield return fuWait;
 
             isHitStop = true;
-            Vector2 initialVelocity = rb.velocity;
+            storedVelocity = rb.velocity;
 
             float timer = 0;
             while (timer < time)
@@ -863,19 +886,16 @@ public class PlayerController : MonoBehaviour
                 timer += Time.fixedDeltaTime;
                 yield return fuWait;
             }
-            rb.velocity = initialVelocity;
+            rb.velocity = storedVelocity;
             isHitStop = false;
 
-            
-        
-        
         }
     }
 
 
     //applies knockback effects to this player - does nothing to other colliding player
     //called in OnCollisionEnter2D when colliding with opponent
-    public virtual IEnumerator ApplyKnockback(float otherPower, Rigidbody2D otherRB)
+    public virtual IEnumerator ApplyKnockback(int otherPriority, float otherPower, Rigidbody2D otherRB)
     {
         //Debug.Log("ApplyKnockback!");
 

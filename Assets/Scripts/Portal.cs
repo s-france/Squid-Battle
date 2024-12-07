@@ -46,7 +46,10 @@ public class Portal : MonoBehaviour
         if (coolDown <= 0)
         {
             //warpObjs.Add(col);
-            Warp(col.transform);
+            
+            //FIX THIS
+            //using parent is unsafe af
+            Warp(col.transform.parent);
         }
 
     }
