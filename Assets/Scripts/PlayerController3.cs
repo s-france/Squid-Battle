@@ -767,6 +767,7 @@ public class PlayerController3 : PlayerController
             //ADD PARRY HERE
             if(otherPC.canWallTech && otherPC.lastChargePress < otherPC.wallTechFrameWindow * Time.fixedDeltaTime)
             {
+                Debug.Log("P" + idx + " got PARRIED!");
                 //give this player intangible priority from otherPlayer
                 //EDIT THIS: int constant = invol frame data
                 IntangiblePeerPrioTable[otherPC.idx] = 12 * Time.fixedDeltaTime;
@@ -778,7 +779,9 @@ public class PlayerController3 : PlayerController
                 transform.position = otherPC.transform.position;
 
                 //apply parry KB to this player
-                ApplyMove(1, otherPC.true_i_move, /* (moveTimer/moveTime) * */ knockbackMultiplier * movePower);
+                Debug.Log("parry movetime ratio: " + (1 - (moveTimer/moveTime)));
+                //Debug.Log("parry charge: " + (.7f * (1 - (moveTimer/moveTime)) * knockbackMultiplier * movePower));
+                ApplyMove(1, otherPC.true_i_move,  .7f * (1 - (moveTimer/moveTime)) * knockbackMultiplier * movePower);
 
                 //ADD THIS: increase hitstop for parry indication
                 //apply KB impact hitstop

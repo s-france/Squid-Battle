@@ -535,6 +535,7 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
+        //THIS IS A PROBLEM!!!!
         charge = Mathf.Clamp(charge, minCharge, maxChargeTime);
 
         //max speed reached in this movement
