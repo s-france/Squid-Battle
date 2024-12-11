@@ -18,9 +18,10 @@ public class PlayerManager : MonoBehaviour
     //REWORK!!!
     [HideInInspector] public List<PlayerConfig> playerList {get; private set;}
     
-    /*[HideInInspector]*/ public int colorsCount;
+    [HideInInspector] public int colorsCount;
     int[] TakenColors;
 
+    /*
     public Sprite[] blueSprites;
     public Sprite[] cyanSprites;
     public Sprite[] greenSprites;
@@ -29,7 +30,11 @@ public class PlayerManager : MonoBehaviour
     public Sprite[] purpSprites;
     public Sprite[] redSprites;
     public Sprite[] yellowSprites;
-    public Sprite[][] playerSprites;
+    */
+
+    public Sprite[] playerSprites;
+    public Color[] playerColors;
+
 
     //[HideInInspector] public int winnerIdx;
 
@@ -52,8 +57,10 @@ public class PlayerManager : MonoBehaviour
 
         playerList = new List<PlayerConfig>();
         
+
+        /*
         //build sprite array
-        playerSprites = new Sprite[8][];
+        
         //build sprite array
         playerSprites[0] = blueSprites;
         playerSprites[1] = cyanSprites;
@@ -63,8 +70,9 @@ public class PlayerManager : MonoBehaviour
         playerSprites[5] = purpSprites;
         playerSprites[6] = redSprites;
         playerSprites[7] = yellowSprites;
+        */
 
-        colorsCount = playerSprites.Length - 1;
+        colorsCount = playerColors.Length - 1;
 
         TakenColors = new int[colorsCount+1];
         Array.Clear(TakenColors, 0, TakenColors.Length);

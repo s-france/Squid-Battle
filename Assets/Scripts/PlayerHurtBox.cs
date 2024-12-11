@@ -51,10 +51,13 @@ public class PlayerHurtBox : MonoBehaviour
                 if(col == col.GetComponent<PlayerHurtBox>().hb)
                 {
                     Debug.Log("players TriggerStay!!");
-
-                    Vector2 away = (col.transform.parent.position - transform.parent.position).normalized;
-
-                    col.transform.parent.position = (Vector2)col.transform.parent.position + (pushOutPower * Time.fixedDeltaTime * away);
+                    
+                    if(!pc.isMoving && !pc.isHitStop && !pc.isKnockback)
+                    {
+                        Vector2 away = (col.transform.parent.position - transform.parent.position).normalized;
+                        col.transform.parent.position = (Vector2)col.transform.parent.position + (pushOutPower * Time.fixedDeltaTime * away);
+                    }
+                    
                 }
             }
             

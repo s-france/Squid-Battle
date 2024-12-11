@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem.UI;
 using System.Runtime.InteropServices;
+using Unity.VisualScripting.Antlr3.Runtime;
 
 public class MapVote : MonoBehaviour
 {
@@ -119,10 +120,12 @@ public class MapVote : MonoBehaviour
         }
 
         //set token color
-        TokenSprites[idx].sprite = pm.playerList[idx].playerScript.spriteSet[0];
+        TokenSprites[idx].sprite = pm.playerList[idx].playerScript.SpriteSet[0];
+        TokenSprites[idx].color = pm.playerList[idx].playerScript.sr.color;
 
         //set confirmed token colors
-        TokenSprites[idx+6].sprite = pm.playerList[idx].playerScript.spriteSet[2];
+        TokenSprites[idx+6].sprite = pm.playerList[idx].playerScript.SpriteSet[2];
+        TokenSprites[idx+6].color = pm.playerList[idx].playerScript.sr.color;
     }
 
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+//using System.Numerics;
 using System.Runtime.Serialization;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -95,7 +96,7 @@ public class PlayerController3 : PlayerController
         //Debug.Log(i_move);
 
         //rotate sprite
-        if(!isCoolingDown)
+        if(!isCoolingDown && !isHitStop)
         {
             RotateSprite(i_move);
         }
@@ -108,9 +109,9 @@ public class PlayerController3 : PlayerController
     {
         if(ctx.performed)
         {
-            if(lastChargePress <= 3 * wallTechFrameWindow * Time.fixedDeltaTime)
+            if(lastChargePress <= .5f) //repeat tech input lockout time
             {
-                //repeat inut closes window
+                //repeat input closes window
                 canWallTech = false;
             } else if(lastWallTech >= 20 * wallTechFrameWindow * Time.fixedDeltaTime)
             {
@@ -119,6 +120,8 @@ public class PlayerController3 : PlayerController
             {
                 canWallTech = false;
             }
+
+            Debug.Log("time from last charge press: " + lastChargePress);
 
             //reset buffer timer
             lastChargePress = 0;
@@ -133,7 +136,6 @@ public class PlayerController3 : PlayerController
 
             //chargeTime = 0;
             //charging = true;
-            //StartCoroutine(Charge());
             chargePressed = true;
 
         } else if (ctx.canceled) //released
@@ -141,7 +143,7 @@ public class PlayerController3 : PlayerController
             //charging = false;
             chargePressed = false;
 
-            if(!isMoving)
+            if(!isMoving && !isHitStop)
             {
                 ApplyMove(0, i_move, chargeTime);
             }
@@ -186,11 +188,10 @@ public class PlayerController3 : PlayerController
                 ///render reticle function
                 ///
 
-
                 //rc.RenderNormalReticle();
 
 
-                sr.sprite = spriteSet[2]; //charging sprite
+                sr.sprite = SpriteSet[2]; //charging sprite
                 chargeTime += Time.deltaTime;
 
                 RotateSprite(i_move);
@@ -254,11 +255,14 @@ public class PlayerController3 : PlayerController
             
             if(isKnockback)
             {
-                DIMod = 1.1f * DIStrength * ((1.2f * lateralDIStrength * lateralDI) + (forwardDIStrength * forwardDI)) /*true_i_move*/;
+                DIMod = 1.1f * DIStrength * ((1.2f * lateralDIStrength * lateralDI) + (forwardDIStrength * forwardDI));
             } else
             {
                 DIMod = (1.2f * lateralDIStrength * lateralDI) * DIStrength;
             }
+
+            //account for tick rate
+            DIMod *= Time.fixedDeltaTime;
 
             if(moveTimer <= moveTime) //MOVING
             {
@@ -267,9 +271,15 @@ public class PlayerController3 : PlayerController
 
                 if(isKnockback)
                 {
+                    eyeSR.sprite = EyeSpriteSet[3];
+                    sr.sprite = SpriteSet[0];
+
                     movePriority = 2;
                 } else
                 {
+                    eyeSR.sprite = EyeSpriteSet[0];
+                    sr.sprite = SpriteSet[1];
+
                     movePriority = 3;
                 }
                 
@@ -278,8 +288,6 @@ public class PlayerController3 : PlayerController
                 if(isMoving && !isKnockback && isCoolingDown)
                 {
                     RotateSprite(rb.velocity.normalized);
-                    //not a great fix but it works
-                    sr.sprite = spriteSet[1];
                 }
 
                 moveTimer += Time.fixedDeltaTime;
@@ -305,8 +313,12 @@ public class PlayerController3 : PlayerController
                 movePhase = 1;
                 isGliding = true;
 
+                eyeSR.sprite = EyeSpriteSet[0];
+                sr.sprite = SpriteSet[0];
+
                 
-                DIMod = DIStrength * (lateralDIStrength * lateralDI);                
+                DIMod = DIStrength * (lateralDIStrength * lateralDI);
+                DIMod *= Time.fixedDeltaTime;
 
                 //rate of glideTimer tick
                 /// >1 => quicker deccel, shorter glide
@@ -370,9 +382,6 @@ public class PlayerController3 : PlayerController
 
                 glideTimer += (Time.fixedDeltaTime * glideRate);                
 
-
-                //may cause problems in the future
-                //sr.sprite = spriteSet[0];
             } else //done - no movement
             {
                 //movement is over -> reset movement tracking variables
@@ -405,7 +414,7 @@ public class PlayerController3 : PlayerController
                 }
 
                 //may cause problems in the future
-                sr.sprite = spriteSet[0];
+                //sr.sprite = SpriteSet[0];
 
             }
 
@@ -557,7 +566,7 @@ public class PlayerController3 : PlayerController
             FindFirstObjectByType<AudioManager>().PlayRandom("Move");
 
             isMoving = true;
-            sr.sprite = spriteSet[1];
+            sr.sprite = SpriteSet[1];
             charge = Mathf.Clamp(charge, minCharge, maxChargeTime);
         } else if(type == 1) //knockback
         {
@@ -585,6 +594,11 @@ public class PlayerController3 : PlayerController
 
         //probably not needed in this context
         rb.velocity = direction.normalized;
+        //definitely needed
+        if(isHitStop)   //testing this
+        {
+            storedVelocity = direction.normalized;
+        }
 
         //reset moveTimer to beginning
         moveTimer = 0;
@@ -625,9 +639,17 @@ public class PlayerController3 : PlayerController
     //called in OnCollisionEnter2D when colliding with opponent
     public override IEnumerator ApplyKnockback(int otherPriority, float otherPower, Rigidbody2D otherRB)
     {
+        WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
+
         //Debug.Log("ApplyKnockback!");
 
         PlayerController otherPC = otherRB.GetComponent<PlayerController>();
+
+        int eyeSprite = movePower == 0 ? 2 : 1;
+
+        //true velocity at impact
+        Vector2 velocity = isHitStop ? storedVelocity : rb.velocity;
+        Vector2 otherVelocity = otherPC.isHitStop ?  otherPC.storedVelocity : otherRB.velocity;
         
         
         //exit if this player is intangible to KB from otherPlayer
@@ -638,7 +660,7 @@ public class PlayerController3 : PlayerController
 
 
         //REPLACE THIS WITH STUNNED SPRITE!!!!!!!!!!!!
-        sr.sprite = spriteSet[0];
+        //sr.sprite = SpriteSet[0];
 
         GetComponentInChildren<TrailRenderer>().emitting = false; //cancel wall item on impact
 
@@ -651,7 +673,7 @@ public class PlayerController3 : PlayerController
         //angle players are colliding:
             //1 = moving straight at each other
             //0 = moving in same direction
-        float directionDiff = Vector2.Angle(rb.velocity, otherRB.velocity) / 180;
+        float directionDiff = Vector2.Angle(velocity, otherVelocity) / 180;
 
         //relative positions
         //vector pointing from player's position to otherPlayer's position i.e. relative position (direction only)
@@ -664,15 +686,15 @@ public class PlayerController3 : PlayerController
             //0 = indirect hit
         //animationCurve used to level out "almost direct hits" and keep value > 0
         float directness = 0;
-        if(rb.velocity != Vector2.zero)
+        if(velocity != Vector2.zero)
         {
-            directness = directnessKBCurve.Evaluate(1 - (Vector2.Angle(posDiff, rb.velocity) / 180));
+            directness = directnessKBCurve.Evaluate(1 - (Vector2.Angle(posDiff, velocity) / 180));
         }
 
         float otherDirectness = 0;
-        if(otherRB.velocity != Vector2.zero)
+        if(otherVelocity != Vector2.zero)
         {
-            otherDirectness = directnessKBCurve.Evaluate(1 - (Vector2.Angle(otherPosDiff, otherRB.velocity) / 180));
+            otherDirectness = directnessKBCurve.Evaluate(1 - (Vector2.Angle(otherPosDiff, otherVelocity) / 180));
         }
 
         float directnessRatio = otherDirectness/directness;
@@ -711,18 +733,18 @@ public class PlayerController3 : PlayerController
         //calc hitstop
         float hitstop = (strength > otherStrength) ? (strength/maxMovePower) : (otherStrength/maxMovePower);
 
-        Vector2 otherImpactDirection = otherRB.velocity.normalized;
+        Vector2 otherImpactDirection = otherVelocity.normalized;
 
         direction = otherPosDiff; //replicates movement2.0 style knockback
 
         //wait one tick so other player's knockback calculations can finish
         //IMPORTANT: all variables used in KB calcs must be set before this yield
-        yield return new WaitForFixedUpdate();
+        yield return fuWait;
 
         //direction = (otherStrength * pre-impact otherPlayer.direction) + (strenght * post-impact thisPlayer.direction)
-        //direction = ((movePower * rb.velocity.normalized) + (otherStrength * otherImpactDirection)).normalized;
+        //direction = ((movePower * velocity.normalized) + (otherStrength * otherImpactDirection)).normalized;
         
-        //direction = rb.velocity.normalized;
+        //direction = velocity.normalized;
 
 
         //calculate knockback strength/charge
@@ -755,40 +777,39 @@ public class PlayerController3 : PlayerController
         }
 
         
+
+        
         if(!isRewind)
         {
+            //apply impact hitstop
+            ApplyHitStop(maxHitstop * hitstopCurve.Evaluate(hitstop), 1);
+
             //apply movement - type 1
             //need to calculate direction and charge
 
-            Debug.Log("player" + idx + " knockback direction: " + direction);
-            Debug.Log("player" + idx + " knockback strength: " + (knockbackMultiplier * otherStrength));
+            //Debug.Log("player" + idx + " knockback direction: " + direction);
+            //Debug.Log("player" + idx + " knockback strength: " + (knockbackMultiplier * otherStrength));
             
-
-            //ADD PARRY HERE
-            if(otherPC.canWallTech && otherPC.lastChargePress < otherPC.wallTechFrameWindow * Time.fixedDeltaTime)
+            //late parry window
+            float timer = 0;
+            while (timer < 4 * Time.fixedDeltaTime && isHitStop) //4 frames of leeway for inputting parry after impact
             {
-                Debug.Log("P" + idx + " got PARRIED!");
-                //give this player intangible priority from otherPlayer
-                //EDIT THIS: int constant = invol frame data
-                IntangiblePeerPrioTable[otherPC.idx] = 12 * Time.fixedDeltaTime;
-                //give otherPlayer intangible priority from this player
-                //EDIT THIS: int constant = invol frame data
-                otherPC.IntangiblePeerPrioTable[idx] = 12 * Time.fixedDeltaTime;
+                //someone parrys
+                if((canWallTech && lastChargePress < wallTechFrameWindow * Time.fixedDeltaTime) || (otherPC.canWallTech && otherPC.lastChargePress < otherPC.wallTechFrameWindow * Time.fixedDeltaTime))
+                {
+                    //reset peer priority
+                    OverpowerPeerPrioTable[otherPC.idx] = 0;
+                    IntangiblePeerPrioTable[otherPC.idx] = 0;
+                    
+                    //receive parry effects
+                    StartCoroutine(ParryLaunch(otherPC));
+                    yield break;
+                }
 
-                //KB starts from parrying player's position
-                transform.position = otherPC.transform.position;
+                eyeSR.sprite = EyeSpriteSet[eyeSprite];
 
-                //apply parry KB to this player
-                Debug.Log("parry movetime ratio: " + (1 - (moveTimer/moveTime)));
-                //Debug.Log("parry charge: " + (.7f * (1 - (moveTimer/moveTime)) * knockbackMultiplier * movePower));
-                ApplyMove(1, otherPC.true_i_move,  .7f * (1 - (moveTimer/moveTime)) * knockbackMultiplier * movePower);
-
-                //ADD THIS: increase hitstop for parry indication
-                //apply KB impact hitstop
-                //StartCoroutine(HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
-                ApplyHitStop(maxHitstop * hitstopCurve.Evaluate(hitstop), 1);
-
-                yield break;
+                timer += Time.fixedDeltaTime;
+                yield return fuWait;
             }
 
             //if this player overpowers otherPlayer
@@ -813,16 +834,16 @@ public class PlayerController3 : PlayerController
 
                 //alter direction
                 //factors: otherPosDiff, otherRB direction, 
-                Vector2 directionMod = ((2 * otherPosDiff.normalized) + (5 * otherRB.velocity.normalized)).normalized * Mathf.Clamp((3 * otherStrength), .4f, 1);
+                Vector2 directionMod = ((2 * otherPosDiff.normalized) + (5 * otherVelocity.normalized)).normalized * Mathf.Clamp((3 * otherStrength), .4f, 1);
 
                 ModifyMove(0, directionMod, impedanceFactor, impedanceFactor, .9f);
 
                 //apply KB impact hitstop
                 //StartCoroutine(HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
-                ApplyHitStop(maxHitstop * hitstopCurve.Evaluate(hitstop), 1);
 
                 yield break;
             }
+
 
             switch (movePriority)
             {
@@ -832,12 +853,15 @@ public class PlayerController3 : PlayerController
                         //ADD THIS:
                         //weak gliding KB nudge
                         //use both glidePowers in calc
+                        eyeSprite = 1;
 
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
 
                     } else if(otherPriority == 2) //other being KB launched
                     {
+                        eyeSprite = 2;
+
                         //powerful attack KB
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
@@ -850,6 +874,8 @@ public class PlayerController3 : PlayerController
                         //give otherPlayer overpower priority over this Player
                         //EDIT THIS: int constant = overPower frame data
                         otherPC.OverpowerPeerPrioTable[idx] = 7 * Time.fixedDeltaTime;
+
+                        eyeSprite = 2;
 
                         //TWEAK THIS - calc should be more biased to otherPlayer
                         //powerful attack KB
@@ -864,10 +890,14 @@ public class PlayerController3 : PlayerController
                         //weak gliding KB nudge
                         //use both glidePowers in calc
 
+                        eyeSprite = 1;
+
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
                     } else if(otherPriority == 2)
                     {
+                        eyeSprite = 2;
+
                         //powerful attack KB
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
@@ -882,6 +912,8 @@ public class PlayerController3 : PlayerController
                         //EDIT THIS: int constant = overPower frame data
                         otherPC.OverpowerPeerPrioTable[idx] = 7 * Time.fixedDeltaTime;
 
+                        eyeSprite = 2;
+
                         //powerful attack KB
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
                     }
@@ -890,6 +922,8 @@ public class PlayerController3 : PlayerController
                 case 2: //knockback launch
                     if(otherPriority <= 1)
                     {
+                        eyeSprite = 1;
+
                         //old "8ball" behaviour works for now
                         //^^BRITISH???
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
@@ -903,6 +937,8 @@ public class PlayerController3 : PlayerController
 
                     } else if(otherPriority == 2)
                     {
+                        eyeSprite = 2;
+
                         //Equal KB exchange
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
@@ -911,6 +947,8 @@ public class PlayerController3 : PlayerController
 
                     } else if(otherPriority == 3)
                     {
+                        eyeSprite = 2;
+
                         //receive full KB
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
@@ -930,6 +968,8 @@ public class PlayerController3 : PlayerController
                         //give this player overpower priority over otherPlayer
                         //EDIT THIS: int constant = overPower frame data
                         OverpowerPeerPrioTable[otherPC.idx] = 7 * Time.fixedDeltaTime;
+
+                        eyeSprite = 1;
                         
                         //max possible glidestrength = maxMovePower * .1
                         Debug.Log("otherStrength = " + otherStrength);
@@ -938,12 +978,14 @@ public class PlayerController3 : PlayerController
 
                         //alter direction
                         //factors: otherPosDiff, otherRB direction, 
-                        Vector2 directionMod = ((2 * otherPosDiff.normalized) + (5 * otherRB.velocity.normalized)).normalized * Mathf.Clamp((3 * otherStrength), .4f, 1);
+                        Vector2 directionMod = ((2 * otherPosDiff.normalized) + (5 * otherVelocity.normalized)).normalized * Mathf.Clamp((3 * otherStrength), .4f, 1);
 
                         ModifyMove(0, directionMod, impedanceFactor, impedanceFactor, .9f);                        
 
                     } else if(otherPriority == 2)
                     {
+                        eyeSprite = 1;
+
                         //ADD THIS
                         //apply reduced knockback based on powerDiff
 
@@ -953,6 +995,8 @@ public class PlayerController3 : PlayerController
 
                     } else if(otherPriority == 3)
                     {
+                        eyeSprite = 2;
+
                         //Equal KB exchange
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
@@ -960,15 +1004,18 @@ public class PlayerController3 : PlayerController
 
                     break;
             }
+            
+            //animate impact
+            while(isHitStop)
+            {
+                eyeSR.sprite = EyeSpriteSet[eyeSprite];
+                yield return fuWait;
+            }
+
 
             //old default behavior
             //ApplyMove(1, direction, knockbackMultiplier * otherStrength);
         }
-
-        //apply KB impact hitstop
-        //(must be at the end)
-        //StartCoroutine(HitStop(maxHitstop * hitstopCurve.Evaluate(hitstop)));
-        ApplyHitStop(maxHitstop * hitstopCurve.Evaluate(hitstop), 1);
 
     }
 
@@ -1000,24 +1047,26 @@ public class PlayerController3 : PlayerController
         WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
 
         
-        if(lastSolidCollision < 5 * Time.fixedDeltaTime)
+        if(lastSolidCollision > 5 * Time.fixedDeltaTime)
         {
             //extend movement slightly
             ModifyMove(0, Vector2.zero, 1.2f, .95f, 1);
 
             //hitstop calculation
-            float hitstop = Mathf.Clamp(.4f * maxHitstop * hitstopCurve.Evaluate(movePower/maxMovePower), 4*Time.fixedDeltaTime, maxHitstop);
+            float hitstop = Mathf.Clamp(.3f * maxHitstop * hitstopCurve.Evaluate(movePower/maxMovePower), 4*Time.fixedDeltaTime, maxHitstop);
             Debug.Log("solid collision hitstop: " + hitstop);
 
             //apply hitstop
             //StartCoroutine(HitStop(hitstop));
             ApplyHitStop(hitstop, 0);
         }
+
+        lastSolidCollision = 0;
         
 
         //wall tech timer
         float timer = 0;
-        while (timer <= 2 * Time.fixedDeltaTime) //2 frames of wiggle room for late inputs
+        while (timer <= 2 * Time.fixedDeltaTime) //2 frames of wiggle room after impact for late inputs
         {
             float window = wallTechFrameWindow * Time.fixedDeltaTime;
             if(isKnockback)
@@ -1028,7 +1077,7 @@ public class PlayerController3 : PlayerController
             //wall tech frame window
             if(canWallTech && lastChargePress <= window)
             {
-                StartCoroutine(WallTech());
+                StartCoroutine(WallTech(col));
                 break;
             }
 
@@ -1040,7 +1089,7 @@ public class PlayerController3 : PlayerController
     }
 
     //wallbounce tech
-    IEnumerator WallTech()
+    IEnumerator WallTech(Collision2D wall)
     {
         WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
 
@@ -1052,20 +1101,140 @@ public class PlayerController3 : PlayerController
         //read DI input up until launch (for responsiveness)
         while(isHitStop)
         {
-            storedVelocity = storedVelocity.magnitude * true_i_move.normalized;
+            sr.sprite = SpriteSet[4];
+            RotateSprite(wall.GetContact(0).normal);
+
+             //constrain new direction based off wall normal
+            if(Vector2.Angle(true_i_move, wall.GetContact(0).normal) > 90)
+            {
+                storedVelocity = storedVelocity.magnitude * Vector2.Reflect(true_i_move, wall.GetContact(0).normal).normalized;
+                
+            } else
+            {
+                storedVelocity = storedVelocity.magnitude * true_i_move.normalized;
+            }
+
             Debug.Log("wallTech storedVelocity: " + storedVelocity);
             yield return fuWait;
         }
 
-        //ADD THIS:
-        //constrain new direction based off wall normal
-
         //reset cooldown timer
         lastWallTech = 0;
 
-        //add extra distance
-        ModifyMove(0, Vector2.zero, 1.4f, .95f, 1.05f);
+        
+        if(Vector2.Angle(true_i_move, wall.GetContact(0).normal) > 90)
+        {
+            //player is holding into wall
+            //decrease distance
+            ModifyMove(0, Vector2.zero, .9f, .9f, 1.05f);
+        } else
+        {
+            //player is holding away from wall
+            //add extra distance
+            ModifyMove(0, Vector2.zero, 1.4f, .95f, 1.05f);
+        }
+        
         Debug.Log("P" + idx + " WALLTECH!");
+    }
+
+
+    //launch KB received when this player is parried by otherPlayer
+    IEnumerator ParryLaunch(PlayerController otherPC)
+    {
+        WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
+
+        //give this player intangible priority from otherPlayer
+        //EDIT THIS: int constant = invol frame data
+        IntangiblePeerPrioTable[otherPC.idx] = 12 * Time.fixedDeltaTime;
+        //give otherPlayer intangible priority from this player
+        //EDIT THIS: int constant = invol frame data
+        otherPC.IntangiblePeerPrioTable[idx] = 12 * Time.fixedDeltaTime;
+        
+        //save pre-impact stats for KB calcs
+        float mTime = moveTime;
+        float mTimer = moveTimer;
+        float mPower = movePower;
+        float otherMTime = otherPC.moveTime;
+        float otherMTimer = otherPC.moveTimer;
+        float otherMPower = otherPC.movePower;
+
+
+        float hitstop;
+        if(movePower > otherPC.movePower)
+        {
+            hitstop = Mathf.Clamp(.8f * maxHitstop * hitstopCurve.Evaluate(movePower/maxMovePower), 8*Time.fixedDeltaTime, 2*maxHitstop);
+        }else
+        {
+            hitstop = Mathf.Clamp(.8f * maxHitstop * hitstopCurve.Evaluate(otherPC.movePower/maxMovePower), 8*Time.fixedDeltaTime, 2*maxHitstop);
+        }
+
+        //extra hitstop for player feedback
+        ApplyHitStop(hitstop, 0); //applying hitstop additively
+
+        //this player parrying otherPlayer
+        if(canWallTech && lastChargePress < wallTechFrameWindow * Time.fixedDeltaTime)
+        {
+            Debug.Log("P" + idx + " parried P" + otherPC.idx);
+
+            //save pre-impact otherVelocity
+            Vector2 otherDirection = otherPC.rb.velocity.normalized;
+
+            //wait to read this player's DI input up until launch (for responsiveness)
+            while(isHitStop)
+            {
+                sr.sprite = SpriteSet[3];
+                eyeSR.sprite = EyeSpriteSet[4];
+
+                RotateSprite(otherPC.transform.position - transform.position);
+
+                //parrying players are inputting launch direction during this time...
+                yield return fuWait;
+            }
+
+
+
+            //successful parry recoil
+            Vector2 direction = ((.9f * -(true_i_move.normalized)) + (.1f * otherMPower * otherDirection)).normalized;
+
+            Debug.Log("Parry recoil direction: " + direction);
+
+            //apply parry recoil KB to this player in opposite direction of parry
+            ApplyMove(1, direction,  Mathf.Clamp(.2f * otherMPower, minCharge, .7f * (.2f * maxMovePower)));
+
+            //reset cooldown timer
+            lastWallTech = 0;
+
+        //otherPlayer parrying this player
+        } else if(otherPC.canWallTech && otherPC.lastChargePress < otherPC.wallTechFrameWindow * Time.fixedDeltaTime)
+        {
+            //wait to read players' DI input up until launch (for responsiveness)
+            while(isHitStop)
+            {
+                //parrying players are inputting launch direction during this time...
+                
+                yield return fuWait;
+            }
+
+            //KB starts from parrying player's position
+            transform.position = otherPC.transform.position;
+
+            //apply parry KB to this player in direction inputted by otherPlayer
+            if(mPower > 0) //player is moving (defensive parry) use this player's power
+            {
+                Debug.Log("defensive parry");
+                Debug.Log("defense parry power: " + .7f * (1 - (mTimer/mTime)) * knockbackMultiplier * mPower);
+                ApplyMove(1, otherPC.true_i_move,  .7f * (1 - (mTimer/mTime)) * knockbackMultiplier * mPower);
+            } else //player is standing still (aggressive parry) use attacker's power
+            {
+                Debug.Log("aggressive parry");
+                Debug.Log("aggro parry power: " + .7f * (1 - (otherMTimer/otherMTime)) * knockbackMultiplier * otherMPower);
+                ApplyMove(1, otherPC.true_i_move,  .7f * (1 - (otherMTimer/otherMTime)) * knockbackMultiplier * otherMPower);
+            }
+        }
+
+        
+
+        
     }
 
 
@@ -1081,6 +1250,14 @@ public class PlayerController3 : PlayerController
             {
                 if(col == col.GetComponent<PlayerHurtBox>().hb)
                 {
+                    PlayerController otherPC = col.GetComponentInParent<PlayerController>();
+
+                    //ignore collision if peer-intangible
+                    if(IntangiblePeerPrioTable[otherPC.idx] > 0 || otherPC.IntangiblePeerPrioTable[idx] > 0)
+                    {
+                        return;
+                    }
+
                     Debug.Log("Player" + idx + " collided with Player " + col.gameObject.GetComponentInParent<PlayerController>().idx);
 
                     //positional collision hack
@@ -1094,7 +1271,6 @@ public class PlayerController3 : PlayerController
                         prev = prevPos[0];
                     }
 
-                    PlayerController otherPC = col.GetComponentInParent<PlayerController>();
                     Vector2 otherPrev = otherPC.transform.position;
                     if(otherPC.prevPos[1] != (Vector2)otherPC.transform.position)
                     {

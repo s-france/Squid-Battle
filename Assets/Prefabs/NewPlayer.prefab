@@ -75,6 +75,92 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63baf421b4e6674eb6a2b16a658b42b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2809029699474252322
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5485761594052190089}
+  - component: {fileID: 5344140811641832327}
+  m_Layer: 6
+  m_Name: EyeSprite
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5485761594052190089
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2809029699474252322}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.015, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5251562808165186442}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &5344140811641832327
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2809029699474252322}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 1810327131
+  m_SortingLayer: 4
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 21300000, guid: cc990c2202ac2d9418c92e87d1a4c3b9, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.671875, y: 0.6953125}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 1
 --- !u!1 &5251562808165186444
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,6 +197,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5485761594052190089}
   - {fileID: 7662443152363485237}
   - {fileID: 5894637164420444278}
   - {fileID: 3349715349416888729}
@@ -164,12 +251,12 @@ SpriteRenderer:
   m_SortingLayerID: 1810327131
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: ab12ff48f46d8954e99ab3b040ad39a9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6b95bd3b5b937b6458ea31363b33200e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.48, y: 0.41}
+  m_Size: {x: 0.671875, y: 0.6953125}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -523,9 +610,21 @@ MonoBehaviour:
   WarpPoint: {fileID: 0}
   rb: {fileID: -3142732938146884802}
   sr: {fileID: 0}
+  eyeSR: {fileID: 5344140811641832327}
   bubblePart: {fileID: 6286807170148970422}
   hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
-  spriteSet: []
+  SpriteSet:
+  - {fileID: 21300000, guid: 6b95bd3b5b937b6458ea31363b33200e, type: 3}
+  - {fileID: 21300000, guid: c6f597db052dded4195e96c23c115491, type: 3}
+  - {fileID: 21300000, guid: 377d3995c17cd5f46a773e49291bbaed, type: 3}
+  - {fileID: 21300000, guid: c0cf1d19d4c391344a5b419eae42002a, type: 3}
+  - {fileID: 21300000, guid: b6e9c9504327815449c8385ddd9f052b, type: 3}
+  EyeSpriteSet:
+  - {fileID: 21300000, guid: cc990c2202ac2d9418c92e87d1a4c3b9, type: 3}
+  - {fileID: 21300000, guid: 15b96cec05f418a49af988736735ca58, type: 3}
+  - {fileID: 21300000, guid: 956f344817a05864a8348d803558689c, type: 3}
+  - {fileID: 21300000, guid: 06007171fd9d6214bb4d5b2ace2d2416, type: 3}
+  - {fileID: 21300000, guid: e62a7d32d0575fb4a8d60dd4efb63069, type: 3}
   storedVelocity: {x: 0, y: 0}
   i_move: {x: 0, y: 0}
   true_i_move: {x: 0, y: 0}
@@ -789,7 +888,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxMoveSpeed: 33
+  maxMoveSpeed: 32
   maxMoveTime: 0.28
   maxMovePower: 2.75
   maxHitstop: 0.15
@@ -798,6 +897,7 @@ MonoBehaviour:
   moveTime: 0
   moveTimer: 0
   hitStopTimer: 0
+  hitStopTime: 0
   moveSpeed: 0
   movePower: 0
   glidePower: 0
@@ -805,6 +905,9 @@ MonoBehaviour:
   isGliding: 0
   isKnockback: 0
   isHitStop: 0
+  lastChargePress: 0
+  wallTechFrameWindow: 6
+  canWallTech: 0
   isCoolingDown: 0
   isGrown: 0
   isRewind: 0
@@ -817,9 +920,9 @@ MonoBehaviour:
   specialMoveMod: 0.3
   OOBMoveMod: 0.1
   knockbackMultiplier: 1.2
-  DIStrength: 0.012
+  DIStrength: 1.5
   forwardDIStrength: 10
-  lateralDIStrength: 1
+  lateralDIStrength: 1.5
   maxRumbleStrength: 0.55
   rumbleCurve:
     serializedVersion: 2
@@ -862,7 +965,6 @@ MonoBehaviour:
   defaultMaxHitstop: 0
   OverpowerPeerPrioTable: []
   IntangiblePeerPrioTable: []
-  wallTechFrameWindow: 6
   glideDeccelDICurve:
     serializedVersion: 2
     m_Curve:
@@ -1095,6 +1197,12 @@ MonoBehaviour:
     rgba: 3859218615
   - serializedVersion: 2
     rgba: 3858812881
+  - serializedVersion: 2
+    rgba: 4281348144
+  - serializedVersion: 2
+    rgba: 4293980400
+  - serializedVersion: 2
+    rgba: 4280300635
 --- !u!1 &5331742974187090821
 GameObject:
   m_ObjectHideFlags: 0
@@ -6335,4 +6443,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hb: {fileID: 0}
-  pushOutPower: 0.2
+  pushOutPower: 0.1

@@ -33,10 +33,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public Transform WarpPoint;
     public Rigidbody2D rb;
     [HideInInspector] public SpriteRenderer sr;
+    public SpriteRenderer eyeSR;
     [SerializeField] public ParticleSystem bubblePart;
     [SerializeField] public GameObject hitPart;
 
-    [HideInInspector] public Sprite[] spriteSet;
+    public Sprite[] SpriteSet;
+    public Sprite[] EyeSpriteSet;
     CinemachineTargetGroup tg;
 
     //saved "real" velocity value for when velocity is temporarily modified (hitstop)
@@ -405,6 +407,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //makes player look in direction
     public void RotateSprite(Vector2 dir)
     {
         rb.angularVelocity = 0;
@@ -444,7 +447,7 @@ public class PlayerController : MonoBehaviour
         {
             if (!isCoolingDown && pm.playerList[idx].isInBounds)
             {
-                sr.sprite = spriteSet[2]; //charging sprite
+                sr.sprite = SpriteSet[2]; //charging sprite
                 chargeTime += Time.deltaTime;
 
                 if(gm.battleStarted)
@@ -485,7 +488,7 @@ public class PlayerController : MonoBehaviour
             ApplyMove(0, i_move, chargeTime);
         } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
         {
-            sr.sprite = spriteSet[0];
+            sr.sprite = SpriteSet[0];
         }
 
         gp.SetMotorSpeeds(0, 0);
@@ -573,9 +576,9 @@ public class PlayerController : MonoBehaviour
             isCoolingDown = false;
 
             //reset sprite after cooldown
-            if(!charging)
+            if(!charging && !isHitStop)
             {
-                sr.sprite = spriteSet[0];
+                sr.sprite = SpriteSet[0];
             }
         }
     }
@@ -616,7 +619,7 @@ public class PlayerController : MonoBehaviour
         {
             if (!isCoolingDown)
             {
-                sr.sprite = spriteSet[2]; //charging sprite
+                sr.sprite = SpriteSet[2]; //charging sprite
                 specialChargeTime += Time.deltaTime;
 
                 if(gm.battleStarted)
@@ -667,7 +670,7 @@ public class PlayerController : MonoBehaviour
             UseItem(selectedItemIdx);
         } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
         {
-            sr.sprite = spriteSet[0];
+            sr.sprite = SpriteSet[0];
         }
 
         gp.SetMotorSpeeds(0, 0);
@@ -727,8 +730,8 @@ public class PlayerController : MonoBehaviour
     {
         colorID = color;
 
-        spriteSet = pm.playerSprites[color];
-        sr.sprite = spriteSet[0];
+        sr.color = pm.playerColors[color];
+        sr.sprite = SpriteSet[0];
 
         rc.ChangeColor(color);
 
@@ -771,7 +774,7 @@ public class PlayerController : MonoBehaviour
                 {
                     RotateSprite(rb.velocity.normalized);
                     //not a great fix but it works
-                    sr.sprite = spriteSet[1];
+                    sr.sprite = SpriteSet[1];
                 }
 
                 moveTimer += Time.fixedDeltaTime;
@@ -799,7 +802,7 @@ public class PlayerController : MonoBehaviour
             }
 
             //may cause problems in the future
-            sr.sprite = spriteSet[0];
+            sr.sprite = SpriteSet[0];
 
         }
 
@@ -837,7 +840,7 @@ public class PlayerController : MonoBehaviour
             FindFirstObjectByType<AudioManager>().PlayRandom("Move");
 
             isMoving = true;
-            sr.sprite = spriteSet[1];
+            sr.sprite = SpriteSet[1];
             charge = Mathf.Clamp(charge, minCharge, maxChargeTime);
         } else if(type == 1) //knockback
         {
@@ -901,7 +904,7 @@ public class PlayerController : MonoBehaviour
         //Debug.Log("ApplyKnockback!");
 
         //REPLACE THIS WITH STUNNED SPRITE!!!!!!!!!!!!
-        sr.sprite = spriteSet[0];
+        sr.sprite = SpriteSet[0];
 
         GetComponentInChildren<TrailRenderer>().emitting = false; //cancel wall item on impact
 

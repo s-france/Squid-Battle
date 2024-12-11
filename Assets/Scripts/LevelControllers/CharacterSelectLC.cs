@@ -174,7 +174,7 @@ public class CharacterSelectLC : LevelController
     public override void ReadyPlayer(int idx)
     {
         //do ui stuff
-        PlayersUI[idx][0].GetComponent<Image>().sprite = pm.playerSprites[pm.playerList[idx].color][2];
+        PlayersUI[idx][0].GetComponent<Image>().sprite = pm.playerSprites[2];
         PlayersUI[idx][2].gameObject.SetActive(false);
         PlayersUI[idx][5].gameObject.SetActive(false);
         PlayersUI[idx][6].gameObject.SetActive(true);
@@ -197,7 +197,7 @@ public class CharacterSelectLC : LevelController
         //base.UnReadyPlayer(idx);
         
         //do ui stuff
-        PlayersUI[idx][0].GetComponent<Image>().sprite = pm.playerSprites[pm.playerList[idx].color][0];
+        PlayersUI[idx][0].GetComponent<Image>().sprite = pm.playerSprites[0]; //neutral sprite
         PlayersUI[idx][2].gameObject.SetActive(true);
         PlayersUI[idx][5].gameObject.SetActive(true);
         PlayersUI[idx][6].gameObject.SetActive(false);
@@ -260,7 +260,7 @@ public class CharacterSelectLC : LevelController
 
 
         //set colors
-        PlayerUI[0].GetComponent<Image>().sprite = pm.playerSprites[pm.playerList[idx].color][0];
+        PlayerUI[0].GetComponent<Image>().color = pm.playerColors[pm.playerList[idx].color];
 
         foreach (PlayerConfig pc in pm.playerList)
         {
@@ -269,8 +269,8 @@ public class CharacterSelectLC : LevelController
             PlayerUI = PlayersUI[idx];
             
 
-            PlayerUI[3].GetComponent<Image>().sprite = pm.playerSprites[pm.FindFirstAvailableColorID(pm.playerList[idx].color -1 , -1)][0];
-            PlayerUI[4].GetComponent<Image>().sprite = pm.playerSprites[pm.FindFirstAvailableColorID(pm.playerList[idx].color + 1, 1)][0];
+            PlayerUI[3].GetComponent<Image>().color = pm.playerColors[pm.FindFirstAvailableColorID(pm.playerList[idx].color -1 , -1)];
+            PlayerUI[4].GetComponent<Image>().color = pm.playerColors[pm.FindFirstAvailableColorID(pm.playerList[idx].color + 1, 1)];
         }
     }
 

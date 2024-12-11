@@ -44,7 +44,7 @@ public class ScoreBoard : MonoBehaviour
         }
 
         //set player icon color
-        scores[playerID].GetComponent<Image>().sprite = pm.playerList[playerID].playerScript.spriteSet[0];
+        scores[playerID].GetComponent<Image>().sprite = pm.playerList[playerID].playerScript.SpriteSet[0];
 
         //set progress bar color
         //FINISH THIS!!!!

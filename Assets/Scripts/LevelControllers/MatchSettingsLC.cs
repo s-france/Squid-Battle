@@ -116,7 +116,7 @@ public class MatchSettingsLC : LevelController
             SetUIColors(p.playerIndex);
         }
 
-        LeftUIElements[4].GetComponent<Image>().sprite = pm.playerList[0].playerScript.spriteSet[0];
+        LeftUIElements[4].GetComponent<Image>().sprite = pm.playerList[0].playerScript.SpriteSet[0];
 
         //initialize p1 menu state tracking
         p1MenuState = 0;
