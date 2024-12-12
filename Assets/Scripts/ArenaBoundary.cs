@@ -48,7 +48,15 @@ public class ArenaBoundary : MonoBehaviour
                 pm.playerList[idx].isInBounds = false;
                 pm.playerList[idx].playerScript.isInBounds = false;
 
-                StartCoroutine(pm.PlayerKillClock(idx, 3.0f));
+                //alter player's stats offstage
+                pm.playerList[idx].playerScript.maxMoveSpeed *= .5f;
+                pm.playerList[idx].playerScript.maxMoveTime *= 1.5f;
+                pm.playerList[idx].playerScript.maxMovePower *= .6f;
+                pm.playerList[idx].playerScript.maxChargeTime *= 1.2f;
+
+
+
+                //StartCoroutine(pm.PlayerKillClock(idx, 3.0f));
 
             } else if (col.gameObject.layer == LayerMask.NameToLayer("ItemObjs"))
             {
@@ -68,6 +76,9 @@ public class ArenaBoundary : MonoBehaviour
             int idx = col.GetComponentInParent<PlayerController>().idx;
             pm.playerList[idx].isInBounds = true;
             pm.playerList[idx].playerScript.isInBounds = true;
+
+            //restore player's default stats
+            pm.playerList[idx].playerScript.ResetDefaultStats();
         }
 
     }

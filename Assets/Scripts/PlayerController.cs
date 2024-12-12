@@ -128,6 +128,7 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public Vector3 defaultScale;
     [HideInInspector] public float defaultChargeStrength;
+    [HideInInspector] public float defaultMaxChargeTime;
 
     [HideInInspector] public float defaultMaxMoveSpeed;
     [HideInInspector] public float defaultMaxMoveTime;
@@ -212,6 +213,7 @@ public class PlayerController : MonoBehaviour
         defaultScale = transform.localScale;
         defaultChargeStrength = chargeStrength;
 
+        defaultMaxChargeTime = maxChargeTime;
         defaultMaxMoveSpeed = maxMoveSpeed;
         defaultMaxMoveTime = maxMoveTime;
         defaultMaxMovePower = maxMovePower;
@@ -273,6 +275,7 @@ public class PlayerController : MonoBehaviour
         transform.localScale = defaultScale;
         chargeStrength = defaultChargeStrength;
 
+        maxChargeTime = defaultMaxChargeTime;
         maxMoveSpeed = defaultMaxMoveSpeed;
         maxMoveTime = defaultMaxMoveTime;
         maxMovePower = defaultMaxMovePower;
@@ -687,7 +690,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //uses item in heldItems[idx]
-    void UseItem(int idx)
+    public virtual void UseItem(int idx)
     {
         if(heldItems.Any())
         {

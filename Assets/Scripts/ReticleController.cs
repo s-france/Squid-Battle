@@ -37,6 +37,7 @@ public class ReticleController : MonoBehaviour
     void Update()
     {
         RenderNormalReticle();
+        //RenderSpecialReticle(pc.heldItems[pc.selectedItemIdx].GetItemType());
 
     }
 
@@ -62,6 +63,7 @@ public class ReticleController : MonoBehaviour
         lr.endColor = colorSet[colorID];
     }
 
+    //New Movement 3.0
     public void RenderNormalReticle()
     {
         if(pc.charging)
@@ -73,7 +75,7 @@ public class ReticleController : MonoBehaviour
 
                 //int chargeType = 0;
 
-                if(!pc.isCoolingDown && pc.isInBounds)
+                if(!pc.isCoolingDown /*&& pc.isInBounds*/)
                 {
                     lr.enabled = true;
 
@@ -91,6 +93,95 @@ public class ReticleController : MonoBehaviour
         } else
         {
             DeactivateReticle();
+        }
+    }
+
+    //new Item Reticle func for movement3.0
+    public void RenderSpecialReticle(string item)
+    {
+        if(pc.specialCharging)
+        {
+            if(pc.specialChargeTime > pc.minCharge)
+            {
+                switch (item)
+                {
+                    case "Shot":
+                        ActivateReticle();
+                        lr.positionCount = 2;
+
+                        //int chargeType = 1;
+
+                        if(!pc.isCoolingDown /*&& pc.isInBounds*/)
+                        {
+                            lr.enabled = true;
+
+                            SetReticle(1, Vector2.up);
+                        } else
+                        {
+                            lr.enabled = false;
+                            DeactivateReticle();
+                        }
+
+                        break;
+                    
+                    case "Ink":
+                        ActivateReticle();
+                        lr.positionCount = 2;
+
+                        //int chargeType = 1;
+
+                        if(!pc.isCoolingDown /*&& pc.isInBounds*/)
+                        {
+                            lr.enabled = true;
+
+                            SetReticle(1, Vector2.up);
+                        } else
+                        {
+                            lr.enabled = false;
+                            DeactivateReticle();
+                        }   
+                    
+                        break;
+                    
+                    case "Wall":
+
+                        break;
+                    
+                    case "Warp":
+
+                        break;
+
+                    case "Rewind":
+
+                        break;
+                    
+                    case "Grow":
+
+                        break;
+
+
+
+                    default:
+                        ActivateReticle();
+                        lr.positionCount = 2;
+
+                        //int chargeType = 1;
+
+                        if(!pc.isCoolingDown /*&& pc.isInBounds*/)
+                        {
+                            lr.enabled = true;
+
+                            SetReticle(1, Vector2.up);
+                        } else
+                        {
+                            lr.enabled = false;
+                            DeactivateReticle();
+                        }
+
+                        break;
+                }
+            }
+            
         }
         
 
@@ -142,7 +233,7 @@ public class ReticleController : MonoBehaviour
         while (pc.charging || pc.specialCharging)
         {
 
-            if(!pc.isCoolingDown && pc.isInBounds)
+            if(!pc.isCoolingDown /*&& pc.isInBounds*/)
             {
                 lr.enabled = true;
 
@@ -203,8 +294,6 @@ public class ReticleController : MonoBehaviour
         wr.gameObject.GetComponent<SpriteRenderer>().enabled = false;
         wr.SetParent(pc.transform);
         wr.localPosition = Vector3.zero;
-
-
     }
 
 

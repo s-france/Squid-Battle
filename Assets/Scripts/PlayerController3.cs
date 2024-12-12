@@ -15,8 +15,12 @@ public class PlayerController3 : PlayerController
     
 
     bool chargePressed = false;
+    bool specialChargePressed = false;
     //int movePriority = 0;
     int movePhase = 0;
+
+    [SerializeField] float oobLifespan; //how long the player can survive offstage
+    float oobTimer; //how long the player has been offstage
 
 
     //bool isGliding = false;
@@ -56,8 +60,11 @@ public class PlayerController3 : PlayerController
         InputBufferTick();
         PeerPriorityTick();
         ChargeTick();
+        SpecialChargeTick();
         MovementTick();
         HitStopTick();
+
+        OutOfBoundsTick();
 
 
     }
@@ -129,7 +136,7 @@ public class PlayerController3 : PlayerController
 
         
         Debug.Log("charge: " + ctx.phase);
-        if(ctx.performed && pm.playerList[idx].isInBounds) //charging
+        if(ctx.performed /*&& pm.playerList[idx].isInBounds*/) //charging
         {
             //Debug.Log("charging!!");
             
@@ -151,28 +158,34 @@ public class PlayerController3 : PlayerController
     }
 
 
-    /*
+    
     public override void OnSpecial(InputAction.CallbackContext ctx)
     {
         if(ctx.performed) //special charging
         {
-            specialChargeTime = 0;
-            specialCharging = true;
+            specialChargePressed = true;
+            //specialChargeTime = 0;
+            //specialCharging = true;
             //StartCoroutine(SpecialCharge());
             
         } else if (ctx.canceled) //released
         {
-            specialCharging = false;
+            specialChargePressed = false;
+
+            if(!isMoving && !isHitStop)
+            {
+                UseItem(selectedItemIdx);
+            }
         }
     }
-    */
+    
 
     
     void ChargeTick()
     {
         if(chargePressed)
         {
-            if(pm.playerList[idx].isInBounds && !isMoving && !isKnockback && !isHitStop && !isRewind/*charge conditions: end of movement or gliding, not hitstop, not stunned in any way*/ )
+            if(/*pm.playerList[idx].isInBounds &&*/ !isMoving && !isKnockback && !isHitStop && !isRewind/*charge conditions: end of movement or gliding, not hitstop, not stunned in any way*/ )
             {
                 charging = true;
             } else
@@ -211,7 +224,16 @@ public class PlayerController3 : PlayerController
 
                 if(chargeTime > maxChargeHoldTime)
                 {
+                    //force launch
+                    if(charging && !isMoving && !isHitStop)
+                    {
+                        ApplyMove(0, i_move, chargeTime);
+                    }
+
+                    //cancel charge
+                    chargeTime = 0;
                     charging = false;
+                    
                 }
 
             }
@@ -223,6 +245,77 @@ public class PlayerController3 : PlayerController
             charging = false;
 
         }
+
+    }
+
+    void SpecialChargeTick()
+    {
+        if(specialChargePressed)
+        {
+            if(!isMoving && !isKnockback && !isHitStop && !isRewind/*charge conditions: end of movement or gliding, not hitstop, not stunned in any way*/ )
+            {
+                specialCharging = true;
+            } else
+            {
+                specialCharging = false;
+            }
+
+            if (specialCharging)
+            {
+                //REPLACE WITH THIS!!!:
+                //charge function
+                ///contained within held ItemBehavior
+                ////render reticle function
+                
+
+                //rc.RenderNormalReticle();
+
+
+                sr.sprite = SpriteSet[2]; //charging sprite
+                specialChargeTime += Time.deltaTime;
+
+                //MOVE THIS TO ITEMBEHAVIOR 
+                //some items face forward some face back
+                RotateSprite(i_move);
+
+                if(gm.battleStarted)
+                {
+                    if(specialChargeTime/maxChargeHoldTime >= .85f)
+                    {
+                        gp.SetMotorSpeeds(maxRumbleStrength * 7, maxRumbleStrength * 7);
+                    } else
+                    {
+                        gp.SetMotorSpeeds(rumbleCurve.Evaluate(Mathf.Clamp(specialChargeTime/maxChargeTime, 0, 1)) * maxRumbleStrength, rumbleCurve.Evaluate(Mathf.Clamp(specialChargeTime/maxChargeTime, 0, 1)) * maxRumbleStrength);
+                    }
+                }
+                
+
+
+                if(specialChargeTime > maxChargeHoldTime)
+                {
+                    //force launch
+                    if(specialCharging && !isMoving && !isHitStop)
+                    {
+                        UseItem(selectedItemIdx);
+                        //ApplyMove(0, i_move, chargeTime);
+                    }
+
+                    //cancel charge
+                    specialChargeTime = 0;
+                    specialCharging = false;
+                    
+                }
+
+            }
+            
+
+        } else //special charge button not pressed
+        {
+            specialChargeTime = 0;
+            specialCharging = false;
+        }
+
+
 
     }
     
@@ -313,9 +406,11 @@ public class PlayerController3 : PlayerController
                 movePhase = 1;
                 isGliding = true;
 
-                eyeSR.sprite = EyeSpriteSet[0];
-                sr.sprite = SpriteSet[0];
-
+                if(!charging && !specialCharging)
+                {
+                    eyeSR.sprite = EyeSpriteSet[0];
+                    sr.sprite = SpriteSet[0];
+                }
                 
                 DIMod = DIStrength * (lateralDIStrength * lateralDI);
                 DIMod *= Time.fixedDeltaTime;
@@ -336,14 +431,14 @@ public class PlayerController3 : PlayerController
                     glideRate = 1.2f;
                 }
 
+                //holding back
                 if(forwardDI != Vector2.zero)
                 {
-                    //holding back
                     if(Vector2.Angle(rb.velocity, true_i_move) > 90)
                     {
                         if(charging)
                         {
-                            chargeMod = 6.5f;
+                            chargeMod = 5f; //old val = 6.5
                         }
 
                         //EDIT THIS CONSTANT
@@ -365,14 +460,16 @@ public class PlayerController3 : PlayerController
                 //extend glide duration for lateral control
                 if(lateralDI != Vector2.zero)
                 {
-                    //EDIT THIS CONSTANT
-                    glideRate -= (lateralDI.magnitude * .25f);
+                    //EDIT THIS CONSTANT (very sensitive value)
+                    glideRate -= (lateralDI.magnitude * .12f); //old val = .25
                 }
 
-                //is this really necessary???
+                //is this really necessary??? - yes
                 if(charging)
                 {
+                    //charging slows momentum
                     glideSpeed = .8f * moveSpeed;
+                    //extend duration to compensate
                     glideRate *= .8f;
 
                 }
@@ -493,10 +590,46 @@ public class PlayerController3 : PlayerController
         }
     }
 
+    //handles player behavior while offstage
+    void OutOfBoundsTick()
+    {
+        if(!isInBounds) //Offstage
+        {
+            //if time runs out
+            if(oobTimer > oobLifespan && pm.playerList[idx].isAlive)
+            {
+                //kill player
+                pm.KillPlayer(idx);
+            }
+            
+            //(stats modified in ArenaBoundary.OnTriggerExit/Enter)
+
+            //tick OOB clock while not launching
+            if(movePriority < 2 || (movePower < (maxMovePower * powerCurve.Evaluate((1.8f * minCharge)/maxChargeTime))))
+            {
+                oobTimer += Time.fixedDeltaTime;
+            }
+        } else //Onstage
+        {
+            //restore oob time while onstage
+            if(oobTimer > 0)
+            {
+                //increase regen tick rate
+                oobTimer -= .5f * Time.fixedDeltaTime;
+            } else if(oobTimer < 0)
+            {
+                oobTimer = 0;
+            }
+            
+        }
+
+
+    }
+
 
     //tracks peer priority timers
     void PeerPriorityTick()
-    {   
+    {
         if(!isHitStop)
         {
             //timer > 0 => this player overpowers otherPlayer
@@ -563,6 +696,8 @@ public class PlayerController3 : PlayerController
 
         if(type == 0) //movement
         {
+            chargePressed = false;
+
             FindFirstObjectByType<AudioManager>().PlayRandom("Move");
 
             isMoving = true;
@@ -795,7 +930,7 @@ public class PlayerController3 : PlayerController
             while (timer < 4 * Time.fixedDeltaTime && isHitStop) //4 frames of leeway for inputting parry after impact
             {
                 //someone parrys
-                if((canWallTech && lastChargePress < wallTechFrameWindow * Time.fixedDeltaTime) || (otherPC.canWallTech && otherPC.lastChargePress < otherPC.wallTechFrameWindow * Time.fixedDeltaTime))
+                if(((canWallTech && lastChargePress < wallTechFrameWindow * Time.fixedDeltaTime) || (otherPC.canWallTech && otherPC.lastChargePress < otherPC.wallTechFrameWindow * Time.fixedDeltaTime)) && (movePower > (maxMovePower * powerCurve.Evaluate((1.8f * minCharge)/maxChargeTime)) || otherPower > (otherPC.maxMovePower * otherPC.powerCurve.Evaluate((1.8f * otherPC.minCharge)/otherPC.maxChargeTime))))
                 {
                     //reset peer priority
                     OverpowerPeerPrioTable[otherPC.idx] = 0;
@@ -1094,7 +1229,7 @@ public class PlayerController3 : PlayerController
         WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
 
         //extra hitstop for player feedback
-        float hitstop = Mathf.Clamp(.8f * maxHitstop * hitstopCurve.Evaluate(movePower/maxMovePower), 8*Time.fixedDeltaTime, maxHitstop);
+        float hitstop = Mathf.Clamp(.7f * maxHitstop * hitstopCurve.Evaluate(movePower/maxMovePower), 10*Time.fixedDeltaTime, maxHitstop);
         //StartCoroutine(HitStop(hitstop));
         ApplyHitStop(hitstop, 0);
 
@@ -1103,6 +1238,8 @@ public class PlayerController3 : PlayerController
         {
             sr.sprite = SpriteSet[4];
             RotateSprite(wall.GetContact(0).normal);
+
+            transform.position = wall.GetContact(0).point + (.2f * wall.GetContact(0).normal.normalized);
 
              //constrain new direction based off wall normal
             if(Vector2.Angle(true_i_move, wall.GetContact(0).normal) > 90)
@@ -1122,7 +1259,7 @@ public class PlayerController3 : PlayerController
         lastWallTech = 0;
 
         
-        if(Vector2.Angle(true_i_move, wall.GetContact(0).normal) > 90)
+        if(Vector2.Angle(true_i_move, wall.GetContact(0).normal) > 105) //a little leeway for parallels
         {
             //player is holding into wall
             //decrease distance
@@ -1157,6 +1294,8 @@ public class PlayerController3 : PlayerController
         float otherMTime = otherPC.moveTime;
         float otherMTimer = otherPC.moveTimer;
         float otherMPower = otherPC.movePower;
+        int mPrio = movePriority;
+        int otherMPrio = otherPC.movePriority;
 
 
         float hitstop;
@@ -1194,7 +1333,7 @@ public class PlayerController3 : PlayerController
 
 
             //successful parry recoil
-            Vector2 direction = ((.9f * -(true_i_move.normalized)) + (.1f * otherMPower * otherDirection)).normalized;
+            Vector2 direction = ((.9f * Mathf.Clamp((otherMPower/maxMovePower), .2f, 1) * -(true_i_move.normalized)) + (.1f * otherMPower * otherDirection)).normalized;
 
             Debug.Log("Parry recoil direction: " + direction);
 
@@ -1219,7 +1358,7 @@ public class PlayerController3 : PlayerController
             transform.position = otherPC.transform.position;
 
             //apply parry KB to this player in direction inputted by otherPlayer
-            if(mPower > 0) //player is moving (defensive parry) use this player's power
+            if(mPrio > 1) //player is launching (defensive parry) use this player's power
             {
                 Debug.Log("defensive parry");
                 Debug.Log("defense parry power: " + .7f * (1 - (mTimer/mTime)) * knockbackMultiplier * mPower);

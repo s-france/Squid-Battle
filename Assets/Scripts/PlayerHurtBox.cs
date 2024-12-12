@@ -50,7 +50,7 @@ public class PlayerHurtBox : MonoBehaviour
             {
                 if(col == col.GetComponent<PlayerHurtBox>().hb)
                 {
-                    Debug.Log("players TriggerStay!!");
+                    //Debug.Log("players TriggerStay!!");
                     
                     if(!pc.isMoving && !pc.isHitStop && !pc.isKnockback)
                     {

@@ -252,7 +252,7 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 6b95bd3b5b937b6458ea31363b33200e, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.23113209, b: 0.23113209, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -624,7 +624,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 15b96cec05f418a49af988736735ca58, type: 3}
   - {fileID: 21300000, guid: 956f344817a05864a8348d803558689c, type: 3}
   - {fileID: 21300000, guid: 06007171fd9d6214bb4d5b2ace2d2416, type: 3}
-  - {fileID: 21300000, guid: e62a7d32d0575fb4a8d60dd4efb63069, type: 3}
+  - {fileID: 21300000, guid: 982e52149355f2940930e698947bd6a6, type: 3}
   storedVelocity: {x: 0, y: 0}
   i_move: {x: 0, y: 0}
   true_i_move: {x: 0, y: 0}
@@ -671,13 +671,13 @@ MonoBehaviour:
       outWeight: 0.182538
     - serializedVersion: 3
       time: 1
-      value: 0.1
-      inSlope: -0.04718016
-      outSlope: -0.04718016
+      value: 0.17
+      inSlope: -0.11133214
+      outSlope: -0.11133214
       tangentMode: 0
       weightedMode: 1
-      inWeight: 0.3356753
-      outWeight: 0.24139452
+      inWeight: 0.24397093
+      outWeight: 0.14660835
     - serializedVersion: 3
       time: 2
       value: 0
@@ -729,21 +729,21 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0.675
-      inSlope: 0.325
-      outSlope: 0.325
-      tangentMode: 34
+      inSlope: 0.7632584
+      outSlope: 0.7632584
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.33333334
+      outWeight: 0.05689278
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0.28609434
-      outSlope: 0.18657732
+      inSlope: 0.110067226
+      outSlope: 0.06406537
       tangentMode: 1
       weightedMode: 0
-      inWeight: 0.3571387
-      outWeight: 0.25017953
+      inWeight: 0.20787746
+      outWeight: 0.23413563
     - serializedVersion: 3
       time: 2
       value: 1.1
@@ -888,7 +888,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxMoveSpeed: 32
+  maxMoveSpeed: 31
   maxMoveTime: 0.28
   maxMovePower: 2.75
   maxHitstop: 0.15
@@ -959,12 +959,14 @@ MonoBehaviour:
     m_RotationOrder: 4
   defaultScale: {x: 0, y: 0, z: 0}
   defaultChargeStrength: 0
+  defaultMaxChargeTime: 0
   defaultMaxMoveSpeed: 0
   defaultMaxMoveTime: 0
   defaultMaxMovePower: 0
   defaultMaxHitstop: 0
   OverpowerPeerPrioTable: []
   IntangiblePeerPrioTable: []
+  oobLifespan: 3
   glideDeccelDICurve:
     serializedVersion: 2
     m_Curve:

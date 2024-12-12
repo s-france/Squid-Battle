@@ -1,19 +1,19 @@
 fileFormatVersion: 2
-guid: e62a7d32d0575fb4a8d60dd4efb63069
+guid: 982e52149355f2940930e698947bd6a6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -407093627809035702
-    second: EyeParry_0
+      213: -7876167575515351148
+    second: EyeParry 1_0
   - first:
-      213: -7952565796591741989
-    second: EyeParry_1
+      213: 3654187224920075428
+    second: EyeParry 1_1
   - first:
-      213: -5480875175051548437
-    second: EyeParry_2
+      213: -2758339066181648158
+    second: EyeParry 1_2
   - first:
-      213: -4614492704876639918
-    second: EyeParry_3
+      213: 8653145584855989238
+    second: EyeParry 1_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -122,7 +122,28 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: EyeParry_0
+      name: EyeParry 1_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 23
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49735fdd15b32b290800000000000000
+      internalID: -7876167575515351148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EyeParry 1_1
       rect:
         serializedVersion: 2
         x: 0
@@ -130,62 +151,41 @@ TextureImporter:
         width: 5
         height: 8
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a4a0e1c9086b95af0800000000000000
-      internalID: -407093627809035702
+      spriteID: 4aca12c9be746b230800000000000000
+      internalID: 3654187224920075428
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: EyeParry_1
+      name: EyeParry 1_2
       rect:
         serializedVersion: 2
-        x: 1
-        y: 0
-        width: 22
-        height: 19
+        x: 21
+        y: 1
+        width: 19
+        height: 20
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bd35a31ea8fc2a190800000000000000
-      internalID: -7952565796591741989
+      spriteID: 2e0092ecb3968b9d0800000000000000
+      internalID: -2758339066181648158
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: EyeParry_2
-      rect:
-        serializedVersion: 2
-        x: 22
-        y: 3
-        width: 17
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: be8abc4311500f3b0800000000000000
-      internalID: -5480875175051548437
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EyeParry_3
+      name: EyeParry 1_3
       rect:
         serializedVersion: 2
         x: 35
@@ -193,14 +193,14 @@ TextureImporter:
         width: 5
         height: 8
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2594233655706ffb0800000000000000
-      internalID: -4614492704876639918
+      spriteID: 6fbb4172016261870800000000000000
+      internalID: 8653145584855989238
       vertices: []
       indices: 
       edges: []
@@ -209,17 +209,17 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      EyeParry_0: -407093627809035702
-      EyeParry_1: -7952565796591741989
-      EyeParry_2: -5480875175051548437
-      EyeParry_3: -4614492704876639918
+      EyeParry 1_0: -7876167575515351148
+      EyeParry 1_1: 3654187224920075428
+      EyeParry 1_2: -2758339066181648158
+      EyeParry 1_3: 8653145584855989238
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
