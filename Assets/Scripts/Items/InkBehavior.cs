@@ -30,6 +30,9 @@ public class InkBehavior : ItemBehavior
 
         GameObject ink = Instantiate(InkPrefab, pc.transform.Find("ItemSpawn").position, pc.transform.Find("ItemSpawn").rotation);
         ink.GetComponent<InkObj>().Deploy(chargeTime);
+
+        pc.ApplyMove(0, -pc.i_move, pc.specialMoveMod * Mathf.Clamp(pc.specialChargeTime, 0, pc.maxChargeTime));
+        
         DestroyItem();
     }
 

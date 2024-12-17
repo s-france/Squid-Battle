@@ -15,8 +15,6 @@ using System.Linq;
 using UnityEngine.InputSystem.UI;
 using System.Runtime.InteropServices;
 //using Unity.Barracuda;
-//using System.Numerics;
-//using System.Numerics;
 
 public class PlayerController : MonoBehaviour
 {
@@ -39,7 +37,7 @@ public class PlayerController : MonoBehaviour
 
     public Sprite[] SpriteSet;
     public Sprite[] EyeSpriteSet;
-    CinemachineTargetGroup tg;
+    [HideInInspector] public CinemachineTargetGroup tg;
 
     //saved "real" velocity value for when velocity is temporarily modified (hitstop)
     [HideInInspector] public Vector2 storedVelocity;
@@ -47,6 +45,8 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public Vector2 i_move;
     [HideInInspector] public Vector2 true_i_move;
     [HideInInspector] public Vector3 rotation;
+
+    [HideInInspector] public float lastIMove = 0;
 
     [HideInInspector] public int idx;
     [HideInInspector] public int colorID;
@@ -57,9 +57,11 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool specialCharging;
     [HideInInspector] public float specialChargeTime;
 
-    float staticTimer = 0;
+    [HideInInspector] public float staticTimer = 0;
     [SerializeField] public int rewindSize;
     [HideInInspector] public Queue<PlayerState> prevStates;
+    [HideInInspector] public Vector2 lastPrevStatePos; //tracks the last added state in PrevStates queue
+
     [HideInInspector] public List<Vector2> prevPos; //this is redundant idgaf
 
     //NEW movement system
@@ -198,6 +200,7 @@ public class PlayerController : MonoBehaviour
 
         prevStates = new Queue<PlayerState>(rewindSize);
         prevPos = new List<Vector2>(3);
+        lastPrevStatePos = Vector2.zero;
 
         ChangeColor(colorID);
 
@@ -699,7 +702,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void ClearInventory()
+    public virtual void ClearInventory()
     {
         
         foreach (ItemBehavior item in heldItems)
@@ -1036,21 +1039,21 @@ public class PlayerController : MonoBehaviour
     }
 
     //called in FixedUpdate if gm.gamestarted
-    void TrackStatesTick()
+    public virtual void TrackStatesTick()
     {
         //always store state if moving
         if(isMoving || isKnockback || isRewind)
         {
             staticTimer = 0;
 
-            PlayerState s = new PlayerState(transform.position.x, transform.position.y, movePower);
+            PlayerState s = new PlayerState(transform.position.x, transform.position.y, movePower, rb.velocity);
             prevStates.Enqueue(s);
         } else
         {
             //store .2s of states when stationary
             if(staticTimer <= .25f)
             {
-                PlayerState s = new PlayerState(transform.position.x, transform.position.y, movePower);
+                PlayerState s = new PlayerState(transform.position.x, transform.position.y, movePower, rb.velocity);
                 prevStates.Enqueue(s);
             }
             staticTimer += Time.fixedDeltaTime;

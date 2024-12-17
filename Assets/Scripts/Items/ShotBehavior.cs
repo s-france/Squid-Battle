@@ -26,8 +26,13 @@ public class ShotBehavior : ItemBehavior
 
     public override void UseItem(float chargeTime)
     {
-        GameObject shot = Instantiate(ShotPrefab, pc.transform.Find("ItemSpawn").position, pc.transform.Find("ItemSpawn").rotation);
+        GameObject shot = Instantiate(ShotPrefab, pc.transform.position, pc.transform.rotation);
+        shot.GetComponent<ShotObj>().parentID = pc.idx;
         shot.GetComponent<ShotObj>().Shoot(chargeTime);
+
+        //pc.ApplyMove(0,);
+        pc.ApplyMove(0, -pc.i_move, pc.specialMoveMod * Mathf.Clamp(pc.specialChargeTime, pc.minCharge, pc.maxChargeTime));
+
         DestroyItem();
     }
 

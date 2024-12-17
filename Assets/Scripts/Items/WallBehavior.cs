@@ -29,6 +29,8 @@ public class WallBehavior : ItemBehavior
         Wall.GetComponent<WallObj>().tr = pc.GetComponentInChildren<TrailRenderer>();
         Wall.GetComponent<WallObj>().tr.emitting = true;
 
+        pc.ApplyMove(0, pc.i_move, Mathf.Clamp(pc.specialChargeTime, 0, pc.maxChargeTime));
+
         DestroyItem();
     }
 

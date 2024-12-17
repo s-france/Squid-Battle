@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework.Constraints;
+using UnityEditor.Callbacks;
+
 //using Unity.MLAgents.SideChannels;
 using UnityEngine;
 
@@ -32,6 +34,7 @@ public class RewindBehavior : ItemBehavior
         base.DestroyItem();
     }
 
+    //rewinds the player back in time
     IEnumerator Rewind(float charge)
     {
         WaitForFixedUpdate fuwait = new WaitForFixedUpdate();
@@ -57,14 +60,17 @@ public class RewindBehavior : ItemBehavior
 
                 //pc.transform.position = pos;
                 pc.rb.MovePosition(pos);
-                //pc.RotateSprite(...);
+                pc.storedVelocity = -ps.velocity;
+                pc.rb.velocity = -ps.velocity;
                 pc.movePower = ps.movePower;
+                pc.movePriority = 3;
 
-                if(pc.rb.velocity.magnitude != 0)
+                if(ps.velocity.magnitude != 0)
                 {
-                    pc.RotateSprite(-pc.rb.velocity.normalized);
+                    pc.RotateSprite(ps.velocity.normalized);
                 }
 
+                //TRY THIS: move timer tick into above if statement^^
                 timer += Time.fixedDeltaTime;
             }
             yield return fuwait;

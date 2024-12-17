@@ -36,16 +36,19 @@ public class WarpBehavior : ItemBehavior
     IEnumerator Warp(float chargeTime)
     {
         CircleCollider2D playerCol = pc.GetComponent<CircleCollider2D>();
-        CircleCollider2D warpCol = pc.transform.Find("WarpPoint").GetComponent<CircleCollider2D>();
+        
+        CircleCollider2D playerHB = pc.transform.Find("TriggerHurtbox").GetComponent<CircleCollider2D>();
+        CircleCollider2D warpCol = pc.WarpPoint.GetComponent<CircleCollider2D>();
 
         float timer = 0; //warp routine timer
         float totalTime = .5f; //total warp time from start -> finish
 
-        Color change = new Color(0,0,0, -1/(totalTime/3));
+        Color change = new(0,0,0, -1/(totalTime/3));
 
         //player disappear:
         ///disable collision
         playerCol.enabled = false;
+        playerHB.enabled = false;
 
         ///play warp-out animation
         while(timer < totalTime/3)
@@ -89,6 +92,7 @@ public class WarpBehavior : ItemBehavior
 
         ///enable collision
         playerCol.enabled = true;
+        playerHB.enabled = true;
         
         //destroy
         DestroyItem();

@@ -279,5 +279,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSize: 5
-  maxUpTime: 20
+  maxUpTime: 15
   maxChargeTime: 3

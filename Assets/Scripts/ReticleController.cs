@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using Unity.Mathematics;
 using UnityEngine;
@@ -15,6 +16,11 @@ public class ReticleController : MonoBehaviour
     [SerializeField] SpriteRenderer warpSR;
 
 
+    //rewind tick variables
+    int prevTC = 0;
+    Stack<PlayerState> states;
+
+
 
 
     public Color32[] colorSet;
@@ -26,6 +32,8 @@ public class ReticleController : MonoBehaviour
     {
         pc = GetComponentInParent<PlayerController>();
         lr = GetComponent<LineRenderer>();
+
+        states = new Stack<PlayerState>(pc.prevStates.ToArray());
         
         ChangeColor(pc.colorID);
 
@@ -36,8 +44,23 @@ public class ReticleController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        warpSR.enabled = false;
+
+        //hide reticle if dead
+        if(!pc.pm.playerList[pc.idx].isAlive)
+        {
+            DeactivateReticle();
+            return;
+        }
+
+
         RenderNormalReticle();
-        //RenderSpecialReticle(pc.heldItems[pc.selectedItemIdx].GetItemType());
+
+        if(pc.heldItems.Any() && pc.heldItems[pc.selectedItemIdx] != null)
+        {
+            RenderSpecialReticle(pc.heldItems[pc.selectedItemIdx].GetItemType());
+        }
+
 
     }
 
@@ -70,12 +93,15 @@ public class ReticleController : MonoBehaviour
         {
             if(pc.chargeTime > pc.minCharge)
             {
+                transform.SetParent(pc.transform);
+                transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
                 ActivateReticle();
                 lr.positionCount = 2;
+                lr.SetPosition(0, Vector2.zero);
 
                 //int chargeType = 0;
 
-                if(!pc.isCoolingDown /*&& pc.isInBounds*/)
+                if(!pc.isCoolingDown)
                 {
                     lr.enabled = true;
 
@@ -92,7 +118,8 @@ public class ReticleController : MonoBehaviour
             }
         } else
         {
-            DeactivateReticle();
+            //DeactivateReticle();
+            lr.enabled = false;
         }
     }
 
@@ -113,6 +140,9 @@ public class ReticleController : MonoBehaviour
 
                         if(!pc.isCoolingDown /*&& pc.isInBounds*/)
                         {
+                            //dumb that this is here and not pc but idgaf
+                            pc.RotateSprite(-pc.i_move);
+
                             lr.enabled = true;
 
                             SetReticle(1, Vector2.up);
@@ -132,6 +162,9 @@ public class ReticleController : MonoBehaviour
 
                         if(!pc.isCoolingDown /*&& pc.isInBounds*/)
                         {
+                            //dumb that this is here and not pc but idgaf
+                            pc.RotateSprite(-pc.i_move);
+
                             lr.enabled = true;
 
                             SetReticle(1, Vector2.up);
@@ -144,14 +177,86 @@ public class ReticleController : MonoBehaviour
                         break;
                     
                     case "Wall":
+                        ActivateReticle();
+                        lr.positionCount = 2;
+
+                        //int chargeType = 0;
+
+                        if(!pc.isCoolingDown /*&& pc.isInBounds*/)
+                        {
+                            lr.enabled = true;
+
+                            SetReticle(2, Vector2.up);
+                        } else
+                        {
+                            lr.enabled = false;
+                            DeactivateReticle();
+                        }
 
                         break;
                     
                     case "Warp":
-
+                        
                         break;
 
                     case "Rewind":
+
+                        int tickCount = Mathf.RoundToInt(/*5 * */ (pc.specialChargeTime/pc.maxChargeTime) * pc.rewindSize);
+                        
+                        //DURING
+                        if(!pc.isCoolingDown)
+                        {
+                            //START
+                            //only do this once at start
+                            if(transform.parent != null)
+                            {
+                                Debug.Log("initing rewind reticle!");
+
+                                //temporarily free reticle from player parent
+                                transform.SetParent(null);
+                                transform.SetPositionAndRotation(Vector2.zero, Quaternion.identity);
+
+                                //convert queue to stack
+                                states.Clear();
+                                states = new Stack<PlayerState>(pc.prevStates.ToArray());
+                                //Vector2 pos = Vector2.zero;
+
+                                lr.positionCount = 1;
+                            }
+
+                            lr.SetPosition(0, pc.transform.position);
+
+                            lr.enabled = true;
+
+                            if(pc.specialChargeTime/pc.maxChargeTime < 1)
+                            {
+                                while(lr.positionCount < tickCount)
+                                {
+                                    //render reticle stuff here!!!!:
+                                    PlayerState ps = states.Pop();
+                                    Vector2 pos = new Vector2(ps.xPos, ps.yPos);
+
+                                    lr.positionCount++;
+                                    lr.SetPosition(lr.positionCount-1, pos);
+                                }
+                                
+                            }
+
+
+                        } else //cooling down
+                        {
+                            if(transform.parent == null)
+                            {
+                                transform.SetParent(pc.transform);
+                                transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+                            }
+
+                            //transform.position = pc.transform.position;
+                            //lr.SetPosition(0, pc.transform.position);
+
+                            lr.positionCount = 2;
+                            lr.enabled = false;
+                        }
 
                         break;
                     
@@ -162,12 +267,13 @@ public class ReticleController : MonoBehaviour
 
 
                     default:
+                        
                         ActivateReticle();
                         lr.positionCount = 2;
 
                         //int chargeType = 1;
 
-                        if(!pc.isCoolingDown /*&& pc.isInBounds*/)
+                        if(!pc.isCoolingDown)
                         {
                             lr.enabled = true;
 
@@ -177,11 +283,77 @@ public class ReticleController : MonoBehaviour
                             lr.enabled = false;
                             DeactivateReticle();
                         }
+                        
 
                         break;
                 }
             }
             
+            //items that ignore mincharge go here    
+            switch(item)
+            {
+                case "Warp":
+                    //START
+                    //do this only once
+                    if(wr.parent != null)
+                    {
+                        wr.position = pc.transform.position;
+                        wr.SetParent(null);
+                    }
+                    
+                    
+                    //DURING
+                    if(!pc.isCoolingDown)
+                    {
+                        warpSR.enabled = true;
+                        wr.position +=  warpSpeed * Time.deltaTime * (Vector3)pc.true_i_move;
+
+                        //save warp position
+                        WarpBehavior wb = (WarpBehavior)pc.heldItems[pc.selectedItemIdx];
+                        wb.warpPoint = wr.position;
+                    } else
+                    {
+                        warpSR.enabled = false;
+                        wr.position = pc.transform.position;
+                    }
+
+                    break;
+                
+
+                
+                default:
+                    break;
+            }
+
+
+            
+        } else //not charging
+        {
+            //handled in normal charge function:
+            //DeactivateReticle();
+
+            //reset parent
+            transform.SetParent(pc.transform);
+            transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            lr.positionCount = 2;
+            lr.SetPosition(0, Vector2.zero);
+
+            //deactivate warp reticle
+            warpSR.enabled = false;
+            if(item == "Warp")
+            {   
+                //hide reticle
+                wr.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                wr.SetParent(pc.transform);
+                wr.localPosition = Vector3.zero;
+            }
+
+            
+
+
+
+
+
         }
         
 
@@ -259,6 +431,8 @@ public class ReticleController : MonoBehaviour
 
         float reticleLength = pc.CalcMoveForce(chargeType).magnitude * .575f;
 
+        //Debug.Log("SET RETICLE!!");
+
         lr.SetPosition(1, reticlePosition * reticleLength);
         //Debug.Log("reticlePosition: " + reticlePosition*reticleLength*.08f);
     }
@@ -280,7 +454,7 @@ public class ReticleController : MonoBehaviour
             } else
             {
                 warpSR.enabled = true;
-                wr.position += (Vector3)pc.true_i_move * warpSpeed * Time.deltaTime;
+                wr.position +=  warpSpeed * Time.deltaTime * (Vector3)pc.true_i_move;
             }
 
             yield return null;

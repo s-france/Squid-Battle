@@ -48,7 +48,7 @@ public class InkObj : MonoBehaviour
         transform.localScale += new Vector3(size, size, 0);
 
         rb = this.GetComponent<Rigidbody2D>();
-        rb.AddForce(-transform.up * 10, ForceMode2D.Impulse);
+        rb.AddForce(transform.up * 10, ForceMode2D.Impulse);
     }
 
 }

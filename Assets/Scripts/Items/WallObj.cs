@@ -12,7 +12,7 @@ public class WallObj : MonoBehaviour
 
     [SerializeField] float maxUpTime;
 
-    Vector3[] positions = new Vector3[50];
+    Vector3[] positions = new Vector3[100];
 
     float activeTimer;
     float upTime;
@@ -40,6 +40,14 @@ public class WallObj : MonoBehaviour
         }
 
         SetColliderPointsFromTrail(tr, col);
+    }
+
+    void FixedUpdate()
+    {
+        
+
+
+
     }
 
 
