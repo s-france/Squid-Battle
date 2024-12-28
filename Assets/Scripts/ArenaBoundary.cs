@@ -9,6 +9,8 @@ public class ArenaBoundary : MonoBehaviour
     InputManager im;
     PlayerManager pm;
 
+    List<int> PlayerCollisions;
+
     bool started;
 
     // Start is called before the first frame update
@@ -17,6 +19,8 @@ public class ArenaBoundary : MonoBehaviour
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
         pm = gm.GetComponentInChildren<PlayerManager>();
+
+        PlayerCollisions = new List<int>();
 
         StartCoroutine(DelayStart());
     }
@@ -45,18 +49,25 @@ public class ArenaBoundary : MonoBehaviour
             {
                 int idx = col.GetComponentInParent<PlayerController>().idx;
 
-                pm.playerList[idx].isInBounds = false;
-                pm.playerList[idx].playerScript.isInBounds = false;
+                //remove one instance of player idx from collision tracking
+                PlayerCollisions.Remove(idx);
 
-                //alter player's stats offstage
-                pm.playerList[idx].playerScript.maxMoveSpeed *= .5f;
-                pm.playerList[idx].playerScript.maxMoveTime *= 1.5f;
-                pm.playerList[idx].playerScript.maxMovePower *= .6f;
-                pm.playerList[idx].playerScript.maxChargeTime *= 1.2f;
+                //if player is not inside any arena colliders
+                if(!PlayerCollisions.Contains(idx))
+                {
+                    //set player out of bounds
+                    pm.playerList[idx].isInBounds = false;
+                    pm.playerList[idx].playerScript.isInBounds = false;
+
+                    //alter player's stats offstage
+                    pm.playerList[idx].playerScript.maxMoveSpeed *= .5f;
+                    pm.playerList[idx].playerScript.maxMoveTime *= 1.5f;
+                    pm.playerList[idx].playerScript.maxMovePower *= .6f;
+                    pm.playerList[idx].playerScript.maxChargeTime *= 1.2f;
 
 
-
-                //StartCoroutine(pm.PlayerKillClock(idx, 3.0f));
+                    //StartCoroutine(pm.PlayerKillClock(idx, 3.0f));
+                }
 
             } else if (col.gameObject.layer == LayerMask.NameToLayer("ItemObjs"))
             {
@@ -74,6 +85,7 @@ public class ArenaBoundary : MonoBehaviour
         if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
         {
             int idx = col.GetComponentInParent<PlayerController>().idx;
+            PlayerCollisions.Add(idx);
             pm.playerList[idx].isInBounds = true;
             pm.playerList[idx].playerScript.isInBounds = true;
 

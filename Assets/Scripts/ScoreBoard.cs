@@ -45,6 +45,7 @@ public class ScoreBoard : MonoBehaviour
 
         //set player icon color
         scores[playerID].GetComponent<Image>().sprite = pm.playerList[playerID].playerScript.SpriteSet[0];
+        scores[playerID].GetComponent<Image>().color = pm.playerList[playerID].playerScript.sr.color;
 
         //set progress bar color
         //FINISH THIS!!!!
@@ -52,7 +53,6 @@ public class ScoreBoard : MonoBehaviour
 
     public void SetScores()
     {
-
         foreach(PlayerConfig p in pm.playerList)
         {
             Debug.Log("P" + p.playerIndex + " score: " + p.score);
@@ -62,7 +62,7 @@ public class ScoreBoard : MonoBehaviour
             scores[p.playerIndex].GetComponentInChildren<Slider>().value = p.score;
             scores[p.playerIndex].GetComponentInChildren<TextMeshProUGUI>().text = p.score.ToString();
 
-        }        
+        }
 
     }
 

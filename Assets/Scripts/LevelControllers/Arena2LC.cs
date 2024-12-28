@@ -40,8 +40,9 @@ public class Arena2LC : ArenaLevelController
     // Update is called once per frame
     void Update()
     {
-        MoveBox(1);
-        MoveBox(2);
+        //these have been replaced with SplineAnimate movement
+        //MoveBox(1);
+        //MoveBox(2);
     }
 
     void MoveBox(int boxNum)

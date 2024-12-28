@@ -33,6 +33,15 @@ public class HitEffect : MonoBehaviour
         Destroy(gameObject, lifetime +Time.deltaTime);
     }
 
+    public void SetColor(Color color)
+    {
+        foreach(ParticleSystem part in parts)
+        {
+            var main = part.main;
+            main.startColor = color;
+        }
+    }
+
 
     // Update is called once per frame
     void Update()

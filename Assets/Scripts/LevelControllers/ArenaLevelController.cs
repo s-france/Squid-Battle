@@ -225,6 +225,7 @@ public class ArenaLevelController : LevelController
             
             //set winner sprite
             winnerSprite.sprite = pm.playerList.Find(p => p.playerIndex == winner).playerScript.SpriteSet[0];
+            winnerSprite.color = pm.playerList.Find(p => p.playerIndex == winner).playerScript.sr.color;
             //set winner text
             winnerText.text = "Player " + winner + " Wins!";
 

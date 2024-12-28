@@ -47,9 +47,15 @@ public class Portal : MonoBehaviour
         {
             //warpObjs.Add(col);
             
-            //FIX THIS
-            //using parent is unsafe af
-            Warp(col.transform.parent);
+            if(col.TryGetComponent<ShotObj>(out ShotObj shot))
+            {
+                Warp(shot.transform);
+            } else
+            {
+                //works for players
+                Warp(col.transform.parent);
+            }
+
         }
 
     }
@@ -65,13 +71,21 @@ public class Portal : MonoBehaviour
         coolDown = defaultCoolDown;
         otherPortal.coolDown = otherPortal.defaultCoolDown;
 
+
+        if(obj.TryGetComponent<PlayerController>(out PlayerController pc))
+        {
+            if(!pc.isRewind)
+            {
+                pc.moveTime *= 1.5f;
+            } else
+            {
+                return;
+            }
+            
+        }
+
         obj.transform.position = otherPortal.transform.position;
 
-        PlayerController pc = obj.GetComponent<PlayerController>();
-        if(pc != null)
-        {
-            pc.moveTime *= 1.5f;
-        }
 
     }
 

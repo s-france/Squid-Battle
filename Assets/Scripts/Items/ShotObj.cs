@@ -9,8 +9,8 @@ public class ShotObj : MonoBehaviour
 {
     [HideInInspector] public int parentID;
     [SerializeField] float parentImmunityTime;
-    float parentImmunityTimer = 0;
-    bool timerStarted = false;
+    [HideInInspector] public float parentImmunityTimer = 0;
+    [HideInInspector] public bool timerStarted = false;
 
     [HideInInspector] public float activeTimer;
     public Rigidbody2D rb;

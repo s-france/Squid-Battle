@@ -1620,7 +1620,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b04f9d4fc211904f8ee655e7c08eebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  finalResult: {fileID: 0}
   scores:
   - {fileID: 7233755785598145506}
   - {fileID: 6150749253109251510}

@@ -201,7 +201,7 @@ public class ReticleController : MonoBehaviour
 
                     case "Rewind":
 
-                        int tickCount = Mathf.RoundToInt(/*5 * */ (pc.specialChargeTime/pc.maxChargeTime) * pc.rewindSize);
+                        int tickCount = Mathf.RoundToInt(.6f * (Mathf.Clamp(pc.specialChargeTime, 0, pc.maxChargeTime)/pc.maxChargeTime) * pc.rewindSize);
                         
                         //DURING
                         if(!pc.isCoolingDown)
@@ -228,9 +228,9 @@ public class ReticleController : MonoBehaviour
 
                             lr.enabled = true;
 
-                            if(pc.specialChargeTime/pc.maxChargeTime < 1)
+                            if(Mathf.Clamp(pc.specialChargeTime, 0, pc.maxChargeTime)/pc.maxChargeTime < 1)
                             {
-                                while(lr.positionCount < tickCount)
+                                while(lr.positionCount < tickCount && states.Count > 0)
                                 {
                                     //render reticle stuff here!!!!:
                                     PlayerState ps = states.Pop();
@@ -429,7 +429,7 @@ public class ReticleController : MonoBehaviour
         reticlePosition.x = point.x;
         reticlePosition.y = point.y;
 
-        float reticleLength = pc.CalcMoveForce(chargeType).magnitude * .575f;
+        float reticleLength = pc.CalcMoveForce(chargeType).magnitude * .65f;
 
         //Debug.Log("SET RETICLE!!");
 

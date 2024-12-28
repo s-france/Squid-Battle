@@ -25,6 +25,9 @@ public class RewindBehavior : ItemBehavior
     public override void UseItem(float charge)
     {
         HideSprite();
+
+
+
         StartCoroutine(Rewind(charge));
         
     }
@@ -41,6 +44,8 @@ public class RewindBehavior : ItemBehavior
         Vector2 pos = Vector2.zero;
         PlayerState ps;
         pc.isRewind = true;
+
+        pc.SolidCol.enabled = false;
 
 
         float rewindTime = (charge/pc.maxChargeTime) * Time.fixedDeltaTime * pc.rewindSize;
@@ -62,20 +67,24 @@ public class RewindBehavior : ItemBehavior
                 pc.rb.MovePosition(pos);
                 pc.storedVelocity = -ps.velocity;
                 pc.rb.velocity = -ps.velocity;
-                pc.movePower = ps.movePower;
+                pc.movePower = Mathf.Clamp(ps.movePower, pc.maxMovePower/5, 999);
                 pc.movePriority = 3;
 
                 if(ps.velocity.magnitude != 0)
                 {
                     pc.RotateSprite(ps.velocity.normalized);
-                }
 
-                //TRY THIS: move timer tick into above if statement^^
+                }
+                
+                //should this really be inside here???
                 timer += Time.fixedDeltaTime;
+
+                
             }
             yield return fuwait;
         }
 
+        pc.SolidCol.enabled = true;
         pc.isRewind = false;
 
         DestroyItem();

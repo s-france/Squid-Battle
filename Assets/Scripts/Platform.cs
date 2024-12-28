@@ -68,7 +68,17 @@ public class Platform : MonoBehaviour
         {
             foreach(Collider2D col in contacts)
             {
-                col.transform.position += (Vector3)diff;
+                if(col.TryGetComponent<PlayerController>(out PlayerController pc))
+                {
+                    if(!pc.isMoving && !pc.isRewind)
+                    {
+                        col.transform.position += (Vector3)diff;
+                    }
+                } else
+                {
+                    col.transform.position += (Vector3)diff;
+                }
+
                 
             }
         }

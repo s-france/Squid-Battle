@@ -32,8 +32,10 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rb;
     [HideInInspector] public SpriteRenderer sr;
     public SpriteRenderer eyeSR;
-    [SerializeField] public ParticleSystem bubblePart;
-    [SerializeField] public GameObject hitPart;
+    public ParticleSystem bubblePart;
+    public GameObject hitPart; //particle prefabs
+    public GameObject impactPart; //particle prefab
+
 
     public Sprite[] SpriteSet;
     public Sprite[] EyeSpriteSet;
@@ -176,6 +178,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log("got GP!!");
             Debug.Log("device type: " + gp.GetType().ToString());
         }
+
 
         //pi.uiInputModule = FindFirstObjectByType<InputSystemUIInputModule>();
 
@@ -697,7 +700,7 @@ public class PlayerController : MonoBehaviour
     {
         if(heldItems.Any())
         {
-            heldItems[idx].UseItem(specialChargeTime);
+            heldItems[idx].UseItem(Mathf.Clamp(specialChargeTime, 0, maxChargeTime));
             heldItems.RemoveAt(idx);
         }
     }
@@ -716,7 +719,7 @@ public class PlayerController : MonoBehaviour
         
     }
 
-    public void OnSelectL(InputAction.CallbackContext ctx)
+    public virtual void OnSelectL(InputAction.CallbackContext ctx)
     {
 
         //whatever L does during gameplay
@@ -724,7 +727,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void OnSelectR(InputAction.CallbackContext ctx)
+    public virtual void OnSelectR(InputAction.CallbackContext ctx)
     {
         //whatever R does during gameplay
         //maybe swaps between items idk
