@@ -287,7 +287,7 @@ public class PlayerController3 : PlayerController
         {
             if(!isDodging && !isHitStop && !isKnockback && !isRewind)
             {
-                ApplyDodge(true_i_move.normalized);
+                //ApplyDodge(true_i_move.normalized);
             }
         }
     }
