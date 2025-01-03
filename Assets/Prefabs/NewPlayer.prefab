@@ -911,7 +911,8 @@ MonoBehaviour:
   isKnockback: 0
   isHitStop: 0
   lastChargePress: 0
-  wallTechFrameWindow: 4
+  wallTechFrameWindow: 3
+  parryFrameWindow: 5
   canWallTech: 0
   isCoolingDown: 0
   isGrown: 0
@@ -973,7 +974,7 @@ MonoBehaviour:
   IntangiblePeerPrioTable: []
   moveSpeedCap: 50
   moveTimeCap: 0.7
-  oobLifespan: 3
+  oobLifespan: 2.85
   dodgeSpeed: 10
   dodgeTime: 0.4
   dodgeCurve:
@@ -1222,7 +1223,7 @@ MonoBehaviour:
   pc: {fileID: 1687167956417677184}
   lr: {fileID: 5371809183366282524}
   wr: {fileID: 194492634184046858}
-  warpSpeed: 5
+  warpSpeed: 7
   warpSR: {fileID: 8057401209555982923}
   colorSet:
   - serializedVersion: 2

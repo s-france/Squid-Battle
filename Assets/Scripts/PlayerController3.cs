@@ -18,6 +18,7 @@ public class PlayerController3 : PlayerController
     float lastWallTech = 0; //tracks last successful wallTech
     Vector2 lastWallTechNormal; //normal of the most recent wallTech performed
     float lastSolidCollision = 0; // tracks last solid collision
+
     
 
     bool chargePressed = false;
@@ -209,6 +210,7 @@ public class PlayerController3 : PlayerController
     {
         if(ctx.performed)
         {
+            //THIS DOESN'T WORK
             //NEED TO REWORK THIS!!
             if(lastChargePress <= 40 * Time.fixedDeltaTime) //40 frame repeat-input lockout time
             {
@@ -287,7 +289,7 @@ public class PlayerController3 : PlayerController
         {
             if(!isDodging && !isHitStop && !isKnockback && !isRewind)
             {
-                //ApplyDodge(true_i_move.normalized);
+                ApplyDodge(true_i_move.normalized);
             }
         }
     }
@@ -531,8 +533,13 @@ public class PlayerController3 : PlayerController
                     HurtBoxTrigger.enabled = false;
                 } else
                 {
-                    //player is vulnerable (startup / end lag)
-                    HurtBoxTrigger.enabled = true;
+                    //dumb band-aid fix
+                    if(pm.playerList[idx].isAlive)
+                    {
+                        //player is vulnerable (startup / end lag)
+                        HurtBoxTrigger.enabled = true;
+                    }
+                    
                 }
 
                 movePriority = 0;
@@ -547,7 +554,12 @@ public class PlayerController3 : PlayerController
             {
                 if(isDodging)
                 {
-                    HurtBoxTrigger.enabled = true;
+                    //dumb band-aid fix
+                    if(pm.playerList[idx].isAlive)
+                    {
+                        HurtBoxTrigger.enabled = true;
+                    }
+                    
                     isDodging = false;
                 }
 
@@ -582,7 +594,11 @@ public class PlayerController3 : PlayerController
             {
                 if(isDodging)
                 {
-                    HurtBoxTrigger.enabled = true;
+                    //dumb band-aid fix
+                    if(pm.playerList[idx].isAlive)
+                    {
+                        HurtBoxTrigger.enabled = true;
+                    }
                     isDodging = false;
                 }
 
@@ -682,7 +698,11 @@ public class PlayerController3 : PlayerController
             {
                 if(isDodging)
                 {
-                    HurtBoxTrigger.enabled = true;
+                    //dumb band-aid fix
+                    if(pm.playerList[idx].isAlive)
+                    {
+                        HurtBoxTrigger.enabled = true;
+                    }
                     isDodging = false;
                 }
 
@@ -931,7 +951,11 @@ public class PlayerController3 : PlayerController
         //cancel dodge
         dodgeTimer = 100;
         isDodging = false;
-        HurtBoxTrigger.enabled = true;
+        //dumb band-aid fix
+        if(pm.playerList[idx].isAlive)
+        {
+            HurtBoxTrigger.enabled = true;
+        }
 
         //max speed reached in this movement
         moveSpeed = maxMoveSpeed * speedCurve.Evaluate(charge/maxChargeTime);
@@ -1247,10 +1271,10 @@ public class PlayerController3 : PlayerController
             
             //late parry window
             float timer = 0;
-            while (timer < 2 * Time.fixedDeltaTime && isHitStop && !isRewind) //2 frames of leeway for inputting parry after impact
+            while (timer < 5 * Time.fixedDeltaTime && isHitStop && !isRewind) //5 frames of leeway for inputting parry after impact
             {
                 //someone parrys
-                if(((!isKnockback && canWallTech && lastChargePress < wallTechFrameWindow * Time.fixedDeltaTime) || (!otherPC.isKnockback && otherPC.canWallTech && otherPC.lastChargePress < otherPC.wallTechFrameWindow * Time.fixedDeltaTime)) && (isMoving || otherPC.isMoving) && (movePower > (maxMovePower * powerCurve.Evaluate((3 * minCharge)/maxChargeTime)) || otherPower > (otherPC.maxMovePower * otherPC.powerCurve.Evaluate((3 * otherPC.minCharge)/otherPC.maxChargeTime))))
+                if(((!isKnockback && canWallTech && lastChargePress < parryFrameWindow * Time.fixedDeltaTime) || (!otherPC.isKnockback && otherPC.canWallTech && otherPC.lastChargePress < otherPC.parryFrameWindow * Time.fixedDeltaTime)) && (isMoving || otherPC.isMoving) && (movePower > (maxMovePower * powerCurve.Evaluate((3 * minCharge)/maxChargeTime)) || otherPower > (otherPC.maxMovePower * otherPC.powerCurve.Evaluate((3 * otherPC.minCharge)/otherPC.maxChargeTime))))
                 {
                     //reset peer priority
                     OverpowerPeerPrioTable[otherPC.idx] = 0;
@@ -1605,7 +1629,7 @@ public class PlayerController3 : PlayerController
         }
 
         //hitstop calculation
-        float hitstop = Mathf.Clamp(.3f * maxHitstop * hitstopCurve.Evaluate(movePower/maxMovePower), 2*Time.fixedDeltaTime, maxHitstop);
+        float hitstop = Mathf.Clamp(.3f * maxHitstop * hitstopCurve.Evaluate(movePower/maxMovePower), 3*Time.fixedDeltaTime, maxHitstop);
         Debug.Log("solid collision hitstop: " + hitstop);
 
         //apply hitstop
@@ -1623,12 +1647,12 @@ public class PlayerController3 : PlayerController
 
         //wall tech timer
         float timer = 0;
-        while (timer <= 2 * Time.fixedDeltaTime) //2 frames of wiggle room after impact for late inputs
+        while (timer <= 3 * Time.fixedDeltaTime) //2 frames of wiggle room after impact for late inputs
         {
             float window = wallTechFrameWindow * Time.fixedDeltaTime;
             if(isKnockback)
             {
-                window = 3 * wallTechFrameWindow * Time.fixedDeltaTime;
+                window = 1.5f * wallTechFrameWindow * Time.fixedDeltaTime;
             }
 
             //wall tech frame window
@@ -1778,15 +1802,18 @@ public class PlayerController3 : PlayerController
 
 
         //this player parrying otherPlayer
-        if(canWallTech && lastChargePress < wallTechFrameWindow * Time.fixedDeltaTime)
+        if(canWallTech && lastChargePress < parryFrameWindow * Time.fixedDeltaTime)
         {
             Debug.Log("P" + idx + " parried P" + otherPC.idx);
 
             bool doubleParry = false;
             //double parry
-            if(otherPC.canWallTech && otherPC.lastChargePress < otherPC.wallTechFrameWindow * Time.fixedDeltaTime)
+            if(otherPC.canWallTech && otherPC.lastChargePress < otherPC.parryFrameWindow * Time.fixedDeltaTime)
             {
                 doubleParry = true;
+
+                //boost recoil on double parry
+                otherMPower *= 1.5f;
             }
 
             //save pre-impact otherVelocity
@@ -1838,7 +1865,7 @@ public class PlayerController3 : PlayerController
                 Debug.Log("P" + idx + " Parry recoil direction: " + direction);
 
                 //apply parry recoil KB to this player in opposite direction of parry
-                ApplyMove(1, direction,  Mathf.Clamp(.12f * otherMPower, 0, (.12f * maxMovePower)));
+                ApplyMove(1, direction,  Mathf.Clamp(.2f * otherMPower, (.1f * maxMovePower), (.5f * maxMovePower)));
             } else //no recoil on neutral parry
             {
                 rb.velocity = Vector2.zero;
@@ -1849,7 +1876,7 @@ public class PlayerController3 : PlayerController
             lastWallTech = 0;
 
         //otherPlayer parrying this player
-        } else if(otherPC.canWallTech && otherPC.lastChargePress < otherPC.wallTechFrameWindow * Time.fixedDeltaTime)
+        } else if(otherPC.canWallTech && otherPC.lastChargePress < otherPC.parryFrameWindow * Time.fixedDeltaTime)
         {
             //impact particle effect
             SpawnImpactParticles((Vector2)transform.position + (Vector2)((otherPC.transform.position - transform.position)/2), (transform.position - otherPC.transform.position), sr.color);
@@ -1883,16 +1910,16 @@ public class PlayerController3 : PlayerController
 
 
             //apply parry KB to this player in direction inputted by otherPlayer
-            if(mPrio > 1) //player is launching (defensive parry) use this player's power
+            if(mPower >= otherMPower) //player is launching (defensive parry) use this player's power
             {
                 Debug.Log("defensive parry");
-                Debug.Log("defense parry power: " + /*.7f * */ (1 - (mTimer/mTime)) * knockbackMultiplier * mPower);
-                ApplyMove(1, otherParryDirection,  /*.7f * */ (1 - (mTimer/mTime)) * knockbackMultiplier * mPower);
+                Debug.Log("defense parry power: " + /*.7f * */ Mathf.Clamp((1 - (mTimer/mTime)), .6f, 1)  * knockbackMultiplier * mPower);
+                ApplyMove(1, otherParryDirection,  /*.7f * */ Mathf.Clamp((1 - (mTimer/mTime)), .6f, 1) * knockbackMultiplier * mPower);
             } else //player is standing still (aggressive parry) use attacker's power
             {
                 Debug.Log("aggressive parry");
-                Debug.Log("aggro parry power: " + /*.7f * */ (1 - (otherMTimer/otherMTime)) * knockbackMultiplier * otherMPower);
-                ApplyMove(1, otherParryDirection,  /*.7f * */ (1 - (otherMTimer/otherMTime)) * knockbackMultiplier * otherMPower);
+                Debug.Log("aggro parry power: " + /*.7f * */ Mathf.Clamp((1 - (otherMTimer/otherMTime)), .6f, 1) * knockbackMultiplier * otherMPower);
+                ApplyMove(1, otherParryDirection,  /*.7f * */ Mathf.Clamp((1 - (otherMTimer/otherMTime)), .6f, 1) * knockbackMultiplier * otherMPower);
             }
         }
 

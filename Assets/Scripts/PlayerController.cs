@@ -99,6 +99,7 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public float lastChargePress = 0;
     public int wallTechFrameWindow; //frame data for open wallTechWindow
+    public int parryFrameWindow; //frame data for parryWindow
     [HideInInspector] public bool canWallTech = false; //wallTech window open/closed bool
 
 
