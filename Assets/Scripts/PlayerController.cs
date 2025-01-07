@@ -742,6 +742,9 @@ public class PlayerController : MonoBehaviour
 
         sr.color = pm.playerColors[color];
         sr.sprite = SpriteSet[0];
+        
+        ParticleSystem.MainModule bubbles = transform.Find("BubbleTrail").GetComponent<ParticleSystem>().main;
+        bubbles.startColor = pm.playerColors[color];
 
         rc.ChangeColor(color);
 

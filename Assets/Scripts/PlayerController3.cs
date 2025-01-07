@@ -1791,10 +1791,10 @@ public class PlayerController3 : PlayerController
         float hitstop;
         if(movePower > otherPC.movePower)
         {
-            hitstop = Mathf.Clamp(.8f * maxHitstop * hitstopCurve.Evaluate(movePower/maxMovePower), 4*Time.fixedDeltaTime, 2*maxHitstop);
+            hitstop = Mathf.Clamp(/*.8f * */ maxHitstop * hitstopCurve.Evaluate(movePower/maxMovePower), 4*Time.fixedDeltaTime, 2*maxHitstop);
         }else
         {
-            hitstop = Mathf.Clamp(.8f * maxHitstop * hitstopCurve.Evaluate(otherPC.movePower/maxMovePower), 4*Time.fixedDeltaTime, 2*maxHitstop);
+            hitstop = Mathf.Clamp(/*.8f * */ maxHitstop * hitstopCurve.Evaluate(otherPC.movePower/maxMovePower), 4*Time.fixedDeltaTime, 2*maxHitstop);
         }
 
         //extra hitstop for player feedback
