@@ -938,7 +938,7 @@ public class PlayerController3 : PlayerController
         } else if(type == 1) //knockback
         {
             isKnockback = true;
-            charge = Mathf.Clamp(charge, 0, maxChargeTime * 2);
+            charge = Mathf.Clamp(charge, 0, maxChargeTime * 8); //8 is max overcharge potential on movement curves
 
             chargeTime = 0;
         } else if(type == 2) //glide - weak tap
@@ -966,7 +966,7 @@ public class PlayerController3 : PlayerController
 
         //new glide stuff
         glidePower = /*.5f * */movePower;
-        glideTime = 2.7f * moveTime;
+        glideTime = 2.7f * Mathf.Clamp(moveTime,0, timeCurve.Evaluate(1.2f));
 
         //probably not needed in this context
         rb.velocity = direction.normalized;
@@ -1996,7 +1996,7 @@ public class PlayerController3 : PlayerController
                     if((prev - otherPrev).magnitude > HurtBoxTrigger.radius + otherPC.HurtBoxTrigger.radius)
                     {
                         //correct collision position
-                        var (pos, otherPos) = EstimateCircleTriggerCollision(HurtBoxTrigger.radius, otherPC.HurtBoxTrigger.radius, transform.position, prev, otherPC.transform.position, otherPrev);
+                        var (pos, otherPos) = EstimateCircleTriggerCollision(HurtBoxTrigger.radius * transform.localScale.x, otherPC.HurtBoxTrigger.radius * otherPC.transform.localScale.x, transform.position, prev, otherPC.transform.position, otherPrev);
 
                         Debug.Log("newPos: " + pos);
                         Debug.Log("otherNewPos: " + otherPos);

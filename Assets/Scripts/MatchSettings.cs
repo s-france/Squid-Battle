@@ -123,7 +123,23 @@ public class MatchSettings : MonoBehaviour
             ItemProbs[itemID] = 0;
         } else //ADD THIS: functionality for saving player-set probabilities...
         {
+            //using default rn
             ItemProbs[itemID] = DefaultItemProbs[itemID];
+        }
+    }
+
+    //turns all items back on
+    public void ResetItemSettings()
+    {
+        int idx = 0;
+        foreach (bool item in ActiveItems)
+        {
+            ActiveItems[idx] = true;
+            
+            //using default rn
+            ItemProbs[idx] = DefaultItemProbs[idx];
+
+            idx++;
         }
     }
 

@@ -8,6 +8,7 @@ using UnityEngine.InputSystem.UI;
 using Unity.VisualScripting.Antlr3.Runtime;
 using System;
 using TMPro;
+using UnityEngine.Rendering;
 
 public class MatchSettingsLC : LevelController
 {
@@ -116,7 +117,11 @@ public class MatchSettingsLC : LevelController
             SetUIColors(p.playerIndex);
         }
 
-        LeftUIElements[4].GetComponent<Image>().sprite = pm.playerList[0].playerScript.SpriteSet[0];
+        //turn all items on
+        gm.ms.ResetItemSettings();
+
+        //set P1 icon color
+        LeftUIElements[4].GetComponent<Image>().color = pm.playerList[0].playerScript.sr.color;
 
         //initialize p1 menu state tracking
         p1MenuState = 0;
@@ -302,6 +307,7 @@ public class MatchSettingsLC : LevelController
     {
         gm.ms.ToggleItem(itemID);
     }
+
 
     public void SetPointsToWin()
     {

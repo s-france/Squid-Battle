@@ -12,10 +12,10 @@ public class GrowBehavior : ItemBehavior
     float maxSize = 3;
     float timeToGrow = .75f;
     
-    float maxMoveSpeedMod = .5f;
-    float maxMoveTimeMod = .75f;
+    float maxMoveSpeedMod = -.4f;
+    float maxMoveTimeMod = 3;
     float maxMovePowerMod = 2;
-    float maxHitstopMod = 1.5f;
+    float maxHitstopMod = .5f;
 
 
 
@@ -83,14 +83,16 @@ public class GrowBehavior : ItemBehavior
     IEnumerator GrowPlayer(float chargeTime)
     {
         float timer = 0;
-        float bigTime = Mathf.Clamp(chargeTime*4, 5, 10);
-        float sizeMod = Mathf.Clamp(chargeTime+1, minSize, maxSize);
+        float bigTime = Mathf.Clamp(6+((chargeTime/pc.maxChargeTime)*15),6,20);
+        //float bigTime = Mathf.Clamp((1+(chargeTime/pc.maxChargeTime))*8, 6, 15);
+        float sizeMod = Mathf.Clamp(1+((chargeTime/pc.maxChargeTime)*maxSize), minSize,maxSize);
+        //float sizeMod = Mathf.Clamp(1+(chargeTime/pc.maxChargeTime), minSize, maxSize);
 
         //percent values to be added to default ratio
-        float maxMoveSpeedMod = -.5f;
-        float maxMoveTimeMod = .5f; 
-        float maxMovePowerMod = 1;
-        float maxHitstopMod = 1f;
+        //float maxMoveSpeedMod = -.5f;
+        //float maxMoveTimeMod = .5f; 
+        //float maxMovePowerMod = 1;
+        //float maxHitstopMod = 1f;
 
         Vector3 finalSize = sizeMod * Vector2.one; /** pc.transform.localScale*/;
 
