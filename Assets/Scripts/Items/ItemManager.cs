@@ -134,7 +134,11 @@ public class ItemManager : MonoBehaviour
                 //ic.itemSprite.sprite = ItemPickupSprites[2];
                 Debug.Log("spawned grow at " + pos.position);
                 break;
-            
+            case 6: //double
+                ic.ib = newItem.AddComponent<DoubleBehavior>() as DoubleBehavior;
+                Debug.Log("spawned double at " + pos.position);
+                break;
+                
             default:
                 Debug.Log("ERROR: invalid item type!!");
                 break;

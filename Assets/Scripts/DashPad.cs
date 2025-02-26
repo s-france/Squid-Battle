@@ -25,7 +25,7 @@ public class DashPad : MonoBehaviour
         {
             col.transform.parent.position = transform.position;
 
-            col.GetComponentInParent<PlayerController>().ApplyMove(0, -transform.up, movePower);
+            col.GetComponentInParent<PlayerController>().ApplyMove(-1, -transform.up, movePower);
         }
 
 

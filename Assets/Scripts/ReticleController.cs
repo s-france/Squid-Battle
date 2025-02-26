@@ -47,7 +47,7 @@ public class ReticleController : MonoBehaviour
         warpSR.enabled = false;
 
         //hide reticle if dead
-        if(!pc.pm.playerList[pc.idx].isAlive)
+        if(!pc.isAlive)
         {
             DeactivateReticle();
             return;

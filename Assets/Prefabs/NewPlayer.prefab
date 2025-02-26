@@ -615,6 +615,7 @@ MonoBehaviour:
   bubblePart: {fileID: 6286807170148970422}
   hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
   impactPart: {fileID: 1176242393547921506, guid: b66d07bc822427b43b2d0b6c2f53e9ce, type: 3}
+  DummyPrefab: {fileID: 783451137108293788, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
   SpriteSet:
   - {fileID: 21300000, guid: 6b95bd3b5b937b6458ea31363b33200e, type: 3}
   - {fileID: 21300000, guid: c6f597db052dded4195e96c23c115491, type: 3}
@@ -712,19 +713,19 @@ MonoBehaviour:
       time: 1
       value: 1
       inSlope: 0
-      outSlope: 0.10808146
+      outSlope: 0.15454447
       tangentMode: 1
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.1991247
+      outWeight: 0.1406378
     - serializedVersion: 3
       time: 2.5
-      value: 1.1
-      inSlope: 0.16581438
-      outSlope: 0.16581438
+      value: 1.25
+      inSlope: 0.31971344
+      outSlope: 0.31971344
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.28714052
+      inWeight: 0.11492729
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -752,25 +753,16 @@ MonoBehaviour:
       outWeight: 0.23413563
     - serializedVersion: 3
       time: 2
-      value: 1.1
-      inSlope: 0.03756193
-      outSlope: 0.03756193
+      value: 1.25
+      inSlope: 0.12534672
+      outSlope: 0.12534672
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.36841583
-      outWeight: 0
-    - serializedVersion: 3
-      time: 4
-      value: 1.15
-      inSlope: 0.01917826
-      outSlope: 0.01917826
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.2086041
-      outWeight: 0
+      outWeight: 0.32899138
     - serializedVersion: 3
       time: 8
-      value: 1.25
+      value: 1.75
       inSlope: 0.029041097
       outSlope: 0.029041097
       tangentMode: 0
@@ -938,6 +930,43 @@ MonoBehaviour:
   isGliding: 0
   isKnockback: 0
   isHitStop: 0
+  armorCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.3
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.25601745
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxMoveArmor: 0.3
+  maxPassiveArmor: 0
+  passiveArmor: 0
+  moveArmor: 0
   lastChargePress: 0
   wallTechFrameWindow: 3
   parryFrameWindow: 5
@@ -998,11 +1027,15 @@ MonoBehaviour:
   defaultMaxMoveTime: 0
   defaultMaxMovePower: 0
   defaultMaxHitstop: 0
+  defaultMaxPassiveArmor: 0
+  defaultMaxMoveArmor: 0
   OverpowerPeerPrioTable: []
   IntangiblePeerPrioTable: []
-  moveSpeedCap: 50
+  Clones: []
+  isDummy: 0
+  moveSpeedCap: 60
   moveTimeCap: 0.7
-  oobLifespan: 2.85
+  oobLifespan: 2
   dodgeSpeed: 10
   dodgeTime: 0.4
   dodgeCurve:

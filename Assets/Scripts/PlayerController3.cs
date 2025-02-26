@@ -11,6 +11,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController3 : PlayerController
 {
+
     //absolute max speed possible in game.
     [SerializeField] float moveSpeedCap; //Anything higher will be capped at this val
     [SerializeField] float moveTimeCap; //safety cap for moveTime
@@ -18,8 +19,6 @@ public class PlayerController3 : PlayerController
     float lastWallTech = 0; //tracks last successful wallTech
     Vector2 lastWallTechNormal; //normal of the most recent wallTech performed
     float lastSolidCollision = 0; // tracks last solid collision
-
-    
 
     bool chargePressed = false;
     bool specialChargePressed = false;
@@ -60,12 +59,11 @@ public class PlayerController3 : PlayerController
     */
 
     public override void FixedUpdate()
-    {
-        
-       
-
+    {  
        //tick functions
         TrackStatesTick();
+
+        ArmorTick();
         
         InputBufferTick();
         PeerPriorityTick();
@@ -173,6 +171,20 @@ public class PlayerController3 : PlayerController
         //Debug.Log("prevStates: " + prevStates);
     }
 
+    //tick armor stats
+    //runs in FixedUpdate()
+    void ArmorTick()
+    {
+        if(passiveArmor < maxPassiveArmor)
+        {
+            passiveArmor = Mathf.Clamp(passiveArmor + Time.fixedDeltaTime, 0, maxPassiveArmor);
+        } else
+        {
+            passiveArmor = maxPassiveArmor;
+        }
+
+    }
+
 
     //called when move (stick) input received
     public override void OnMove(InputAction.CallbackContext ctx)
@@ -200,6 +212,13 @@ public class PlayerController3 : PlayerController
         if(!isCoolingDown && !isHitStop)
         {
             RotateSprite(i_move);
+        }
+
+
+        //copy input on clones
+        for(int i=0; i<Clones.Count; i++)
+        {
+            Clones[i].OnMove(ctx);
         }
     }
 
@@ -258,6 +277,15 @@ public class PlayerController3 : PlayerController
                 
             }
         }
+
+        //copy input on clones
+        for(int i=0; i<Clones.Count; i++)
+        {
+            Clones[i].OnCharge(ctx);
+
+        }
+
+
     }
 
 
@@ -280,6 +308,13 @@ public class PlayerController3 : PlayerController
                 UseItem(selectedItemIdx);
             }
         }
+
+        //copy input on clones
+        for(int i=0; i<Clones.Count; i++)
+        {
+            Clones[i].OnSpecial(ctx);
+
+        }
     }
 
 
@@ -289,8 +324,15 @@ public class PlayerController3 : PlayerController
         {
             if(!isDodging && !isHitStop && !isKnockback && !isRewind)
             {
-                ApplyDodge(true_i_move.normalized);
+                //ApplyDodge(true_i_move.normalized);
             }
+        }
+
+        //copy input on clones
+        for(int i=0; i<Clones.Count; i++)
+        {
+            Clones[i].OnSelectL(ctx);
+
         }
     }
 
@@ -354,7 +396,7 @@ public class PlayerController3 : PlayerController
 
                 RotateSprite(i_move);
 
-                if(gm.battleStarted)
+                if(gm.battleStarted && gp != null)
                 {
                     if(chargeTime/maxChargeHoldTime >= .85f)
                     {
@@ -423,7 +465,7 @@ public class PlayerController3 : PlayerController
                 //some items face forward some face back
                 RotateSprite(i_move);
 
-                if(gm.battleStarted)
+                if(gm.battleStarted && gp != null)
                 {
                     if(specialChargeTime/maxChargeHoldTime >= .85f)
                     {
@@ -534,13 +576,15 @@ public class PlayerController3 : PlayerController
                 } else
                 {
                     //dumb band-aid fix
-                    if(pm.playerList[idx].isAlive)
+                    if(isAlive)
                     {
                         //player is vulnerable (startup / end lag)
                         HurtBoxTrigger.enabled = true;
                     }
                     
                 }
+
+                moveArmor = 0;
 
                 movePriority = 0;
                 
@@ -555,7 +599,7 @@ public class PlayerController3 : PlayerController
                 if(isDodging)
                 {
                     //dumb band-aid fix
-                    if(pm.playerList[idx].isAlive)
+                    if(isAlive)
                     {
                         HurtBoxTrigger.enabled = true;
                     }
@@ -595,7 +639,7 @@ public class PlayerController3 : PlayerController
                 if(isDodging)
                 {
                     //dumb band-aid fix
-                    if(pm.playerList[idx].isAlive)
+                    if(isAlive)
                     {
                         HurtBoxTrigger.enabled = true;
                     }
@@ -611,6 +655,8 @@ public class PlayerController3 : PlayerController
                 {
                     isKnockback = false;
                 }
+
+                moveArmor = 0;
 
                 movePriority = 1;
 
@@ -699,7 +745,7 @@ public class PlayerController3 : PlayerController
                 if(isDodging)
                 {
                     //dumb band-aid fix
-                    if(pm.playerList[idx].isAlive)
+                    if(isAlive)
                     {
                         HurtBoxTrigger.enabled = true;
                     }
@@ -721,6 +767,8 @@ public class PlayerController3 : PlayerController
                 {
                     isGliding = false;
                 }
+
+                moveArmor = 0;
 
                 movePriority = 0;
                 
@@ -824,10 +872,13 @@ public class PlayerController3 : PlayerController
         if(!isInBounds) //Offstage
         {
             //if time runs out
-            if(oobTimer > oobLifespan && pm.playerList[idx].isAlive)
+            if(oobTimer > oobLifespan && isAlive)
             {
-                //kill player
-                pm.KillPlayer(idx);
+                //kill this player instance
+                KillPlayer();
+
+                //check if all clones dead then do pm.killplayer
+                CheckIfAlive();
             }
             
             //(stats modified in ArenaBoundary.OnTriggerExit/Enter)
@@ -861,17 +912,32 @@ public class PlayerController3 : PlayerController
         if(!isHitStop)
         {
             //timer > 0 => this player overpowers otherPlayer
-            int idx = 0;
+            //int idx = 0;
 
             //if not attacking
-            if(!isMoving || isKnockback)
+            if((!isMoving || isKnockback) && !isHitStop)
             {
                 //clear overpower prio table
+                /*
                 foreach(float peer in OverpowerPeerPrioTable)
                 {
                     OverpowerPeerPrioTable[idx] = 0;
                     idx++;
                 }
+                */
+
+                for(int i=0; i<OverpowerPeerPrioTable.Count; i++)
+                {
+                    OverpowerPeerPrioTable[OverpowerPeerPrioTable.Keys.ElementAt(i)] = 0;
+                }
+                /*
+                foreach (var pair in OverpowerPeerPrioTable)
+                {
+                    OverpowerPeerPrioTable[pair.Key] = 0;
+                }
+                */
+
+                //OverpowerPeerPrioTable.Clear();
             }
 
             /* //old timer behavior
@@ -893,6 +959,7 @@ public class PlayerController3 : PlayerController
 
 
             //timer > 0 => this player is intangible to player[idx]
+            /*
             idx = 0;
             foreach(float peer in IntangiblePeerPrioTable)
             {
@@ -908,10 +975,53 @@ public class PlayerController3 : PlayerController
 
                 idx++;
             }
+            */
+
+            for(int i=0; i<IntangiblePeerPrioTable.Count; i++)
+            {
+                if(IntangiblePeerPrioTable[IntangiblePeerPrioTable.Keys.ElementAt(i)] > 0)
+                {
+                    IntangiblePeerPrioTable[IntangiblePeerPrioTable.Keys.ElementAt(i)] -= Time.fixedDeltaTime;
+                }
+
+                if(IntangiblePeerPrioTable[IntangiblePeerPrioTable.Keys.ElementAt(i)] < 0)
+                {
+                    IntangiblePeerPrioTable[IntangiblePeerPrioTable.Keys.ElementAt(i)] = 0;
+                }
+            }
+
+            /*
+            foreach (var pair in IntangiblePeerPrioTable)
+            {
+                if(IntangiblePeerPrioTable[pair.Key] > 0)
+                {
+                    IntangiblePeerPrioTable[pair.Key] -= Time.fixedDeltaTime;
+                }
+
+                if(IntangiblePeerPrioTable[pair.Key] < 0)
+                {
+                    IntangiblePeerPrioTable[pair.Key] = 0;
+                }
+
+            }
+            */
+
 
         }
         
 
+    }
+
+
+    public override void SetPeerPriority(Dictionary<PlayerController, float> prioTable, PlayerController pc, float time)
+    {
+        if(prioTable.ContainsKey(pc))
+        {
+            prioTable[pc] = time;
+        } else
+        {
+            prioTable.Add(pc, time);
+        }
     }
 
 
@@ -939,6 +1049,9 @@ public class PlayerController3 : PlayerController
         {
             isKnockback = true;
             charge = Mathf.Clamp(charge, 0, maxChargeTime * 8); //8 is max overcharge potential on movement curves
+            
+            //knockback has no moveArmor
+            moveArmor = 0;
 
             chargeTime = 0;
         } else if(type == 2) //glide - weak tap
@@ -946,13 +1059,22 @@ public class PlayerController3 : PlayerController
             //ADD THIS
             //gonna have to do something completely different here
 
+        } else if(type == -1) //uncapped movement
+        {
+            chargePressed = false;
+
+            FindFirstObjectByType<AudioManager>().PlayRandom("Move");
+
+            isMoving = true;
+            sr.sprite = SpriteSet[1];
+            //charge = Mathf.Clamp(charge, minCharge, maxChargeTime);
         }
 
         //cancel dodge
         dodgeTimer = 100;
         isDodging = false;
         //dumb band-aid fix
-        if(pm.playerList[idx].isAlive)
+        if(isAlive)
         {
             HurtBoxTrigger.enabled = true;
         }
@@ -963,6 +1085,14 @@ public class PlayerController3 : PlayerController
         moveTime = maxMoveTime * timeCurve.Evaluate(charge/maxChargeTime);
         //knockback power of this movement
         movePower = maxMovePower * powerCurve.Evaluate(charge/maxChargeTime);
+        //apply armor if launching
+        if(type == 0)
+        {
+            moveArmor = maxMoveArmor * armorCurve.Evaluate(charge/maxChargeTime);
+        } else
+        {
+            moveArmor = 0;
+        }
 
         //new glide stuff
         glidePower = /*.5f * */movePower;
@@ -971,7 +1101,7 @@ public class PlayerController3 : PlayerController
         //probably not needed in this context
         rb.velocity = direction.normalized;
         //definitely needed
-        if(isHitStop)   //testing this
+        if(isHitStop)
         {
             storedVelocity = direction.normalized;
         }
@@ -1112,7 +1242,7 @@ public class PlayerController3 : PlayerController
 
     //applies knockback effects to this player - does nothing to other colliding player
     //called in OnCollisionEnter2D when colliding with opponent
-    public override IEnumerator ApplyKnockback(int otherPriority, float otherPower, Rigidbody2D otherRB)
+    public override IEnumerator ApplyKnockback(/*int otherPC.movePriority,*/ float otherPower, Rigidbody2D otherRB)
     {
         //ADD THIS
         //isIntangible check -> exit
@@ -1139,10 +1269,14 @@ public class PlayerController3 : PlayerController
         
 
         //exit if this player is intangible to KB from otherPlayer
-        if(IntangiblePeerPrioTable[otherPC.idx] > 0)
+        if(IntangiblePeerPrioTable.ContainsKey(otherPC) && IntangiblePeerPrioTable[otherPC] > 0)
         {
             yield break;
         }
+
+        //IntangiblePeerPrioTable[otherPC] = 1;
+        SetPeerPriority(IntangiblePeerPrioTable, otherPC, 1);
+
 
         
         WaitForFixedUpdate fuWait = new WaitForFixedUpdate();
@@ -1156,11 +1290,12 @@ public class PlayerController3 : PlayerController
         Vector2 velocity = isHitStop ? storedVelocity : rb.velocity;
         Vector2 otherVelocity = otherPC.isHitStop ?  otherPC.storedVelocity : otherRB.velocity;
         
-        
+        int mPrio = movePriority;
+        int otherMPrio = otherPC.movePriority;
         
 
         //cancel charge on impact
-        if(otherPC.movePriority > 1 && otherPC.movePower > powerCurve.Evaluate(2f * minCharge))
+        if(otherMPrio > 1 && otherPC.movePower > powerCurve.Evaluate(2f * minCharge))
         {
             chargeTime = 0;
         }
@@ -1169,7 +1304,7 @@ public class PlayerController3 : PlayerController
         GetComponentInChildren<TrailRenderer>().emitting = false; //cancel wall item on impact
 
         //difference in priority
-        int priorityDiff = movePriority - otherPriority;
+        int priorityDiff = mPrio - otherMPrio;
 
         //difference in powers
         float powerDiff = movePower - otherPower;
@@ -1220,8 +1355,25 @@ public class PlayerController3 : PlayerController
         float strength = directness * movePower;
         float otherStrength = otherDirectness * otherPower;
 
+        //armor calcs
+        float armoredStrength = strength - (otherPC.passiveArmor + otherPC.moveArmor) + (passiveArmor + moveArmor);
+        float armoredOtherStrength = otherStrength - (passiveArmor + moveArmor) + (otherPC.passiveArmor + otherPC.moveArmor);
+
+        
+
+        Debug.Log("P"+idx + " otherStrength: " + otherStrength + " (armor calcs)");
+        float armor = (passiveArmor + moveArmor) - otherStrength;
+        float otherArmor = (otherPC.passiveArmor + otherPC.moveArmor) - strength;
+        Debug.Log("P"+idx + " armor: " + armor);
+        Debug.Log("P"+idx + " otherArmor: " + otherArmor);
+
+        //trying this...
+        //otherStrength = Mathf.Clamp(armoredOtherStrength, .1f, 100);
+        //Debug.Log("P"+idx + " armoredOtherStrength: " + otherStrength);
+
         float strengthDiff = otherStrength - strength;
         float strengthRatio = otherStrength / strength;
+
 
         //calculate knockback direction
         Vector2 direction;
@@ -1238,10 +1390,48 @@ public class PlayerController3 : PlayerController
         direction = ((otherDirectness * otherImpactDirection) + (otherPosDiff * (1/otherDirectness))).normalized;
 
 
-        //wait one tick so other player's knockback calculations can finish
-        //IMPORTANT: all variables used in KB calcs must be set before this yield
-        yield return fuWait;
         
+        
+        //other player is armored
+        if (otherArmor > 0 && otherArmor > armor)
+        {
+            if(otherMPrio <= 1)
+            {
+                Debug.Log("P"+idx + " armored Priority: " + -1);
+
+                //deflected
+                mPrio = -1;
+            } else
+            {
+                Debug.Log("P"+idx + " armored Priority: " + 1);
+
+                //overpowered
+                mPrio = 1;
+            }
+
+        //armor overpower
+        } else if (armor > 0)
+        {
+            if (otherMPrio <= 1)
+            {
+
+            } else
+            {
+                Debug.Log("P"+idx + " armored Priority: " + 4);
+
+                mPrio = 4;
+            }
+
+            
+        }
+        
+
+        //always lose to rewind
+        if(otherPC.isRewind)
+        {
+            mPrio = 0;
+        }
+
 
         //hit particle effect
         GameObject part = null;
@@ -1258,6 +1448,41 @@ public class PlayerController3 : PlayerController
 
         //apply impact hitstop
         ApplyHitStop(maxHitstop * hitstopCurve.Evaluate(hitstop), 1);
+
+
+
+        //wait one tick so other player's knockback calculations can finish
+        //IMPORTANT: all variables used in KB calcs must be set before this yield
+        yield return fuWait;
+        
+        //movearmor gets decreased permanently
+        float remainingAttack = moveArmor - otherStrength;
+
+        moveArmor = Mathf.Clamp(moveArmor - otherStrength, 0, 10000);
+
+        //passive armor gets decreased by any overflow Strength
+        if(moveArmor <= 0 && remainingAttack < 0)
+        {
+            passiveArmor = Mathf.Clamp(passiveArmor + remainingAttack, 0, 10000);
+        }
+
+        /*
+        //hit particle effect
+        GameObject part = null;
+        if(idx < otherRB.gameObject.GetComponent<PlayerController>().idx)
+        {
+            if(hitstop >=.3f)
+            {
+                part = Instantiate(hitPart, (transform.position + otherRB.transform.position)/2, Quaternion.identity);
+                part.GetComponent<HitEffect>().Init(.5f, maxHitstop * hitstopCurve.Evaluate(hitstop)*1.1f);
+            }
+        }
+
+
+
+        //apply impact hitstop
+        ApplyHitStop(maxHitstop * hitstopCurve.Evaluate(hitstop), 1);
+        */
 
 
         if(!isRewind)
@@ -1277,9 +1502,11 @@ public class PlayerController3 : PlayerController
                 if(((!isKnockback && canWallTech && lastChargePress < parryFrameWindow * Time.fixedDeltaTime) || (!otherPC.isKnockback && otherPC.canWallTech && otherPC.lastChargePress < otherPC.parryFrameWindow * Time.fixedDeltaTime)) && (isMoving || otherPC.isMoving) && (movePower > (maxMovePower * powerCurve.Evaluate((3 * minCharge)/maxChargeTime)) || otherPower > (otherPC.maxMovePower * otherPC.powerCurve.Evaluate((3 * otherPC.minCharge)/otherPC.maxChargeTime))))
                 {
                     //reset peer priority
-                    OverpowerPeerPrioTable[otherPC.idx] = 0;
-                    IntangiblePeerPrioTable[otherPC.idx] = 0;
-                    
+                    //OverpowerPeerPrioTable[otherPC] = 0;
+                    //IntangiblePeerPrioTable[otherPC] = 0;
+                    SetPeerPriority(OverpowerPeerPrioTable, otherPC, 0);
+                    SetPeerPriority(IntangiblePeerPrioTable, otherPC, 0);
+
                     //receive parry effects
                     if(part != null)
                     {
@@ -1299,29 +1526,39 @@ public class PlayerController3 : PlayerController
                 yield return fuWait;
             }
 
+            //KB calc vars
+            float impedanceFactor;
+            Vector2 directionMod;
+
             //if this player overpowers otherPlayer
-            if(OverpowerPeerPrioTable[otherPC.idx] > 0)
+            if(OverpowerPeerPrioTable.ContainsKey(otherPC) && OverpowerPeerPrioTable[otherPC] > 0)
             {
+                Debug.Log("P"+idx + " overpowering!");
+
                 //do different KB behavior - barrel through
                 //"barrel through"
                 //impedance based on otherStrength
 
                 //give this player intangible priority from otherPlayer
                 //EDIT THIS: int constant = invol frame data
-                IntangiblePeerPrioTable[otherPC.idx] = 4 * Time.fixedDeltaTime;
+                //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
+                SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
+
+
 
                 //give this player overpower priority over otherPlayer
                 //EDIT THIS: int constant = overPower frame data
-                OverpowerPeerPrioTable[otherPC.idx] = 4 * Time.fixedDeltaTime;
+                //OverpowerPeerPrioTable[otherPC] = 6 * Time.fixedDeltaTime;
+                SetPeerPriority(OverpowerPeerPrioTable, otherPC, 6 * Time.fixedDeltaTime);
 
                 //max possible glidestrength = maxMovePower * .1
-                Debug.Log("otherStrength = " + otherStrength);
+                //Debug.Log("otherStrength = " + otherStrength);
                 //alter travel distance
-                float impedanceFactor = 1 - Mathf.Clamp(1 * otherStrength, .1f, 1);
+                impedanceFactor = 1 - Mathf.Clamp(1 * otherStrength, .1f, 1);
 
                 //alter direction
                 //factors: otherPosDiff, otherRB direction, 
-                Vector2 directionMod = ((2 * otherPosDiff.normalized) + (5 * otherVelocity.normalized)).normalized * Mathf.Clamp((3 * otherStrength), .4f, 1);
+                directionMod = ((2 * otherPosDiff.normalized) + (5 * otherVelocity.normalized)).normalized * Mathf.Clamp((3 * otherStrength), .4f, 1);
 
                 ModifyMove(0, directionMod, impedanceFactor, impedanceFactor, .9f);
 
@@ -1331,16 +1568,44 @@ public class PlayerController3 : PlayerController
                 yield break;
             }
 
-            //always lose to rewind
-            if(otherPC.isRewind)
-            {
-                movePriority = 0;
-            }
 
-            switch (movePriority)
+            Debug.Log("P"+idx + " mPrio: " + mPrio);
+            Debug.Log("P"+idx + " otherMPrio: " + otherMPrio);
+
+
+            //trying this
+            //sort of works, needs tuning (too much KB mitigation)
+            otherStrength = .5f * (otherStrength + armoredOtherStrength);
+            strength = .5f * (strength + armoredStrength);
+
+            switch (mPrio)
             {
+                case -1: //armor deflect
+                    
+                    //give this player intangible priority from otherPlayer
+                    //EDIT THIS: int constant = invol frame data
+                    //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
+                    SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
+
+                    //give otherPlayer overpower priority over this Player
+                    //EDIT THIS: int constant = overPower frame data
+                    //otherPC.OverpowerPeerPrioTable[idx] = 6 * Time.fixedDeltaTime;
+
+
+                    Debug.Log("P"+idx + " deflected! (armor deflect)");
+
+                    //currently in hitstop, use -storedvelocity to cancel out current direction
+                    directionMod = (Vector2.Reflect(storedVelocity, otherPosDiff) * 200);
+                    Debug.Log("P"+idx + " directionMod: " + directionMod);
+
+                    ModifyMove(1, directionMod, 1.1f, .95f, .8f);
+
+
+                    
+
+                    break;
                 case 0: //standing still
-                    if(otherPriority <= 1) //other standing still / gliding
+                    if(otherMPrio <= 1) //other standing still / gliding
                     {
                         //ADD THIS:
                         //weak gliding KB nudge
@@ -1350,7 +1615,7 @@ public class PlayerController3 : PlayerController
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
 
-                    } else if(otherPriority == 2) //other being KB launched
+                    } else if(otherMPrio == 2) //other being KB launched
                     {
                         eyeSprite = 2;
 
@@ -1361,15 +1626,16 @@ public class PlayerController3 : PlayerController
                         //powerful attack KB
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
-                    } else if(otherPriority == 3) //other moving attacking
+                    } else if(otherMPrio >= 3) //other moving attacking
                     {
                         //give this player intangible priority from otherPlayer
                         //EDIT THIS: int constant = invol frame data
-                        IntangiblePeerPrioTable[otherPC.idx] = 4 * Time.fixedDeltaTime;
+                        //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
+                        SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
 
                         //give otherPlayer overpower priority over this Player
                         //EDIT THIS: int constant = overPower frame data
-                        otherPC.OverpowerPeerPrioTable[idx] = 4 * Time.fixedDeltaTime;
+                        //otherPC.OverpowerPeerPrioTable[idx] = 6 * Time.fixedDeltaTime;
 
                         eyeSprite = 2;
 
@@ -1383,7 +1649,7 @@ public class PlayerController3 : PlayerController
 
                     break;
                 case 1: //gliding
-                    if(otherPriority <= 1)
+                    if(otherMPrio <= 1)
                     {
                         //ADD THIS:
                         //weak gliding KB nudge
@@ -1393,7 +1659,7 @@ public class PlayerController3 : PlayerController
 
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
-                    } else if(otherPriority == 2)
+                    } else if(otherMPrio == 2)
                     {
                         eyeSprite = 2;
 
@@ -1404,15 +1670,17 @@ public class PlayerController3 : PlayerController
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
 
-                    } else if(otherPriority == 3)
+                    } else if(otherMPrio >= 3)
                     {
                         //give this player intangible priority from otherPlayer
                         //EDIT THIS: int constant = invol frame data
-                        IntangiblePeerPrioTable[otherPC.idx] = 4 * Time.fixedDeltaTime;
+                        //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
+                        SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
+
                         
                         //give otherPlayer overpower priority over this Player
                         //EDIT THIS: int constant = overPower frame data
-                        otherPC.OverpowerPeerPrioTable[idx] = 4 * Time.fixedDeltaTime;
+                        //otherPC.OverpowerPeerPrioTable[idx] = 6 * Time.fixedDeltaTime;
 
                         eyeSprite = 2;
 
@@ -1425,7 +1693,7 @@ public class PlayerController3 : PlayerController
 
                     break;
                 case 2: //knockback launch
-                    if(otherPriority <= 1)
+                    if(otherMPrio <= 1)
                     {
                         eyeSprite = 1;
 
@@ -1434,20 +1702,22 @@ public class PlayerController3 : PlayerController
 
                         //give this player intangible priority from otherPlayer
                         //EDIT THIS: int constant = invol frame data
-                        IntangiblePeerPrioTable[otherPC.idx] = 2 * Time.fixedDeltaTime;
+                        //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
+                        SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
+
 
                         //give this player overpower priority over otherPlayer
                         //EDIT THIS: int constant = overPower frame data
-                        //OverpowerPeerPrioTable[otherPC.idx] = 4 * Time.fixedDeltaTime;
+                        //OverpowerPeerPrioTable[otherPC.idx] = 6 * Time.fixedDeltaTime;
 
                         //max possible glidestrength = maxMovePower * .1
                         Debug.Log("otherStrength = " + otherStrength);
                         //alter travel distance
-                        float impedanceFactor = 1 - Mathf.Clamp(1 * otherStrength, .1f, 1);
+                        impedanceFactor = 1 - Mathf.Clamp(1 * otherStrength, .1f, 1);
 
                         //alter direction
                         //factors: otherPosDiff, otherRB direction, 
-                        Vector2 directionMod = ((2 * otherPosDiff.normalized) + (5 * otherVelocity.normalized)).normalized * Mathf.Clamp((3 * otherStrength), .4f, 1);
+                        directionMod = ((2 * otherPosDiff.normalized) + (5 * otherVelocity.normalized)).normalized * Mathf.Clamp((3 * otherStrength), .4f, 1);
 
                         ModifyMove(0, directionMod, 1.1f, .95f, 1);      
 
@@ -1467,7 +1737,7 @@ public class PlayerController3 : PlayerController
                         //idk
 
 
-                    } else if(otherPriority == 2)
+                    } else if(otherMPrio == 2)
                     {
                         eyeSprite = 2;
 
@@ -1481,7 +1751,7 @@ public class PlayerController3 : PlayerController
                         //TRY THIS:
                         //impede stronger player's KB more
 
-                    } else if(otherPriority == 3)
+                    } else if(otherMPrio >= 3)
                     {
                         eyeSprite = 2;
 
@@ -1498,33 +1768,37 @@ public class PlayerController3 : PlayerController
 
                     break;
                 case 3: //moving launch
-                    if(otherPriority <= 1)
+                    if(otherMPrio <= 1)
                     {
                         //"barrel through"
                         //impedance based on otherStrength
 
                         //give this player intangible priority from otherPlayer
                         //EDIT THIS: int constant = invol frame data
-                        IntangiblePeerPrioTable[otherPC.idx] = 4 * Time.fixedDeltaTime;
+                        //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
+                        SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
+
 
                         //give this player overpower priority over otherPlayer
                         //EDIT THIS: int constant = overPower frame data
-                        OverpowerPeerPrioTable[otherPC.idx] = 4 * Time.fixedDeltaTime;
+                        //OverpowerPeerPrioTable[otherPC] = 6 * Time.fixedDeltaTime;
+                        SetPeerPriority(OverpowerPeerPrioTable, otherPC, 6 * Time.fixedDeltaTime);
+
 
                         eyeSprite = 1;
                         
                         //max possible glidestrength = maxMovePower * .1
                         Debug.Log("otherStrength = " + otherStrength);
                         //alter travel distance
-                        float impedanceFactor = 1 - Mathf.Clamp(1 * otherStrength, .1f, 1);
+                        impedanceFactor = 1 - Mathf.Clamp(1 * otherStrength, .1f, 1);
 
                         //alter direction
                         //factors: otherPosDiff, otherRB direction, 
-                        Vector2 directionMod = ((2 * otherPosDiff.normalized) + (5 * otherVelocity.normalized)).normalized * Mathf.Clamp((3 * otherStrength), .4f, 1);
+                        directionMod = ((2 * otherPosDiff.normalized) + (5 * otherVelocity.normalized)).normalized * Mathf.Clamp((3 * otherStrength), .4f, 1);
 
                         ModifyMove(0, directionMod, impedanceFactor, impedanceFactor, .9f);                        
 
-                    } else if(otherPriority == 2)
+                    } else if(otherMPrio == 2)
                     {
                         eyeSprite = 1;
                         
@@ -1544,7 +1818,7 @@ public class PlayerController3 : PlayerController
 
 
 
-                    } else if(otherPriority == 3)
+                    } else if(otherMPrio >= 3)
                     {
                         eyeSprite = 2;
 
@@ -1566,6 +1840,47 @@ public class PlayerController3 : PlayerController
                     }
 
                     break;
+
+                case 4: //armored
+                    Debug.Log("P" + idx + " Armored!");
+
+                    if(otherMPrio == -1)
+                    {
+
+                    } else
+                    {
+                        //barrel through
+                        //"barrel through"
+                        //impedance based on otherStrength
+
+                        //give this player intangible priority from otherPlayer
+                        //EDIT THIS: int constant = invol frame data
+                        //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
+                        SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
+
+                        //give this player overpower priority over otherPlayer
+                        //EDIT THIS: int constant = overPower frame data
+                        //OverpowerPeerPrioTable[otherPC] = 6 * Time.fixedDeltaTime;
+                        SetPeerPriority(OverpowerPeerPrioTable, otherPC, 6 * Time.fixedDeltaTime);
+
+
+                        eyeSprite = 1;
+                        
+                        //max possible glidestrength = maxMovePower * .1
+                        Debug.Log("otherStrength = " + otherStrength);
+                        //alter travel distance
+                        impedanceFactor = 1 - Mathf.Clamp(.3f * otherStrength, .2f, 1);
+
+                        //alter direction
+                        //factors: otherPosDiff, otherRB direction, 
+                        directionMod = ((2 * otherPosDiff.normalized) + (4 * otherVelocity.normalized)).normalized * Mathf.Clamp((.5f * otherStrength), .2f, .6f);
+                        ModifyMove(0, directionMod, impedanceFactor, impedanceFactor, .9f);
+                    }
+                    
+
+                    break;
+                default:
+                    break;
             }
             
             //animate impact
@@ -1575,18 +1890,18 @@ public class PlayerController3 : PlayerController
                 yield return fuWait;
             }
 
-
-            //old default behavior
-            //ApplyMove(1, direction, knockbackMultiplier * otherStrength);
         } else //this player is rewinding: grant peer priority
         {
             //give this player intangible priority from otherPlayer
             //EDIT THIS: int constant = invol frame data
-            IntangiblePeerPrioTable[otherPC.idx] = 4 * Time.fixedDeltaTime;
+            //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
+            SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
+
 
             //give this player overpower priority over otherPlayer
             //EDIT THIS: int constant = overPower frame data
-            OverpowerPeerPrioTable[otherPC.idx] = 4 * Time.fixedDeltaTime;
+            //OverpowerPeerPrioTable[otherPC] = 6 * Time.fixedDeltaTime;
+            SetPeerPriority(OverpowerPeerPrioTable, otherPC, 6 * Time.fixedDeltaTime);
 
 
         }
@@ -1732,7 +2047,6 @@ public class PlayerController3 : PlayerController
             if(Vector2.Angle(moveDirection, normal) > 90)
             {
                 storedVelocity = storedVelocity.magnitude * Vector2.Reflect(moveDirection, normal).normalized;
-                
             } else
             {
                 storedVelocity = storedVelocity.magnitude * moveDirection.normalized;
@@ -1772,10 +2086,13 @@ public class PlayerController3 : PlayerController
 
         //give this player intangible priority from otherPlayer
         //EDIT THIS: int constant = invol frame data
-        IntangiblePeerPrioTable[otherPC.idx] = 4 * Time.fixedDeltaTime;
+        //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
+        SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
+
         //give otherPlayer intangible priority from this player
         //EDIT THIS: int constant = invol frame data
-        otherPC.IntangiblePeerPrioTable[idx] = 4 * Time.fixedDeltaTime;
+        //otherPC.IntangiblePeerPrioTable[this] = 8 * Time.fixedDeltaTime;
+        otherPC.SetPeerPriority(otherPC.IntangiblePeerPrioTable, this, 8 * Time.fixedDeltaTime);
         
         //save pre-impact stats for KB calcs
         float mTime = moveTime;
@@ -1943,8 +2260,9 @@ public class PlayerController3 : PlayerController
                     PlayerController otherPC = col.GetComponentInParent<PlayerController>();
 
                     //ignore collision if peer-intangible
-                    if(IntangiblePeerPrioTable[otherPC.idx] > 0 || otherPC.IntangiblePeerPrioTable[idx] > 0)
+                    if(IntangiblePeerPrioTable.ContainsKey(otherPC) && IntangiblePeerPrioTable[otherPC] > 0 /* || otherPC.IntangiblePeerPrioTable[idx] > 0 */)
                     {
+                        Debug.Log("Intangible onCollision. Exiting.");
                         return;
                     }
 
@@ -1974,7 +2292,7 @@ public class PlayerController3 : PlayerController
                     */
                     
 
-                    Vector2 prev = prevPos[1];
+                    Vector2 prev = prevPos[1];                    
                     Vector2 otherPrev = otherPC.prevPos[1];
                     
                     /* //my descent into madness:
@@ -2005,7 +2323,7 @@ public class PlayerController3 : PlayerController
                         otherPC.transform.position = otherPos; //is this needed?
                     }
 
-                    StartCoroutine(ApplyKnockback(otherPC.movePriority, otherPC.movePower, otherPC.rb));
+                    StartCoroutine(ApplyKnockback(/*otherPC.movePriority,*/ otherPC.movePower, otherPC.rb));
                 }
             }
             
@@ -2025,7 +2343,7 @@ public class PlayerController3 : PlayerController
                     transform.position = pos;
                     shot.transform.position = otherPos;
                     
-                    StartCoroutine(ApplyKnockback(3, shot.shotPower, shot.GetComponent<Rigidbody2D>()));
+                    StartCoroutine(ApplyKnockback(/*3,*/ shot.shotPower, shot.GetComponent<Rigidbody2D>()));
                 }
                 
             }
@@ -2110,8 +2428,10 @@ public class PlayerController3 : PlayerController
         GetComponentInChildren<TrailRenderer>().Clear();
         rc.DeactivateReticle();
         
-
-        gp.SetMotorSpeeds(0,0);
+        if(gp != null)
+        {
+            gp.SetMotorSpeeds(0,0);
+        }
 
 
         tg = FindFirstObjectByType<CinemachineTargetGroup>();
@@ -2119,7 +2439,6 @@ public class PlayerController3 : PlayerController
         {
             tg.RemoveMember(this.transform);
         }
-        
     }
 
     public override void Reactivate()
@@ -2141,7 +2460,12 @@ public class PlayerController3 : PlayerController
         GetComponentInChildren<TrailRenderer>().emitting = false;
         GetComponentInChildren<TrailRenderer>().Clear();
         rc.DeactivateReticle();
-        gp.SetMotorSpeeds(0,0);
+
+        if(gp != null)
+        {
+            gp.SetMotorSpeeds(0,0);
+
+        }
 
         tg = FindFirstObjectByType<CinemachineTargetGroup>();
         if(tg != null)
@@ -2160,6 +2484,26 @@ public class PlayerController3 : PlayerController
 
         ParticleSystem.MainModule main = part.GetComponent<ImpactParticle>().partSys.main;
         main.startColor = color;
+    }
+
+
+    //used for killing this player specifically (not eliminating from game if clones are alive)
+    public override void KillPlayer()
+    {
+        isAlive = false;
+        Deactivate();
+        FindFirstObjectByType<AudioManager>().Play("Fall");
+    }
+
+
+    //pm.kill player if all clones are dead
+    public virtual void CheckIfAlive()
+    {
+        //true if any clones are alive
+        if(!(isAlive || Clones.Any(dummy => dummy.isAlive)))
+        {
+            pm.KillPlayer(idx);
+        }
     }
 
 

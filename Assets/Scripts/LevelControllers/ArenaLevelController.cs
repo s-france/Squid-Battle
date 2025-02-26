@@ -123,6 +123,9 @@ public class ArenaLevelController : LevelController
             pm.DeactivatePlayer(p.playerIndex);
             pm.ReactivatePlayer(p.playerIndex);
 
+            //clear dummy list
+            p.playerScript.Clones.Clear();
+
             //enable Player actions for gameplay instances
             p.input.SwitchCurrentActionMap("Player");
 

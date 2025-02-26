@@ -9,7 +9,9 @@ public class ArenaBoundary : MonoBehaviour
     InputManager im;
     PlayerManager pm;
 
-    List<int> PlayerCollisions;
+
+    //List<int> PlayerCollisions; //rework this to List<PlayerController>
+    List<PlayerController> PlayerCollisions;
 
     bool started;
 
@@ -20,7 +22,7 @@ public class ArenaBoundary : MonoBehaviour
         im = GameObject.Find("PlayerInputManager").GetComponent<InputManager>();
         pm = gm.GetComponentInChildren<PlayerManager>();
 
-        PlayerCollisions = new List<int>();
+        PlayerCollisions = new List<PlayerController>();
 
         StartCoroutine(DelayStart());
     }
@@ -47,25 +49,30 @@ public class ArenaBoundary : MonoBehaviour
         {
             if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
             {
-                int idx = col.GetComponentInParent<PlayerController>().idx;
+                PlayerController player = col.GetComponentInParent<PlayerController>();
+                int idx = player.idx;
 
                 //remove one instance of player idx from collision tracking
-                PlayerCollisions.Remove(idx);
+                PlayerCollisions.Remove(player);
 
                 //if player is not inside any arena colliders
-                if(!PlayerCollisions.Contains(idx))
+                if(!PlayerCollisions.Contains(player))
                 {
                     //set player out of bounds
-                    pm.playerList[idx].isInBounds = false;
-                    pm.playerList[idx].playerScript.isInBounds = false;
+                    //pm.playerList[idx].isInBounds = false;
+                    //pm.playerList[idx].playerScript.isInBounds = false;
+                    player.isInBounds = false;
 
-                    //alter player's stats offstage
-                    pm.playerList[idx].playerScript.maxMoveSpeed *= .5f;
-                    pm.playerList[idx].playerScript.maxMoveTime *= 1.5f;
-                    pm.playerList[idx].playerScript.maxMovePower *= .6f;
-                    pm.playerList[idx].playerScript.maxChargeTime *= 1.2f;
-
-
+                    //band aid fix for grow stats
+                    if(!player.isGrown)
+                    {
+                        //alter player's stats offstage
+                        player.maxMoveSpeed *= .5f;
+                        player.maxMoveTime *= 1.5f;
+                        player.maxMovePower *= .6f;
+                        player.maxChargeTime *= 1.2f;
+                    }
+                    
                     //StartCoroutine(pm.PlayerKillClock(idx, 3.0f));
                 }
 
@@ -84,13 +91,27 @@ public class ArenaBoundary : MonoBehaviour
 
         if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
         {
-            int idx = col.GetComponentInParent<PlayerController>().idx;
-            PlayerCollisions.Add(idx);
-            pm.playerList[idx].isInBounds = true;
-            pm.playerList[idx].playerScript.isInBounds = true;
+            PlayerController player = col.GetComponentInParent<PlayerController>();
+            int idx = player.idx;
+            //PlayerCollisions.Add(idx);
+            PlayerCollisions.Add(player);
+            //pm.playerList[idx].isInBounds = true;
+            //pm.playerList[idx].playerScript.isInBounds = true;
+            player.isInBounds = true;
 
             //restore player's default stats
-            pm.playerList[idx].playerScript.ResetDefaultStats();
+            //pm.playerList[idx].playerScript.ResetDefaultStats();
+            
+            //band aid fix for grow stats
+            if(!player.isGrown)
+            {
+                player.maxMoveSpeed = player.defaultMaxMoveSpeed;
+                player.maxMoveTime = player.defaultMaxMoveTime;
+                player.maxMovePower = player.defaultMaxMovePower;
+                player.maxChargeTime = player.defaultMaxChargeTime;
+            }
+
+            
         }
 
     }

@@ -36,6 +36,8 @@ public class PlayerController : MonoBehaviour
     public GameObject hitPart; //particle prefabs
     public GameObject impactPart; //particle prefab
 
+    public GameObject DummyPrefab; //Double clone dummy prefab
+
 
     public Sprite[] SpriteSet;
     public Sprite[] EyeSpriteSet;
@@ -97,6 +99,13 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool isKnockback;
     [HideInInspector] public bool isHitStop;
 
+    //new armor system
+    public AnimationCurve armorCurve;
+    public float maxMoveArmor;
+    public float maxPassiveArmor;
+    [HideInInspector] public float passiveArmor = 0;
+    [HideInInspector] public float moveArmor = 0;
+
     [HideInInspector] public float lastChargePress = 0;
     public int wallTechFrameWindow; //frame data for open wallTechWindow
     public int parryFrameWindow; //frame data for parryWindow
@@ -108,7 +117,7 @@ public class PlayerController : MonoBehaviour
 
 
     [HideInInspector] public bool isCoolingDown;
-    [HideInInspector] public bool isGrown;
+    [HideInInspector] public bool isGrown = false;
     [HideInInspector] public bool isRewind;
     [HideInInspector] public bool isInBounds; //copy of pm.playerList[idx].isInBounds
 
@@ -139,13 +148,27 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float defaultMaxMoveTime;
     [HideInInspector] public float defaultMaxMovePower;
     [HideInInspector] public float defaultMaxHitstop;
+    [HideInInspector] public float defaultMaxPassiveArmor;
+    [HideInInspector] public float defaultMaxMoveArmor;
 
 
     //priority tables
+    /*
     [HideInInspector] public float[] OverpowerPeerPrioTable; //overpower priority
     [HideInInspector] public float[] IntangiblePeerPrioTable; //intangible priority
+    */
 
-    
+    [HideInInspector] public Dictionary<PlayerController, float> OverpowerPeerPrioTable;
+    [HideInInspector] public Dictionary<PlayerController, float> IntangiblePeerPrioTable;
+
+
+
+    //track all clones of this player created by Double item
+    [HideInInspector] public List<DummyPlayerController> Clones;
+    public bool isDummy;
+
+    [HideInInspector] public bool isAlive = true;
+
 
 
     void Awake()
@@ -197,8 +220,15 @@ public class PlayerController : MonoBehaviour
         }
         rc = this.GetComponentInChildren<ReticleController>();
 
+        Clones = new List<DummyPlayerController>();
+
+        /*
         OverpowerPeerPrioTable = new float[6];
         IntangiblePeerPrioTable = new float[6];
+        */
+
+        OverpowerPeerPrioTable = new Dictionary<PlayerController, float>();
+        IntangiblePeerPrioTable = new Dictionary<PlayerController, float>();     
 
         heldItems = new List<ItemBehavior>();
 
@@ -225,6 +255,10 @@ public class PlayerController : MonoBehaviour
         defaultMaxMoveTime = maxMoveTime;
         defaultMaxMovePower = maxMovePower;
         defaultMaxHitstop = maxHitstop;
+
+        passiveArmor = maxPassiveArmor;
+        defaultMaxPassiveArmor = maxPassiveArmor;
+        defaultMaxMoveArmor = maxMoveArmor;
         
 
         moveTime = 0;
@@ -267,7 +301,7 @@ public class PlayerController : MonoBehaviour
         {
             //Debug.Log("Player" + idx + " collided with Player " + col.gameObject.GetComponent<PlayerController>().idx);
 
-            StartCoroutine(ApplyKnockback(col.gameObject.GetComponent<PlayerController>().movePriority, col.gameObject.GetComponent<PlayerController>().movePower, col.gameObject.GetComponent<PlayerController>().rb));
+            StartCoroutine(ApplyKnockback(/*col.gameObject.GetComponent<PlayerController>().movePriority,*/ col.gameObject.GetComponent<PlayerController>().movePower, col.gameObject.GetComponent<PlayerController>().rb));
 
         } /*else if(LayerMask.LayerToName(col.gameObject.layer) == "Items")
         {
@@ -287,6 +321,9 @@ public class PlayerController : MonoBehaviour
         maxMoveTime = defaultMaxMoveTime;
         maxMovePower = defaultMaxMovePower;
         maxHitstop = defaultMaxHitstop;
+
+        maxPassiveArmor = defaultMaxPassiveArmor;
+        maxMoveArmor = defaultMaxMoveArmor;
 
         rc.transform.localScale = Vector2.one;
 
@@ -429,7 +466,7 @@ public class PlayerController : MonoBehaviour
     public virtual void OnCharge(InputAction.CallbackContext ctx)
     {
         Debug.Log("charge: " + ctx.phase);
-        if(ctx.performed && pm.playerList[idx].isInBounds) //charging
+        if(ctx.performed && /*pm.playerList[idx].*/isInBounds) //charging
         {
             //Debug.Log("charging!!");
             
@@ -447,7 +484,7 @@ public class PlayerController : MonoBehaviour
     //called when OnCharge() performed - handles player charging
     public virtual IEnumerator Charge()
     {
-        if(gm.battleStarted && pm.playerList[idx].isActive && pm.playerList[idx].isAlive)
+        if(gm.battleStarted && pm.playerList[idx].isActive && isAlive)
         {
             //StartCoroutine(rc.RenderReticle());
         }
@@ -455,7 +492,7 @@ public class PlayerController : MonoBehaviour
         //Charging
         while (charging)
         {
-            if (!isCoolingDown && pm.playerList[idx].isInBounds)
+            if (!isCoolingDown && /*pm.playerList[idx].*/isInBounds)
             {
                 sr.sprite = SpriteSet[2]; //charging sprite
                 chargeTime += Time.deltaTime;
@@ -493,7 +530,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //After charging
-        if(gm.battleStarted && !isCoolingDown && pm.playerList[idx].isInBounds /*&& !specialCharging*/) //perform movement during match
+        if(gm.battleStarted && !isCoolingDown && /*pm.playerList[idx].*/isInBounds /*&& !specialCharging*/) //perform movement during match
         {
             ApplyMove(0, i_move, chargeTime);
         } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
@@ -609,7 +646,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator SpecialCharge()
     {
-        if(gm.battleStarted && pm.playerList[idx].isActive && pm.playerList[idx].isAlive)
+        if(gm.battleStarted && pm.playerList[idx].isActive && isAlive)
         {
             if(heldItems.Any() && heldItems[selectedItemIdx].GetItemType() == "Warp")
             {
@@ -748,7 +785,11 @@ public class PlayerController : MonoBehaviour
 
         rc.ChangeColor(color);
 
-        pm.SetPlayerColor(idx, color);
+        //Dummys don't access pm
+        if(idx != -1)
+        {
+            pm.SetPlayerColor(idx, color);
+        }
     }
 
     //This is reduntant.  Use pm.ReadyPlayer(idx)
@@ -912,7 +953,7 @@ public class PlayerController : MonoBehaviour
 
     //applies knockback effects to this player - does nothing to other colliding player
     //called in OnCollisionEnter2D when colliding with opponent
-    public virtual IEnumerator ApplyKnockback(int otherPriority, float otherPower, Rigidbody2D otherRB)
+    public virtual IEnumerator ApplyKnockback(/*int otherPriority,*/ float otherPower, Rigidbody2D otherRB)
     {
         //Debug.Log("ApplyKnockback!");
 
@@ -1080,6 +1121,20 @@ public class PlayerController : MonoBehaviour
     {
         return;
     }
+
+    public virtual void SetPeerPriority(Dictionary<PlayerController, float> prioTable, PlayerController pc, float time)
+    {
+        //implementation in PlayerController3
+        return;
+    }
+
+    public virtual void KillPlayer()
+    {
+        //implementation in PlayerController3 / DummyPC
+        return;
+    }
+    
+
 
 
 }

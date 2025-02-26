@@ -173,7 +173,8 @@ public class PlayerManager : MonoBehaviour
         playerList[idx].playerScript.Reactivate();
         //playerList[idx].input.ActivateInput();
         playerList[idx].isAlive = true;
-        playerList[idx].isInBounds = true;
+        playerList[idx].playerScript.isAlive = true;
+        //playerList[idx].isInBounds = true;
         playerList[idx].playerScript.isInBounds = true;
 
         
@@ -191,7 +192,8 @@ public class PlayerManager : MonoBehaviour
         //playerList[idx].input.DeactivateInput();
         playerList[idx].isReady = false;
         playerList[idx].isAlive = false;
-        playerList[idx].isInBounds = true;
+        playerList[idx].playerScript.isAlive = false;
+        //playerList[idx].isInBounds = true;
         playerList[idx].playerScript.isInBounds = true;
 
         if(gm.lc.GetLevelType() == 0)
@@ -212,11 +214,11 @@ public class PlayerManager : MonoBehaviour
         DeactivatePlayer(idx); //sets isalive = false
         FindFirstObjectByType<AudioManager>().Play("Fall");
 
+        playerList[idx].playerScript.Clones.Clear();
+
         //track player's placement
-        
         placements.Add(idx);
         
-
         //if only one remaining player alive end/reset the game
         if (playerList.Count(p => p.isAlive) == 1 && gm.battleStarted)
         {
@@ -224,10 +226,10 @@ public class PlayerManager : MonoBehaviour
             placements.Add(winner);
             Debug.Log("winner: " + winner);
 
+
             //NEW STUFF HERE
             //open results screen + map select
             gm.lc.ShowResults();
-
 
             //gm.lc.EndLevel();
         }
@@ -237,7 +239,7 @@ public class PlayerManager : MonoBehaviour
     {
         float clock = 0;
         
-        while(clock < timer && !playerList[idx].isInBounds)
+        while(clock < timer && !playerList[idx].playerScript.isInBounds)
         {
             //add dying animation here
             
@@ -246,7 +248,7 @@ public class PlayerManager : MonoBehaviour
             yield return null;
         }
 
-        if(!playerList[idx].isInBounds)
+        if(!playerList[idx].playerScript.isInBounds)
         {
             KillPlayer(idx);
         }
@@ -271,7 +273,7 @@ public class PlayerConfig
         isReady = false;
         isActive = true;
         isAlive = true;
-        isInBounds = true;
+        playerScript.isInBounds = true;
         score = 0;
         color = playerManager.FindFirstAvailableColorID(pi.playerIndex, 1);
     }
@@ -283,7 +285,7 @@ public class PlayerConfig
     public bool isReady {get; set;}
     public bool isActive {get; set;}
     public bool isAlive {get; set;}
-    public bool isInBounds {get; set;}
+    //public bool isInBounds {get; set;}
     public int color {get; set;} //color idx
     public int score {get; set;}
 }

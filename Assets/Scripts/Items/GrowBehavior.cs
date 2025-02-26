@@ -13,21 +13,25 @@ public class GrowBehavior : ItemBehavior
     float timeToGrow = .75f;
     
     float maxMoveSpeedMod = -.4f;
-    float maxMoveTimeMod = 3;
-    float maxMovePowerMod = 2;
+    float maxMoveTimeMod = 2.7f;
+    float maxMovePowerMod = 2.2f;
     float maxHitstopMod = .5f;
+
+    float maxPassiveArmorMod = 1.2f;
+    float maxMoveArmorMod = 1.8f;
 
 
 
 
     Vector3 defaultScale;
+    /*
     float defaultStrength;
     float defaultKnockback;
     float defaultMaxMoveSpeed;
     float defaultMaxMoveTime;
     float defaultMaxMovePower;
     float defaultMaxHitstop;
-
+    */
 
 
     // Start is called before the first frame update
@@ -47,14 +51,17 @@ public class GrowBehavior : ItemBehavior
         //pc = GetComponentInParent<PlayerController>();
         rb = pc.GetComponent<Rigidbody2D>();
 
+        
         defaultScale = pc.defaultScale;
+        /*
         defaultStrength = pc.defaultChargeStrength;
 
         defaultMaxMoveSpeed = pc.defaultMaxMoveSpeed;
         defaultMaxMoveTime = pc.defaultMaxMoveTime;
         defaultMaxMovePower = pc.defaultMaxMovePower;
         defaultMaxHitstop = pc.defaultMaxHitstop;
-        
+        */
+
         HideSprite();
         
         StartCoroutine(GrowPlayer(chargeTime));
@@ -103,6 +110,7 @@ public class GrowBehavior : ItemBehavior
 
         float t;
 
+        pc.isGrown = true;
         //grow
         Debug.Log("initiating grow");
         while (timer <= timeToGrow)
@@ -123,8 +131,9 @@ public class GrowBehavior : ItemBehavior
         pc.maxMovePower = pc.defaultMaxMovePower * (1 + (chargeTime/pc.maxChargeTime) * maxMovePowerMod);
         pc.maxHitstop = pc.defaultMaxHitstop * (1 + (chargeTime/pc.maxChargeTime) * maxHitstopMod);
         
-        
-
+        //use addition because default = 0
+        pc.maxPassiveArmor = pc.defaultMaxPassiveArmor + ((chargeTime/pc.maxChargeTime) * maxPassiveArmorMod);
+        pc.maxMoveArmor = pc.defaultMaxMoveArmor * (1+ ((chargeTime/pc.maxChargeTime) * maxMoveArmorMod));
 
         Debug.Log("player is now big");
         Debug.Log("maxMoveSpeed: " + pc.maxMoveSpeed);
@@ -156,11 +165,16 @@ public class GrowBehavior : ItemBehavior
             yield return null;
         }
 
+        pc.isGrown = false;
+
         //reset maxmovespeed, movetime, movepower, hitstop to default values
         pc.maxMoveSpeed = pc.defaultMaxMoveSpeed;
         pc.maxMoveTime = pc.defaultMaxMoveTime;
         pc.maxMovePower = pc.defaultMaxMovePower;
         pc.maxHitstop = pc.defaultMaxHitstop;
+
+        pc.maxPassiveArmor = pc.defaultMaxPassiveArmor;
+        pc.maxMoveArmor = pc.defaultMaxMoveArmor;
 
         rc.transform.localScale = Vector2.one;
 
