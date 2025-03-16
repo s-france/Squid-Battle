@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class MatchSettings : MonoBehaviour
 {
+    public int scoreFormat; //scoring format (0=headhunters, 1=survival,)
     public int pointsToWin; //total points to win
     public bool[] ActiveItems; //toggled items
     [SerializeField] int[] DefaultItemProbs; //default Item Probability values

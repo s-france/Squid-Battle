@@ -72,8 +72,33 @@ public class PlayerController3 : PlayerController
         MovementTick();
         HitStopTick();
         OutOfBoundsTick();
+        KillCreditTick();
 
         MovementSafetyTick();
+    }
+
+    //tracks who should receive kill credit, should this player die rn
+    void KillCreditTick()
+    {
+        //kill credit id is usually assigned in ApplyKnockback and it's results (parry)
+        //hold credit + suspend/reset timer while isknockback
+        if(isKnockback)
+        {
+            killCreditTimer = 0;
+        } else if(isInBounds)
+        {
+            killCreditTimer += Time.fixedDeltaTime;
+
+        }
+
+        //reset kill credit to self if inbounds and not refreshed in last 1sec
+        if(killCreditTimer >= 1)
+        {
+            //suicide
+            killCredit = idx;
+        }
+
+
     }
 
 
@@ -1221,6 +1246,9 @@ public class PlayerController3 : PlayerController
         if(!isRewind)
         {
             ApplyMove(1, direction, knockbackMultiplier * otherStrength);
+            
+            //assign killcredit to shot's owner
+            killCredit = shot.parentID;
         } else
         {
             //give temp immunity from shot
@@ -1246,7 +1274,6 @@ public class PlayerController3 : PlayerController
     {
         //ADD THIS
         //isIntangible check -> exit
-
 
         
         if(otherRB.TryGetComponent<PlayerController>(out PlayerController otherPC))
@@ -1391,7 +1418,7 @@ public class PlayerController3 : PlayerController
 
 
         
-        
+        //armor priority recalculations
         //other player is armored
         if (otherArmor > 0 && otherArmor > armor)
         {
@@ -1465,24 +1492,6 @@ public class PlayerController3 : PlayerController
         {
             passiveArmor = Mathf.Clamp(passiveArmor + remainingAttack, 0, 10000);
         }
-
-        /*
-        //hit particle effect
-        GameObject part = null;
-        if(idx < otherRB.gameObject.GetComponent<PlayerController>().idx)
-        {
-            if(hitstop >=.3f)
-            {
-                part = Instantiate(hitPart, (transform.position + otherRB.transform.position)/2, Quaternion.identity);
-                part.GetComponent<HitEffect>().Init(.5f, maxHitstop * hitstopCurve.Evaluate(hitstop)*1.1f);
-            }
-        }
-
-
-
-        //apply impact hitstop
-        ApplyHitStop(maxHitstop * hitstopCurve.Evaluate(hitstop), 1);
-        */
 
 
         if(!isRewind)
@@ -1600,7 +1609,9 @@ public class PlayerController3 : PlayerController
 
                     ModifyMove(1, directionMod, 1.1f, .95f, .8f);
 
-
+                    //assign killCredit
+                    killCredit = otherPC.idx;
+                    killCreditTimer = 0;
                     
 
                     break;
@@ -1614,6 +1625,12 @@ public class PlayerController3 : PlayerController
 
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
+                        if (otherMPrio ==1)
+                        {
+                            //give otherpc killcredit if bumping on glide
+                            killCredit = otherPC.idx;
+                            killCreditTimer = 0; 
+                        }
 
                     } else if(otherMPrio == 2) //other being KB launched
                     {
@@ -1625,6 +1642,10 @@ public class PlayerController3 : PlayerController
 
                         //powerful attack KB
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
+
+                        //give original attacker killcredit
+                        killCredit = otherPC.killCredit;
+                        killCreditTimer = 0;
 
                     } else if(otherMPrio >= 3) //other moving attacking
                     {
@@ -1645,6 +1666,10 @@ public class PlayerController3 : PlayerController
                         //TWEAK THIS - calc should be more biased to otherPlayer
                         //powerful attack KB
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
+
+                        //otherpc killcredit
+                        killCredit = otherPC.idx;
+                        killCreditTimer = 0;
                     }
 
                     break;
@@ -1658,6 +1683,10 @@ public class PlayerController3 : PlayerController
                         eyeSprite = 1;
 
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
+                        
+                        //otherpc gets killcredit
+                        killCredit = otherPC.idx;
+                        killCreditTimer = 0;
 
                     } else if(otherMPrio == 2)
                     {
@@ -1669,6 +1698,9 @@ public class PlayerController3 : PlayerController
                         //powerful attack KB
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
+                        //give original attacker killcredit
+                        killCredit = otherPC.killCredit;
+                        killCreditTimer = 0;
 
                     } else if(otherMPrio >= 3)
                     {
@@ -1677,7 +1709,6 @@ public class PlayerController3 : PlayerController
                         //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
                         SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
 
-                        
                         //give otherPlayer overpower priority over this Player
                         //EDIT THIS: int constant = overPower frame data
                         //otherPC.OverpowerPeerPrioTable[idx] = 6 * Time.fixedDeltaTime;
@@ -1689,6 +1720,10 @@ public class PlayerController3 : PlayerController
 
                         //powerful attack KB
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
+                        
+                        //otherpc killcredit
+                        killCredit = otherPC.idx;
+                        killCreditTimer = 0;
                     }
 
                     break;
@@ -1721,6 +1756,8 @@ public class PlayerController3 : PlayerController
 
                         ModifyMove(0, directionMod, 1.1f, .95f, 1);      
 
+                        //killcredit unchanged
+
 
 
                         //old "8ball" behaviour works for now
@@ -1748,6 +1785,11 @@ public class PlayerController3 : PlayerController
                         //Equal KB exchange
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
+                        //ADD THIS: assign killcredit either to current or otherPc original attacker
+                        //based on new KB direction: angle>90 otherPc original, <90 current attacker
+                        //killCredit = 
+                        killCreditTimer = 0;
+
                         //TRY THIS:
                         //impede stronger player's KB more
 
@@ -1764,6 +1806,9 @@ public class PlayerController3 : PlayerController
                         //receive full KB
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
+                        //otherpc killcredit
+                        killCredit = otherPC.idx;
+                        killCreditTimer = 0;
                     }
 
                     break;
@@ -1816,7 +1861,9 @@ public class PlayerController3 : PlayerController
 
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
-
+                        //original attacker killcredit
+                        killCredit = otherPC.killCredit;
+                        killCreditTimer = 0;
 
                     } else if(otherMPrio >= 3)
                     {
@@ -1837,6 +1884,8 @@ public class PlayerController3 : PlayerController
                         //Equal KB exchange
                         ApplyMove(1, direction, knockbackMultiplier * otherStrength);
 
+                        killCredit = otherPC.idx;
+                        killCreditTimer = 0;
                     }
 
                     break;
@@ -1897,12 +1946,10 @@ public class PlayerController3 : PlayerController
             //IntangiblePeerPrioTable[otherPC] = 8 * Time.fixedDeltaTime;
             SetPeerPriority(IntangiblePeerPrioTable, otherPC, 8 * Time.fixedDeltaTime);
 
-
             //give this player overpower priority over otherPlayer
             //EDIT THIS: int constant = overPower frame data
             //OverpowerPeerPrioTable[otherPC] = 6 * Time.fixedDeltaTime;
             SetPeerPriority(OverpowerPeerPrioTable, otherPC, 6 * Time.fixedDeltaTime);
-
 
         }
 
@@ -2240,6 +2287,8 @@ public class PlayerController3 : PlayerController
             }
         }
 
+        //assign killcredit to otherPC (on impact regardless of who parried)
+        killCredit = otherPC.idx;
         
     }
 
@@ -2486,23 +2535,35 @@ public class PlayerController3 : PlayerController
         main.startColor = color;
     }
 
+    void SpawnDeathParticles(Vector2 pos, Color color)
+    {
+        GameObject part = Instantiate(deathPart, pos, Quaternion.identity);
+        
+        ParticleSystem.MainModule main = part.GetComponent<ParticleSystem>().main;
+        main.startColor = color;
+    }
+
 
     //used for killing this player specifically (not eliminating from game if clones are alive)
     public override void KillPlayer()
     {
+        SpawnDeathParticles(transform.position, pm.playerList[killCredit].playerScript.sr.color);
+
         isAlive = false;
         Deactivate();
         FindFirstObjectByType<AudioManager>().Play("Fall");
     }
 
 
+    //true killplayer
     //pm.kill player if all clones are dead
     public virtual void CheckIfAlive()
     {
         //true if any clones are alive
         if(!(isAlive || Clones.Any(dummy => dummy.isAlive)))
         {
-            pm.KillPlayer(idx);
+            Debug.Log("Player" + idx + " killed by Player" + killCredit);
+            pm.KillPlayer(idx, killCredit);
         }
     }
 

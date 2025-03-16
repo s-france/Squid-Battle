@@ -20,10 +20,11 @@ public class MatchSettingsLC : LevelController
 
     [SerializeField] MapVote mv;
 
-    [SerializeField] Slider slider;
-    int[] sliderIntervals = {10, 15, 20, 25, 30};
-    [SerializeField] Text sliderNumber;
-    //[SerializeField] SliderButton SliderButton1;
+    [SerializeField] Slider pointSlider;
+    [SerializeField] Slider formatSlider;
+    int[] pointIntervals = {10, 15, 20, 25, 30};
+    [SerializeField] Text pointsNumber;
+    [SerializeField] Text formatText;
 
     [SerializeField] InputSystemUIInputModule[] UIInputModules;
 
@@ -311,25 +312,24 @@ public class MatchSettingsLC : LevelController
 
     public void SetPointsToWin()
     {
-        gm.ms.pointsToWin = (int)slider.value;
+        gm.ms.pointsToWin = (int)pointSlider.value;
     }
 
-    public void OnSliderValueChanged()
+    public void OnPointSliderValueChanged()
     {
         FindFirstObjectByType<AudioManager>().Play("UINav3");
 
         //update slider visuals
         int idx = 0;
-
-        foreach (int i in sliderIntervals)
+        foreach (int i in pointIntervals)
         {
-            if(slider.value == i-1)
+            if(pointSlider.value == i-1)
             {
-                slider.value = sliderIntervals[idx-1];
+                pointSlider.value = pointIntervals[idx-1];
                 break;
-            } else if(slider.value == i+1)
+            } else if(pointSlider.value == i+1)
             {
-                slider.value = sliderIntervals[idx+1];
+                pointSlider.value = pointIntervals[idx+1];
                 break;
             }
 
@@ -338,8 +338,28 @@ public class MatchSettingsLC : LevelController
 
         SetPointsToWin();
 
-        sliderNumber.text = slider.value.ToString();
+        pointsNumber.text = pointSlider.value.ToString();
         
+    }
+
+    public void OnFormatSliderChanged()
+    {
+        FindFirstObjectByType<AudioManager>().Play("UINav3");
+
+        switch (formatSlider.value)
+        {
+            case 0:
+                formatText.text = "Headhunters";
+                break;
+
+            case 1:
+                formatText.text = "Survival";
+                break;
+        }
+
+        gm.ms.scoreFormat = (int)formatSlider.value;
+
+
     }
 
 

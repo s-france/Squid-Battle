@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ItemManager : MonoBehaviour
@@ -84,6 +85,13 @@ public class ItemManager : MonoBehaviour
     public void SpawnItem(int type, Transform pos)
     {
         //Debug.Log("spawning item");
+
+        //exit if no items enabled
+        if(gm.ms.ItemProbs.Max() <= 0)
+        {
+            Debug.Log("no items enabled");
+            return;
+        }
         
         //instantiate new ItemPrefab
         GameObject newItem = Instantiate(ItemPrefab, pos.position, pos.rotation);

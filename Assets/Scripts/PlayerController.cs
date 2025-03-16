@@ -34,7 +34,8 @@ public class PlayerController : MonoBehaviour
     public SpriteRenderer eyeSR;
     public ParticleSystem bubblePart;
     public GameObject hitPart; //particle prefabs
-    public GameObject impactPart; //particle prefab
+    public GameObject impactPart; //impact particle prefab
+    public GameObject deathPart; //death particle prefab
 
     public GameObject DummyPrefab; //Double clone dummy prefab
 
@@ -168,6 +169,9 @@ public class PlayerController : MonoBehaviour
     public bool isDummy;
 
     [HideInInspector] public bool isAlive = true;
+
+    [HideInInspector] public int killCredit;
+    [HideInInspector] public float killCreditTimer = 0;
 
 
 
@@ -786,7 +790,7 @@ public class PlayerController : MonoBehaviour
         rc.ChangeColor(color);
 
         //Dummys don't access pm
-        if(idx != -1)
+        if(!isDummy)
         {
             pm.SetPlayerColor(idx, color);
         }

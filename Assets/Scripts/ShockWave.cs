@@ -10,9 +10,12 @@ public class ShockWave : MonoBehaviour
     [SerializeField] float shockPower;
     [SerializeField] float hitstopRatio;
 
+    int ownerID = -1;
+
     // Start is called before the first frame update
     void Start()
     {
+        ownerID = GetComponentInParent<PlayerController>().idx;
         
     }
 
@@ -72,6 +75,9 @@ public class ShockWave : MonoBehaviour
             pc.StartCoroutine(pc.HitStop(pc.maxHitstop * hitstopRatio));
             pc.ApplyMove(1, direction, shockPower);
 
+            //assign killcredit
+            pc.killCredit = ownerID;
+            pc.killCreditTimer = 0;
         }
     }
 

@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Rendering;
 
 
 //parent LevelController class for all battle arena LevelControllers
@@ -73,17 +74,17 @@ public class ArenaLevelController : LevelController
         
         while(arena.localScale.magnitude > ArenaShrinks[2].magnitude)
         {
-            if (timer >= 35 && arena.localScale.magnitude > ArenaShrinks[0].magnitude)
+            if (timer >= 25 && arena.localScale.magnitude > ArenaShrinks[0].magnitude)
             {
                 //Debug.Log("SHRINKING 0");
                 arena.localScale = Vector2.MoveTowards(arena.localScale, ArenaShrinks[0], shrinkSpeed * Time.deltaTime);
                 arenaAnchor.localScale = Vector2.MoveTowards(arenaAnchor.localScale, ArenaShrinks[0], shrinkSpeed * Time.deltaTime);
-            } else if (timer >= 70 && arena.localScale.magnitude > ArenaShrinks[1].magnitude)
+            } else if (timer >= 45 && arena.localScale.magnitude > ArenaShrinks[1].magnitude)
             {
                 //Debug.Log("SHRINKING 1");
                 arena.localScale = Vector2.MoveTowards(arena.localScale, ArenaShrinks[1], shrinkSpeed * Time.deltaTime);
                 arenaAnchor.localScale = Vector2.MoveTowards(arenaAnchor.localScale, ArenaShrinks[1], shrinkSpeed * Time.deltaTime);
-            } else if (timer >= 105 && arena.localScale.magnitude > ArenaShrinks[2].magnitude)
+            } else if (timer >= 60 && arena.localScale.magnitude > ArenaShrinks[2].magnitude)
             {
                 //Debug.Log("SHRINKING 2");
                 arena.localScale = Vector2.MoveTowards(arena.localScale, ArenaShrinks[2], shrinkSpeed * Time.deltaTime);
@@ -192,17 +193,31 @@ public class ArenaLevelController : LevelController
             {
                 case 0:
                 {
-                    pm.playerList[i].score += 3; //1st +3
+                    //headhunters
+                    if(gm.ms.scoreFormat == 0)
+                    {
+                        pm.playerList[i].score += 1; //1st +1
+                    //survival
+                    } else if(gm.ms.scoreFormat == 1)
+                    {
+                        pm.playerList[i].score += 3; //1st +3
+                    }
                     break;
                 }
                 case 1:
                 {
-                    pm.playerList[i].score += 2; //2nd +2
+                    if(gm.ms.scoreFormat == 1)
+                    {
+                        pm.playerList[i].score += 2; //2nd +2
+                    }
                     break;
                 }
                 case 2:
                 {
-                    pm.playerList[i].score += 1; //3rd +1
+                    if(gm.ms.scoreFormat == 1)
+                    {
+                        pm.playerList[i].score += 1; //3rd +1
+                    }
                     break;
                 }
                 default:
@@ -221,10 +236,39 @@ public class ArenaLevelController : LevelController
 
         resultsScreen.gameObject.SetActive(true);
 
-        //if there is a winner show end screen
-        if(pm.playerList.Exists(p => p.score >= gm.ms.pointsToWin))
+
+        //check for ties
+        List<PlayerConfig> winners = pm.playerList.FindAll(p => p.score >= gm.ms.pointsToWin);
+        int max = 0;
+        int count = 0;
+
+        foreach(PlayerConfig p in winners)
         {
-            int winner = pm.playerList.Find(p => p.score >= gm.ms.pointsToWin).playerIndex;
+            if(p.score > max)
+            {
+                max = p.score;
+                count = 1;
+            } else if(p.score == max)
+            {
+                count ++;
+            }
+        }
+
+
+        //if there is one winner show end screen
+        if(pm.playerList.Exists(p => p.score >= gm.ms.pointsToWin) && count ==1)
+        {
+
+            int winner = -1;// = pm.playerList.Find(p => p.score >= gm.ms.pointsToWin).playerIndex;
+
+            foreach(PlayerConfig p in winners)
+            {
+                if(p.score >= max)
+                {
+                    winner = p.playerIndex;
+                    break;
+                }
+            }
             
             //set winner sprite
             winnerSprite.sprite = pm.playerList.Find(p => p.playerIndex == winner).playerScript.SpriteSet[0];

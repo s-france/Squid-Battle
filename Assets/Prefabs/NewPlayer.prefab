@@ -615,6 +615,7 @@ MonoBehaviour:
   bubblePart: {fileID: 6286807170148970422}
   hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
   impactPart: {fileID: 1176242393547921506, guid: b66d07bc822427b43b2d0b6c2f53e9ce, type: 3}
+  deathPart: {fileID: 1176242393547921506, guid: 8272c1e704f32e141b3bccdad7ccfcf7, type: 3}
   DummyPrefab: {fileID: 783451137108293788, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
   SpriteSet:
   - {fileID: 21300000, guid: 6b95bd3b5b937b6458ea31363b33200e, type: 3}
@@ -1029,10 +1030,11 @@ MonoBehaviour:
   defaultMaxHitstop: 0
   defaultMaxPassiveArmor: 0
   defaultMaxMoveArmor: 0
-  OverpowerPeerPrioTable: []
-  IntangiblePeerPrioTable: []
   Clones: []
   isDummy: 0
+  isAlive: 1
+  killCredit: 0
+  killCreditTimer: 0
   moveSpeedCap: 60
   moveTimeCap: 0.7
   oobLifespan: 2

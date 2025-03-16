@@ -209,7 +209,8 @@ public class PlayerManager : MonoBehaviour
 
 
     //kills player - ONLY CALL THIS WHEN gameStarted == true
-    public void KillPlayer(int idx)
+    //idx: player dying, killCredit player that killed them
+    public void KillPlayer(int idx, int killCredit)
     {
         DeactivatePlayer(idx); //sets isalive = false
         FindFirstObjectByType<AudioManager>().Play("Fall");
@@ -218,6 +219,22 @@ public class PlayerManager : MonoBehaviour
 
         //track player's placement
         placements.Add(idx);
+
+        //assign points (headhunters)
+        if(gm.ms.scoreFormat == 0)
+        {
+            if(idx != killCredit)
+            {
+                playerList[killCredit].score += 2;
+            } else
+            {
+                playerList[idx].score -= 1;
+                if(playerList[idx].score < 0)
+                {
+                    playerList[idx].score = 0;
+                }
+            }
+        }
         
         //if only one remaining player alive end/reset the game
         if (playerList.Count(p => p.isAlive) == 1 && gm.battleStarted)
@@ -235,6 +252,8 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+
+    //outdated ignore
     public IEnumerator PlayerKillClock(int idx, float timer)
     {
         float clock = 0;
@@ -250,7 +269,7 @@ public class PlayerManager : MonoBehaviour
 
         if(!playerList[idx].playerScript.isInBounds)
         {
-            KillPlayer(idx);
+            KillPlayer(idx, -1);
         }
 
     }

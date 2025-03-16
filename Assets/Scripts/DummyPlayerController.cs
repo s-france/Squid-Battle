@@ -56,8 +56,9 @@ public class DummyPlayerController : PlayerController3
         //not needed...
         //transform.parent = gm.transform.GetChild(0);
 
-        //Dummy ID = -1
-        idx = -1;
+        //Dummy ID = parentID
+        //use isDummy to differentiate
+        idx = parent.idx;
         Debug.Log("player idx (from playercontroller): " + idx);
 
         colorID = parent.colorID;
@@ -126,9 +127,11 @@ public class DummyPlayerController : PlayerController3
     public override void CheckIfAlive()
     {
         //true if any clones are alive
-        if(!(isAlive || parent.Clones.Any(dummy => dummy.isAlive)))
+        if(!(isAlive || parent.isAlive || parent.Clones.Any(dummy => dummy.isAlive)))
         {
-            pm.KillPlayer(parent.idx);
+            Debug.Log("Player" + idx + " killed by Player" + killCredit);
+
+            pm.KillPlayer(parent.idx, killCredit);
         }
     }
 }
