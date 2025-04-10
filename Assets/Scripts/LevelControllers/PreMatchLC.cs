@@ -41,9 +41,9 @@ public class PreMatchLC : LevelController
             pm = FindFirstObjectByType<PlayerManager>();
         }
 
-        if (pm != null && pm.playerList.Any())
+        if (pm != null && pm.PlayerList.Any())
         {
-            foreach (PlayerConfig p in pm.playerList)
+            foreach (PlayerConfig p in pm.PlayerList)
             {
                 pm.DeactivatePlayer(p.playerIndex);
 
@@ -84,9 +84,9 @@ public class PreMatchLC : LevelController
         Debug.Log("PLAYER" + idx + " JOINED FROM LC");
 
         UIInputModules[idx].gameObject.SetActive(true);
-        UIInputModules[idx].actionsAsset = pm.playerList[pm.playerList.FindIndex(p => p.playerIndex == idx)].input.actions;
+        UIInputModules[idx].actionsAsset = pm.PlayerList[pm.PlayerList.FindIndex(p => p.playerIndex == idx)].input.actions;
 
-        pm.playerList[pm.playerList.FindIndex(p => p.playerIndex == idx)].input.uiInputModule = UIInputModules[idx];
+        pm.PlayerList[pm.PlayerList.FindIndex(p => p.playerIndex == idx)].input.uiInputModule = UIInputModules[idx];
 
         SpawnPlayer(idx);
     }
@@ -95,7 +95,7 @@ public class PreMatchLC : LevelController
     public override void SpawnPlayer(int idx)
     {
         //move player to spawnpoint
-        pm.playerList[pm.playerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
+        pm.PlayerList[pm.PlayerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
     }
 
 

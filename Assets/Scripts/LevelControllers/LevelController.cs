@@ -83,6 +83,11 @@ public class LevelController : MonoBehaviour
         return;
     }
 
+    public virtual void ShowTeamResults()
+    {
+        return;
+    }
+
 
     public virtual int GetLevelType()
     {

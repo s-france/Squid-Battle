@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public SceneLoader sl;
     [HideInInspector] public MatchSettings ms;
     [HideInInspector] public bool battleStarted;
+    [HideInInspector] public int gameMode;
 
     // Start is called before the first frame update
     void Awake()
@@ -59,9 +60,14 @@ public class GameManager : MonoBehaviour
     {
         ms.roundsPlayed = 1;
 
-        foreach(PlayerConfig p in pm.playerList)
+        foreach(PlayerConfig p in pm.PlayerList)
         {
             p.score = 0;
+        }
+
+        foreach(Team t in pm.TeamList)
+        {
+            t.score = 0;
         }
     }
     
@@ -83,7 +89,7 @@ public class GameManager : MonoBehaviour
         ms.ClearMapPool();
 
         //number of players
-        int pcount = pm.playerList.Count(p => p.isActive);
+        int pcount = pm.PlayerList.Count(p => p.isActive);
 
         string sceneName = "BattleArena" + mapID;
 

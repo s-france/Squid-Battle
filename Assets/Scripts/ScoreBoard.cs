@@ -11,6 +11,7 @@ public class ScoreBoard : MonoBehaviour
     //[SerializeField] Transform mapVote;
     //[SerializeField] Transform finalResult;
     [SerializeField] Transform[] scores;
+    [SerializeField] Image[] sliderFills;
 
 
     // Start is called before the first frame update
@@ -24,7 +25,6 @@ public class ScoreBoard : MonoBehaviour
         {
             s.GetComponentInChildren<Slider>().maxValue = gm.ms.pointsToWin;
         }
-        
     }
 
     // Update is called once per frame
@@ -34,35 +34,79 @@ public class ScoreBoard : MonoBehaviour
     }
 
 
-    public void SetColor(int playerID)
+    //sets color of score meter at idx
+    public void SetColor(int idx)
     {
-        Debug.Log("SetColor playerID: " + playerID);
+        Debug.Log("SetColor scoreboardIDX: " + idx);
 
         if(pm == null)
         {
             pm = FindFirstObjectByType<PlayerManager>();
         }
+        if(gm == null)
+        {
+            gm = FindFirstObjectByType<GameManager>();
+        }
 
-        //set player icon color
-        scores[playerID].GetComponent<Image>().sprite = pm.playerList[playerID].playerScript.SpriteSet[0];
-        scores[playerID].GetComponent<Image>().color = pm.playerList[playerID].playerScript.sr.color;
+        //teams
+        if(gm.gameMode == 1)
+        {
+            //set team icon color
+            scores[idx].GetComponent<Image>().sprite = pm.PlayerList[0].playerScript.SpriteSet[0];
+            scores[idx].GetComponent<Image>().color = pm.teamColors[idx];
 
-        //set progress bar color
-        //FINISH THIS!!!!
+            //set progress bar color
+            sliderFills[idx].color = pm.teamColors[idx];
+
+        } else //FFA
+        {
+            //set player icon color
+            scores[idx].GetComponent<Image>().sprite = pm.PlayerList[idx].playerScript.SpriteSet[0];
+            scores[idx].GetComponent<Image>().color = pm.PlayerList[idx].playerScript.sr.color;
+
+            //set progress bar color
+            sliderFills[idx].color = pm.PlayerList[idx].playerScript.sr.color;
+        }
+
+        
     }
 
     public void SetScores()
     {
-        foreach(PlayerConfig p in pm.playerList)
+        if(gm.gameMode == 1) //Teams
         {
-            Debug.Log("P" + p.playerIndex + " score: " + p.score);
-            //show score
-            scores[p.playerIndex].gameObject.SetActive(true);
+            foreach (Team t in pm.TeamList)
+            {
+                //real team w players
+                if(t.Players.Count > 0)
+                {
+                    Debug.Log("Team" + t.idx + " score: " + t.score);
 
-            scores[p.playerIndex].GetComponentInChildren<Slider>().value = p.score;
-            scores[p.playerIndex].GetComponentInChildren<TextMeshProUGUI>().text = p.score.ToString();
+                    //show score
+                    scores[t.idx].gameObject.SetActive(true);
+                    
+                    //set values
+                    scores[t.idx].GetComponentInChildren<Slider>().value = t.score;
+                    scores[t.idx].GetComponentInChildren<TextMeshProUGUI>().text = t.score.ToString();
+                }
+            }
+
+        } else //FFA
+        {
+             foreach(PlayerConfig p in pm.PlayerList)
+            {
+                Debug.Log("P" + p.playerIndex + " score: " + p.score);
+                //show score
+                scores[p.playerIndex].gameObject.SetActive(true);
+
+                scores[p.playerIndex].GetComponentInChildren<Slider>().value = p.score;
+                scores[p.playerIndex].GetComponentInChildren<TextMeshProUGUI>().text = p.score.ToString();
+
+            }
 
         }
+
+       
 
     }
 

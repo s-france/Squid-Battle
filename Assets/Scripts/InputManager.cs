@@ -41,16 +41,16 @@ public class InputManager : MonoBehaviour
         Debug.Log("Index: " + pi.playerIndex);
         
         //make sure player index is not already added (not that that should ever happen)
-        if(!pm.playerList.Any(p => p.playerIndex == pi.playerIndex))
+        if(!pm.PlayerList.Any(p => p.playerIndex == pi.playerIndex))
         {
-            pm.playerList.Add(new PlayerConfig(pi));
+            pm.PlayerList.Add(new PlayerConfig(pi));
 
             //move player to correct spawn location (based on idx)
             Transform spawn = gm.lc.GetSpawnPoints()[pi.playerIndex];
             pi.gameObject.transform.position = spawn.position;
 
             //must initialize heldItems list before calling DeactivatePlayer()
-            pm.playerList[pi.playerIndex].playerScript.Init();
+            pm.PlayerList[pi.playerIndex].playerScript.Init();
 
             pm.DeactivatePlayer(pi.playerIndex);
             
@@ -70,7 +70,7 @@ public class InputManager : MonoBehaviour
     //handle player leaving/disconnecting
     public void OnPlayerLeave(PlayerInput pi)
     {
-        pm.playerList[pi.playerIndex].isActive = false;
+        pm.PlayerList[pi.playerIndex].isActive = false;
         pm.DeactivatePlayer(pi.playerIndex);
         Debug.Log("P" + pi.playerIndex + " left!");
     }
@@ -79,7 +79,7 @@ public class InputManager : MonoBehaviour
     //ran when disconnected player controller reconnects
     public void OnPlayerReconnect(PlayerInput pi)
     {
-        pm.playerList[pi.playerIndex].isActive = true;
+        pm.PlayerList[pi.playerIndex].isActive = true;
         //REWORK: use OnStartMenu - not battlestarted
         if (gm.lc.GetLevelType() == 1)
         {

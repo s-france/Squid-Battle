@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rb;
     [HideInInspector] public SpriteRenderer sr;
     public SpriteRenderer eyeSR;
+    public SpriteRenderer hatSR;
     public ParticleSystem bubblePart;
     public GameObject hitPart; //particle prefabs
     public GameObject impactPart; //impact particle prefab
@@ -173,6 +174,8 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public int killCredit;
     [HideInInspector] public float killCreditTimer = 0;
 
+    [HideInInspector] public ArenaLevelController alc; //set in ArenaLevelController.StartLevel()
+
 
 
     void Awake()
@@ -212,8 +215,10 @@ public class PlayerController : MonoBehaviour
 
         transform.parent = gm.transform.GetChild(0);
 
-        idx = pm.playerList.FindIndex(i => i.input == this.gameObject.GetComponent<PlayerInput>());
+        idx = pm.PlayerList.FindIndex(i => i.input == this.gameObject.GetComponent<PlayerInput>());
+
         colorID = pm.FindFirstAvailableColorID(idx, 1);
+        
         Debug.Log("player idx (from playercontroller): " + idx);
 
 
@@ -223,6 +228,13 @@ public class PlayerController : MonoBehaviour
             Debug.Log("got SR!!");
         }
         rc = this.GetComponentInChildren<ReticleController>();
+
+        //teams
+        if(gm.gameMode == 1)
+        {
+            pm.SetPlayerTeamDefault(idx);
+        }
+
 
         Clones = new List<DummyPlayerController>();
 
@@ -488,7 +500,7 @@ public class PlayerController : MonoBehaviour
     //called when OnCharge() performed - handles player charging
     public virtual IEnumerator Charge()
     {
-        if(gm.battleStarted && pm.playerList[idx].isActive && isAlive)
+        if(gm.battleStarted && pm.PlayerList[idx].isActive && isAlive)
         {
             //StartCoroutine(rc.RenderReticle());
         }
@@ -537,7 +549,7 @@ public class PlayerController : MonoBehaviour
         if(gm.battleStarted && !isCoolingDown && /*pm.playerList[idx].*/isInBounds /*&& !specialCharging*/) //perform movement during match
         {
             ApplyMove(0, i_move, chargeTime);
-        } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
+        } else if (!gm.battleStarted && !pm.PlayerList[idx].isReady)
         {
             sr.sprite = SpriteSet[0];
         }
@@ -650,7 +662,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator SpecialCharge()
     {
-        if(gm.battleStarted && pm.playerList[idx].isActive && isAlive)
+        if(gm.battleStarted && pm.PlayerList[idx].isActive && isAlive)
         {
             if(heldItems.Any() && heldItems[selectedItemIdx].GetItemType() == "Warp")
             {
@@ -719,7 +731,7 @@ public class PlayerController : MonoBehaviour
             }
 
             UseItem(selectedItemIdx);
-        } else if (!gm.battleStarted && !pm.playerList[idx].isReady)
+        } else if (!gm.battleStarted && !pm.PlayerList[idx].isReady)
         {
             sr.sprite = SpriteSet[0];
         }
@@ -783,18 +795,33 @@ public class PlayerController : MonoBehaviour
 
         sr.color = pm.playerColors[color];
         sr.sprite = SpriteSet[0];
-        
+
         ParticleSystem.MainModule bubbles = transform.Find("BubbleTrail").GetComponent<ParticleSystem>().main;
-        bubbles.startColor = pm.playerColors[color];
 
-        rc.ChangeColor(color);
+        //set team color
+        if(gm.gameMode == 1 && pm.PlayerList[idx].team != -1)
+        {
+            //player fx match team
+            bubbles.startColor = pm.teamColors[pm.TeamList[pm.PlayerList[idx].team].color];
+            rc.ChangeColor(pm.TeamList[pm.PlayerList[idx].team].color);
 
+            hatSR.color = pm.teamColors[pm.TeamList[pm.PlayerList[idx].team].color];
+        } else
+        {
+            //player fx match individual
+            bubbles.startColor = pm.playerColors[color];
+            rc.ChangeColor(color);
+        }
+        
         //Dummys don't access pm
         if(!isDummy)
         {
             pm.SetPlayerColor(idx, color);
         }
+
     }
+
+
 
     //This is reduntant.  Use pm.ReadyPlayer(idx)
     /*public void ReadyUp()

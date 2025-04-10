@@ -30,7 +30,7 @@ public class PlayerUIController : MonoBehaviour
     
     public void OnJoin(InputAction.CallbackContext ctx)
     {
-        if(ctx.performed /*&& !gm.battleStarted*/ && !pm.playerList[pc.idx].isActive && gm.lc.GetLevelType() == 1)
+        if(ctx.performed /*&& !gm.battleStarted*/ && !pm.PlayerList[pc.idx].isActive && gm.lc.GetLevelType() == 1)
         {
             Debug.Log("Reconnect!!");
             pc.OnControllerReconnect(GetComponent<PlayerInput>());
@@ -45,13 +45,13 @@ public class PlayerUIController : MonoBehaviour
         //readyUp if A pressed before game (on CSS)
         if(ctx.performed && gm.lc.GetLevelType() == 1)
         {
-            if(pm.playerList[pc.idx].isActive && !pm.playerList[pc.idx].isReady)
+            if(pm.PlayerList[pc.idx].isActive && !pm.PlayerList[pc.idx].isReady)
             {
                 FindFirstObjectByType<AudioManager>().Play("UINav1");
 
                 pm.ReadyPlayer(pc.idx);
                 //pc.ReadyUp();
-            } else if (pm.playerList.TrueForAll(p => p.isReady || !p.isActive) && pm.playerList.Count(p => p.isActive) > 1)
+            } else if (pm.PlayerList.TrueForAll(p => p.isReady || !p.isActive) && pm.PlayerList.Count(p => p.isActive) > 1)
             {
                 //load map select
                 gm.sl.LoadScene("MatchSettings");
@@ -85,7 +85,7 @@ public class PlayerUIController : MonoBehaviour
         }
 
         //change color if on character select and not ready
-        if(ctx.performed && gm.lc.GetLevelType() == 1 && !pm.playerList[pc.idx].isReady) //change color only before match
+        if(ctx.performed && gm.lc.GetLevelType() == 1 && !pm.PlayerList[pc.idx].isReady) //change color only before match
         {
             FindFirstObjectByType<AudioManager>().Play("UINav3");
 
@@ -111,7 +111,7 @@ public class PlayerUIController : MonoBehaviour
         }
 
         //change color if on character select and not ready
-        if(ctx.performed && gm.lc.GetLevelType() == 1 && !pm.playerList[pc.idx].isReady) //change color only before match
+        if(ctx.performed && gm.lc.GetLevelType() == 1 && !pm.PlayerList[pc.idx].isReady) //change color only before match
         {
             FindFirstObjectByType<AudioManager>().Play("UINav3");
 
@@ -123,6 +123,50 @@ public class PlayerUIController : MonoBehaviour
             pc.ChangeColor(color);
         }
 
+    }
+
+
+    public void OnSelectZL(InputAction.CallbackContext ctx)
+    {
+        //ZL pressed
+        if(ctx.performed)
+        {
+            Debug.Log("Player" + pc.idx + " pressed ZL!");
+        }
+
+        //change teams
+        //if on Teams CSS and not ready
+        if(ctx.performed && gm.gameMode == 1 && gm.lc.GetLevelType() == 1 && !pm.PlayerList[pc.idx].isReady)
+        {
+            FindFirstObjectByType<AudioManager>().Play("UINav3");
+
+            //change team
+            int newTeam = pm.FindFirstAvailableTeam(pm.PlayerList[pc.idx].team - 1, -1);
+
+            pm.SetPlayerTeam(pc.idx, newTeam);
+        }
+    }
+
+    public void OnSelectZR(InputAction.CallbackContext ctx)
+    {
+        //ZR pressed
+        if(ctx.performed)
+        {
+            Debug.Log("Player" + pc.idx + " pressed ZR!");
+        }
+
+        //change teams
+        //if on Teams CSS and not ready
+        if(ctx.performed && gm.gameMode == 1 && gm.lc.GetLevelType() == 1 && !pm.PlayerList[pc.idx].isReady)
+        {
+            FindFirstObjectByType<AudioManager>().Play("UINav3");
+
+            //change team
+            int newTeam = pm.FindFirstAvailableTeam(pm.PlayerList[pc.idx].team + 1, 1);
+
+            pm.SetPlayerTeam(pc.idx, newTeam);
+        }
+        
     }
 
 }

@@ -9,7 +9,7 @@ public class CharacterSelectLC : LevelController
 {
     Transform Players;
 
-    Transform[][] PlayersUI;
+    [HideInInspector] public Transform[][] PlayersUI;
     [SerializeField] Transform[] P1UI;
     [SerializeField] Transform[] P2UI;
     [SerializeField] Transform[] P3UI;
@@ -77,9 +77,9 @@ public class CharacterSelectLC : LevelController
             pm = FindFirstObjectByType<PlayerManager>();
         }
 
-        if (pm != null && pm.playerList.Any())
+        if (pm != null && pm.PlayerList.Any())
         {
-            foreach (PlayerConfig p in pm.playerList)
+            foreach (PlayerConfig p in pm.PlayerList)
             {
                 //pm.DeactivatePlayer(p.playerIndex);
 
@@ -134,7 +134,7 @@ public class CharacterSelectLC : LevelController
 
         SpawnPlayer(idx);
 
-        pm.playerList[idx].input.SwitchCurrentActionMap("Menu");
+        pm.PlayerList[idx].input.SwitchCurrentActionMap("Menu");
         //Debug.Log("Action Map: " + pm.playerList[idx].input.currentActionMap);
 
         //Character Select UI stuff
@@ -142,10 +142,9 @@ public class CharacterSelectLC : LevelController
         //set colors
         SetUIColors(idx);
 
+
         //set UI to be active
         ActivatePlayerUI(idx);
-
-
 
     }
 
@@ -167,7 +166,7 @@ public class CharacterSelectLC : LevelController
     public override void SpawnPlayer(int idx)
     {
         //move player to spawnpoint
-        pm.playerList[pm.playerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
+        pm.PlayerList[pm.PlayerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
     }
 
 
@@ -181,7 +180,7 @@ public class CharacterSelectLC : LevelController
 
 
         //allow starting game if all active players are ready && more than 1 player
-        if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+        if(pm.PlayerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.PlayerList.Count(p => p.isActive) > 1)
         {
             //show ready to start UI
             ready2StartUI.gameObject.SetActive(true);
@@ -203,7 +202,7 @@ public class CharacterSelectLC : LevelController
         PlayersUI[idx][6].gameObject.SetActive(false);
 
         //allow starting game if all active players are ready && more than 1 player
-        if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+        if(pm.PlayerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.PlayerList.Count(p => p.isActive) > 1)
         {
             //show ready to start UI
             ready2StartUI.gameObject.SetActive(true);
@@ -228,7 +227,7 @@ public class CharacterSelectLC : LevelController
     }
 
 
-    void ActivatePlayerUI(int idx)
+    public virtual void ActivatePlayerUI(int idx)
     {
         Transform[] PlayerUI = PlayersUI[idx];
 
@@ -260,17 +259,17 @@ public class CharacterSelectLC : LevelController
 
 
         //set colors
-        PlayerUI[0].GetComponent<Image>().color = pm.playerColors[pm.playerList[idx].color];
+        PlayerUI[0].GetComponent<Image>().color = pm.playerColors[pm.PlayerList[idx].color];
 
-        foreach (PlayerConfig pc in pm.playerList)
+        foreach (PlayerConfig pc in pm.PlayerList)
         {
             idx = pc.playerIndex;
 
             PlayerUI = PlayersUI[idx];
             
 
-            PlayerUI[3].GetComponent<Image>().color = pm.playerColors[pm.FindFirstAvailableColorID(pm.playerList[idx].color -1 , -1)];
-            PlayerUI[4].GetComponent<Image>().color = pm.playerColors[pm.FindFirstAvailableColorID(pm.playerList[idx].color + 1, 1)];
+            PlayerUI[3].GetComponent<Image>().color = pm.playerColors[pm.FindFirstAvailableColorID(pm.PlayerList[idx].color -1 , -1)];
+            PlayerUI[4].GetComponent<Image>().color = pm.playerColors[pm.FindFirstAvailableColorID(pm.PlayerList[idx].color + 1, 1)];
         }
     }
 
@@ -281,20 +280,20 @@ public class CharacterSelectLC : LevelController
         {
             FindFirstObjectByType<AudioManager>().Play("UINav2");
 
-            if(pm.playerList[playerID].isActive)
+            if(pm.PlayerList[playerID].isActive)
             {
-                if(pm.playerList[playerID].isReady)
+                if(pm.PlayerList[playerID].isReady)
                 {
                     //unReady player
                     pm.UnReadyPlayer(playerID);
                 } else //drop out if held for 1 secs before game
                 {
-                    pm.playerList[playerID].playerScript.OnControllerDisconnect(pm.playerList[playerID].input);
+                    pm.PlayerList[playerID].playerScript.OnControllerDisconnect(pm.PlayerList[playerID].input);
                     //(^^this calls lc.OnPlayerLeave)
                 }
 
                 
-            } else if(!pm.playerList[playerID].isActive)
+            } else if(!pm.PlayerList[playerID].isActive)
             {
                 //go to previous screen (mode select)
 

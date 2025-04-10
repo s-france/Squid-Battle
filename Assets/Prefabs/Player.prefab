@@ -142,7 +142,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -515,17 +515,27 @@ MonoBehaviour:
   pm: {fileID: 0}
   im: {fileID: 0}
   pi: {fileID: 4237179659672751331}
+  SolidCol: {fileID: 0}
+  HurtBoxTrigger: {fileID: 0}
   rumbleCon: {fileID: 8285239400662830239}
   rc: {fileID: 0}
   WarpPoint: {fileID: 0}
   rb: {fileID: -3142732938146884802}
   sr: {fileID: 0}
+  eyeSR: {fileID: 0}
   bubblePart: {fileID: 6286807170148970422}
   hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
-  spriteSet: []
+  impactPart: {fileID: 0}
+  deathPart: {fileID: 0}
+  DummyPrefab: {fileID: 0}
+  SpriteSet: []
+  EyeSpriteSet: []
+  tg: {fileID: 0}
+  storedVelocity: {x: 0, y: 0}
   i_move: {x: 0, y: 0}
   true_i_move: {x: 0, y: 0}
   rotation: {x: 0, y: 0, z: 0}
+  lastIMove: 0
   idx: 0
   colorID: 0
   heldItems: []
@@ -534,7 +544,10 @@ MonoBehaviour:
   chargeTime: 0
   specialCharging: 0
   specialChargeTime: 0
+  staticTimer: 0
   rewindSize: 100
+  lastPrevStatePos: {x: 0, y: 0}
+  prevPos: []
   moveCurve:
     serializedVersion: 2
     m_Curve:
@@ -779,14 +792,33 @@ MonoBehaviour:
   maxMoveTime: 0.28
   maxMovePower: 2.75
   maxHitstop: 0.15
+  DIMod: {x: 0, y: 0}
+  movePriority: 0
   moveTime: 0
   moveTimer: 0
   hitStopTimer: 0
+  hitStopTime: 0
   moveSpeed: 0
   movePower: 0
+  glidePower: 0
   isMoving: 0
+  isGliding: 0
   isKnockback: 0
   isHitStop: 0
+  armorCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxMoveArmor: 0
+  maxPassiveArmor: 0
+  passiveArmor: 0
+  moveArmor: 0
+  lastChargePress: 0
+  wallTechFrameWindow: 0
+  parryFrameWindow: 0
+  canWallTech: 0
   isCoolingDown: 0
   isGrown: 0
   isRewind: 0
@@ -800,6 +832,8 @@ MonoBehaviour:
   OOBMoveMod: 0.1
   knockbackMultiplier: 1.2
   DIStrength: 0
+  forwardDIStrength: 0
+  lateralDIStrength: 0
   maxRumbleStrength: 0.55
   rumbleCurve:
     serializedVersion: 2
@@ -836,10 +870,18 @@ MonoBehaviour:
     m_RotationOrder: 4
   defaultScale: {x: 0, y: 0, z: 0}
   defaultChargeStrength: 0
+  defaultMaxChargeTime: 0
   defaultMaxMoveSpeed: 0
   defaultMaxMoveTime: 0
   defaultMaxMovePower: 0
   defaultMaxHitstop: 0
+  defaultMaxPassiveArmor: 0
+  defaultMaxMoveArmor: 0
+  Clones: []
+  isDummy: 0
+  isAlive: 1
+  killCredit: 0
+  killCreditTimer: 0
 --- !u!114 &8285239400662830239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1020,7 +1062,6 @@ MonoBehaviour:
   pc: {fileID: 8809073331192073115}
   lr: {fileID: 5371809183366282524}
   wr: {fileID: 194492634184046858}
-  rlr: {fileID: 0}
   warpSpeed: 5
   warpSR: {fileID: 8057401209555982923}
   colorSet:
@@ -5928,7 +5969,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6085,7 +6126,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6165,6 +6206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e780ca8fda919e8418eef41d56c8dd31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shockWaveCollider: {fileID: 0}
   shockPower: 0.6
   hitstopRatio: 0.2
 --- !u!1 &7439336317534698115

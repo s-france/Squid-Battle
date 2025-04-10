@@ -51,9 +51,9 @@ public class MainMenuLC : LevelController
             pm = FindFirstObjectByType<PlayerManager>();
         }
 
-        if (pm != null && pm.playerList.Any())
+        if (pm != null && pm.PlayerList.Any())
         {
-            foreach (PlayerConfig p in pm.playerList)
+            foreach (PlayerConfig p in pm.PlayerList)
             {
                 pm.DeactivatePlayer(p.playerIndex);
 
@@ -84,7 +84,7 @@ public class MainMenuLC : LevelController
     {
         transform.Find("Canvas").Find("PlayersWin").gameObject.SetActive(false);
 
-        foreach (PlayerConfig p in pm.playerList)
+        foreach (PlayerConfig p in pm.PlayerList)
         {
             if(p.isActive)
             {
@@ -108,7 +108,7 @@ public class MainMenuLC : LevelController
     public override void SpawnPlayer(int idx)
     {
         //move player to spawnpoint
-        pm.playerList[pm.playerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
+        pm.PlayerList[pm.PlayerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
     }
     
 

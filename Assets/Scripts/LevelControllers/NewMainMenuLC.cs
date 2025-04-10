@@ -52,7 +52,7 @@ public class NewMainMenuLC : LevelController
 
         if(pm != null)
         {
-            foreach (PlayerConfig p in pm.playerList)
+            foreach (PlayerConfig p in pm.PlayerList)
             {
                 pm.DeactivatePlayer(p.playerIndex);
 
@@ -90,7 +90,7 @@ public class NewMainMenuLC : LevelController
     public override void SpawnPlayer(int idx)
     {
         //move player to spawnpoint
-        pm.playerList[pm.playerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
+        pm.PlayerList[pm.PlayerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
     }
 
     public void LoadMenu(int type)

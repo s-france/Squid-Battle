@@ -117,6 +117,7 @@ MonoBehaviour:
   rb: {fileID: 1611419156839944238}
   sr: {fileID: 0}
   eyeSR: {fileID: 582125318734987415}
+  hatSR: {fileID: 2001265292719222255}
   bubblePart: {fileID: 1513515051560610982}
   hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
   impactPart: {fileID: 1176242393547921506, guid: b66d07bc822427b43b2d0b6c2f53e9ce, type: 3}
@@ -540,6 +541,7 @@ MonoBehaviour:
   isAlive: 1
   killCredit: 0
   killCreditTimer: 0
+  alc: {fileID: 0}
   moveSpeedCap: 60
   moveTimeCap: 0.7
   oobLifespan: 2.85
@@ -631,6 +633,11 @@ ParticleSystem:
 --- !u!50 &1611419156839944238 stripped
 Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: -3142732938146884802, guid: 2f5f212fb144e774ebd2e4dfc08d170e, type: 3}
+  m_PrefabInstance: {fileID: 4773301189638980368}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &2001265292719222255 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 6483987239586590463, guid: 2f5f212fb144e774ebd2e4dfc08d170e, type: 3}
   m_PrefabInstance: {fileID: 4773301189638980368}
   m_PrefabAsset: {fileID: 0}
 --- !u!58 &2510817960810667069 stripped

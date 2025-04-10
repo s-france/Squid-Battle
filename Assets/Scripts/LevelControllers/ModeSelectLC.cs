@@ -96,7 +96,7 @@ public class ModeSelectLC : LevelController
     public override void SpawnPlayer(int idx)
     {
         //move player to spawnpoint
-        pm.playerList[pm.playerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
+        pm.PlayerList[pm.PlayerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
     }
 
 
@@ -115,15 +115,17 @@ public class ModeSelectLC : LevelController
         switch(modeID)
         {
             case 0: //classic
+                gm.gameMode = 0;
                 sl.LoadScene("CharacterSelect");
                 break;
             case 1: //teams
                 //INSERT LOAD HERE
-
+                gm.gameMode = 1;
+                sl.LoadScene("TeamCharacterSelect");
                 break;
             case 2: //soccer
-                //INSERT LOAD HERE
-
+                gm.gameMode = 2;
+                sl.LoadScene("TeamCharacterSelect");
                 break;
             case 3: //coin
                 //INSERT LOAD HERE

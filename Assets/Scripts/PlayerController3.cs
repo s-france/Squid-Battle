@@ -25,8 +25,9 @@ public class PlayerController3 : PlayerController
     //int movePriority = 0;
     int movePhase = 0;
 
-    [SerializeField] float oobLifespan; //how long the player can survive offstage
-    float oobTimer; //how long the player has been offstage
+    public float oobLifespan; //how long the player can survive offstage
+    [HideInInspector] public float oobTimer; //how long the player has been offstage
+    float oobGraceTimer = 0; //grace period before oobTimer starts passively ticking
 
 
     float glideTimer = 0;
@@ -299,7 +300,6 @@ public class PlayerController3 : PlayerController
                 {
                     ApplyMove(0, i_move, chargeTime);
                 }
-                
             }
         }
 
@@ -897,7 +897,7 @@ public class PlayerController3 : PlayerController
         if(!isInBounds) //Offstage
         {
             //if time runs out
-            if(oobTimer > oobLifespan && isAlive)
+            if(oobTimer > oobLifespan && isAlive && alc.roundOver == false)
             {
                 //kill this player instance
                 KillPlayer();
@@ -911,8 +911,24 @@ public class PlayerController3 : PlayerController
             //tick OOB clock while not launching / rewind / item
             if((movePriority < 2 || (movePower < (maxMovePower * powerCurve.Evaluate((1.8f * minCharge)/maxChargeTime)))) && !isRewind /*&& !specialCharging*/)
             {
-                oobTimer += Time.fixedDeltaTime;
+                if( (charging && chargeTime <= maxChargeTime) || (specialCharging && specialChargeTime <= maxChargeTime))
+                {
+                    oobTimer += (.75f * Time.fixedDeltaTime);
+                } else if(oobGraceTimer < 2)
+                {
+                    oobGraceTimer += Time.fixedDeltaTime;
+                } else
+                {
+                    oobTimer += (.25f * Time.fixedDeltaTime);
+                }
+
+            } else
+            {
+                oobGraceTimer = 0;
             }
+
+
+
         } else //Onstage
         {
             //restore oob time while onstage
@@ -2473,6 +2489,7 @@ public class PlayerController3 : PlayerController
         HurtBoxTrigger.enabled = false;
         sr.enabled = false;
         eyeSR.enabled = false;
+        hatSR.enabled = false;
         GetComponentInChildren<TrailRenderer>().emitting = false;
         GetComponentInChildren<TrailRenderer>().Clear();
         rc.DeactivateReticle();
@@ -2506,6 +2523,13 @@ public class PlayerController3 : PlayerController
         HurtBoxTrigger.enabled = true;
         sr.enabled = true;
         eyeSR.enabled = true;
+
+        //enable hat for team battle
+        if(gm.gameMode == 1)
+        {
+            hatSR.enabled = true;
+        }
+
         GetComponentInChildren<TrailRenderer>().emitting = false;
         GetComponentInChildren<TrailRenderer>().Clear();
         rc.DeactivateReticle();
@@ -2547,7 +2571,7 @@ public class PlayerController3 : PlayerController
     //used for killing this player specifically (not eliminating from game if clones are alive)
     public override void KillPlayer()
     {
-        SpawnDeathParticles(transform.position, pm.playerList[killCredit].playerScript.sr.color);
+        SpawnDeathParticles(transform.position, pm.PlayerList[killCredit].playerScript.sr.color);
 
         isAlive = false;
         Deactivate();

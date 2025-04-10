@@ -98,7 +98,7 @@ public class MatchSettingsLC : LevelController
         //disable players joining
         pm.im.pim.DisableJoining();
 
-        foreach (PlayerConfig p in pm.playerList)
+        foreach (PlayerConfig p in pm.PlayerList)
         {
             pm.DeactivatePlayer(p.playerIndex);
 
@@ -111,8 +111,8 @@ public class MatchSettingsLC : LevelController
 
             //assign players to UI input modules
             UIInputModules[p.playerIndex].gameObject.SetActive(true);
-            UIInputModules[p.playerIndex].actionsAsset = pm.playerList[pm.playerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.actions;
-            pm.playerList[pm.playerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.uiInputModule = UIInputModules[p.playerIndex];
+            UIInputModules[p.playerIndex].actionsAsset = pm.PlayerList[pm.PlayerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.actions;
+            pm.PlayerList[pm.PlayerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.uiInputModule = UIInputModules[p.playerIndex];
 
             //set player UI colors
             SetUIColors(p.playerIndex);
@@ -122,7 +122,7 @@ public class MatchSettingsLC : LevelController
         gm.ms.ResetItemSettings();
 
         //set P1 icon color
-        LeftUIElements[4].GetComponent<Image>().color = pm.playerList[0].playerScript.sr.color;
+        LeftUIElements[4].GetComponent<Image>().color = pm.PlayerList[0].playerScript.sr.color;
 
         //initialize p1 menu state tracking
         p1MenuState = 0;
@@ -135,7 +135,7 @@ public class MatchSettingsLC : LevelController
     public override void EndLevel()
     {
         //set player scores to 0    
-        foreach(PlayerConfig p in pm.playerList)
+        foreach(PlayerConfig p in pm.PlayerList)
         {
             p.score = 0;
         }
@@ -174,7 +174,7 @@ public class MatchSettingsLC : LevelController
         if(ctx.performed)
         {
             //start game if all players ready
-            if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+            if(pm.PlayerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.PlayerList.Count(p => p.isActive) > 1)
             {
                 FindFirstObjectByType<AudioManager>().Play("UINav1");
 
@@ -186,7 +186,7 @@ public class MatchSettingsLC : LevelController
 
 
 
-            if(!pm.playerList[playerID].isReady)
+            if(!pm.PlayerList[playerID].isReady)
             {
                 //FindFirstObjectByType<AudioManager>().Play("UINav1");
 
@@ -214,7 +214,7 @@ public class MatchSettingsLC : LevelController
 
         if(ctx.started)
         {
-            if (pm.playerList[playerID].isReady)
+            if (pm.PlayerList[playerID].isReady)
             {
                 FindFirstObjectByType<AudioManager>().Play("UINav2");
                 pm.UnReadyPlayer(playerID);
@@ -251,7 +251,7 @@ public class MatchSettingsLC : LevelController
         base.ReadyPlayer(idx);
 
         //allow starting game if all active players are ready && more than 1 player
-        if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+        if(pm.PlayerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.PlayerList.Count(p => p.isActive) > 1)
         {
             //show ready to start UI
             ready2StartUI.gameObject.SetActive(true);
@@ -286,7 +286,7 @@ public class MatchSettingsLC : LevelController
 
 
         //allow starting game if all active players are ready && more than 1 player
-        if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+        if(pm.PlayerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.PlayerList.Count(p => p.isActive) > 1)
         {
             //show ready to start UI
             ready2StartUI.gameObject.SetActive(true);

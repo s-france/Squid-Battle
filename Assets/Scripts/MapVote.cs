@@ -39,7 +39,7 @@ public class MapVote : MonoBehaviour
         gm = FindFirstObjectByType<GameManager>();
         pm = FindFirstObjectByType<PlayerManager>();
 
-        foreach(PlayerConfig p in pm.playerList)
+        foreach(PlayerConfig p in pm.PlayerList)
         {
             if(!(gm.lc.GetLevelType() == 3 && p.playerIndex == 0))
             {
@@ -87,7 +87,7 @@ public class MapVote : MonoBehaviour
 
         gameObject.SetActive(true);
 
-        foreach(PlayerConfig p in pm.playerList)
+        foreach(PlayerConfig p in pm.PlayerList)
         {
             //switch to menu input action map
             p.input.SwitchCurrentActionMap("Menu");
@@ -120,12 +120,12 @@ public class MapVote : MonoBehaviour
         }
 
         //set token color
-        TokenSprites[idx].sprite = pm.playerList[idx].playerScript.SpriteSet[0];
-        TokenSprites[idx].color = pm.playerList[idx].playerScript.sr.color;
+        TokenSprites[idx].sprite = pm.PlayerList[idx].playerScript.SpriteSet[0];
+        TokenSprites[idx].color = pm.PlayerList[idx].playerScript.sr.color;
 
         //set confirmed token colors
-        TokenSprites[idx+6].sprite = pm.playerList[idx].playerScript.SpriteSet[2];
-        TokenSprites[idx+6].color = pm.playerList[idx].playerScript.sr.color;
+        TokenSprites[idx+6].sprite = pm.PlayerList[idx].playerScript.SpriteSet[2];
+        TokenSprites[idx+6].color = pm.PlayerList[idx].playerScript.sr.color;
     }
 
 

@@ -32,6 +32,8 @@ public class ArenaLevelController : LevelController
     [SerializeField] ScoreBoard sb;
     [SerializeField] Transform ready2StartUI;
 
+    [HideInInspector] public bool roundOver = false;
+
 
 
     public virtual void Awake()
@@ -119,8 +121,11 @@ public class ArenaLevelController : LevelController
         FindFirstObjectByType<AudioManager>().PlayRandom("BattleTheme");
 
         //move players to spawn positions
-        foreach (PlayerConfig p in pm.playerList.Where(p => p.isActive))
+        foreach (PlayerConfig p in pm.PlayerList.Where(p => p.isActive))
         {
+            //set ArenaLC
+            p.playerScript.alc = this;
+
             pm.DeactivatePlayer(p.playerIndex);
             pm.ReactivatePlayer(p.playerIndex);
 
@@ -138,12 +143,26 @@ public class ArenaLevelController : LevelController
             //prepare post-game UI:
             //assign players to UI input modules
             UIInputModules[p.playerIndex].gameObject.SetActive(true);
-            UIInputModules[p.playerIndex].actionsAsset = pm.playerList[pm.playerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.actions;
-            pm.playerList[pm.playerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.uiInputModule = UIInputModules[p.playerIndex];
+            UIInputModules[p.playerIndex].actionsAsset = pm.PlayerList[pm.PlayerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.actions;
+            pm.PlayerList[pm.PlayerList.FindIndex(player => player.playerIndex == p.playerIndex)].input.uiInputModule = UIInputModules[p.playerIndex];
 
             //set player UI colors
             SetUIColors(p.playerIndex);
         }
+        
+        
+        //set team colors
+        if(gm.gameMode ==1)
+        {
+            foreach (Team t in pm.TeamList)
+            {
+                if(t.Players.Count > 0)
+                {
+                    sb.SetColor(t.idx);
+                }
+            }
+        }
+        
 
         
 
@@ -176,11 +195,16 @@ public class ArenaLevelController : LevelController
         sb.SetColor(idx);
     }
 
-    
-    //shows results + mapvote after round ends
-    public override void ShowResults()
-    {   
+
+    //shows results for team battle 
+    public override void ShowTeamResults()
+    {
+        //signal round has ended
+        roundOver = true;
+
         FindFirstObjectByType<AudioManager>().StopAll();
+
+        //ADD TEAM SURVIVAL RANKING!!!!!
 
         //assign points
         pm.placements.Reverse();
@@ -196,11 +220,12 @@ public class ArenaLevelController : LevelController
                     //headhunters
                     if(gm.ms.scoreFormat == 0)
                     {
-                        pm.playerList[i].score += 1; //1st +1
+                        pm.TeamList[i].score += 1; //1st +1
+                    
                     //survival
                     } else if(gm.ms.scoreFormat == 1)
                     {
-                        pm.playerList[i].score += 3; //1st +3
+                        pm.TeamList[i].score += 3; //1st +3
                     }
                     break;
                 }
@@ -208,7 +233,7 @@ public class ArenaLevelController : LevelController
                 {
                     if(gm.ms.scoreFormat == 1)
                     {
-                        pm.playerList[i].score += 2; //2nd +2
+                        pm.TeamList[i].score += 2; //2nd +2
                     }
                     break;
                 }
@@ -216,7 +241,138 @@ public class ArenaLevelController : LevelController
                 {
                     if(gm.ms.scoreFormat == 1)
                     {
-                        pm.playerList[i].score += 1; //3rd +1
+                        pm.TeamList[i].score += 1; //3rd +1
+                    }
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+
+            idx++;
+        }
+
+        pm.placements.Clear();
+
+        //update scoreboard
+        //(team version)
+        sb.SetScores();
+
+        resultsScreen.gameObject.SetActive(true);
+
+
+        //ADD TEAM TIE CHECK!!
+        //check for ties
+        List<Team> winners = pm.TeamList.FindAll(t => t.score >= gm.ms.pointsToWin);
+        
+        
+        int max = 0;
+        int count = 0;
+
+        foreach(Team t in winners)
+        {
+            if(t.score > max)
+            {
+                max = t.score;
+                count = 1;
+            } else if(t.score == max)
+            {
+                count ++;
+            }
+        }
+
+
+        //if there is one winner show end screen
+        if(pm.TeamList.Exists(t => t.score >= gm.ms.pointsToWin) && count ==1)
+        {
+
+            int winner = -1;// = pm.playerList.Find(p => p.score >= gm.ms.pointsToWin).playerIndex;
+
+            foreach(Team t in winners)
+            {
+                if(t.score >= max)
+                {
+                    winner = t.idx;
+                    break;
+                }
+            }
+            
+            //set winner team sprite
+            winnerSprite.sprite = pm.PlayerList[0].playerScript.SpriteSet[0];
+            winnerSprite.color = pm.teamColors[pm.TeamList[winner].color];
+            
+            //set winning team text
+            winnerText.text = "Team " + winner + " Wins!";
+
+            mv.DeactivateMapVoteMenu();
+            
+            finalResultMenu.gameObject.SetActive(true);
+
+            //switch P1 input to menu
+            pm.PlayerList[0].input.SwitchCurrentActionMap("Menu");
+            //P1 select results menu
+            UIInputModules[0].GetComponent<MultiplayerEventSystem>().SetSelectedGameObject(ReturnButton);
+
+
+        } else
+        {
+            finalResultMenu.gameObject.SetActive(false);
+            
+            mv.ActivateMapVoteMenu();
+
+        }
+    }
+
+
+    
+    //shows results + mapvote after round ends
+    public override void ShowResults()
+    {
+        //signal round has ended
+        roundOver = true;
+
+        FindFirstObjectByType<AudioManager>().StopAll();
+
+
+        //ADD TEAM SURVIVAL RANKING!!!!!
+
+        //assign points
+        pm.placements.Reverse();
+        int idx = 0;
+        foreach(int i in pm.placements)
+        {
+            Debug.Log("placements[idx] = " + i);
+
+            switch (idx)
+            {
+                case 0:
+                {
+                    //headhunters
+                    if(gm.ms.scoreFormat == 0)
+                    {
+                        pm.PlayerList[i].score += 1; //1st +1
+                    //survival
+                    } else if(gm.ms.scoreFormat == 1)
+                    {
+                        pm.PlayerList[i].score += 3; //1st +3
+                    }
+                    break;
+                }
+                case 1:
+                {
+                    if(gm.ms.scoreFormat == 1)
+                    {
+                        pm.PlayerList[i].score += 2; //2nd +2
+                    }
+                    break;
+                }
+                case 2:
+                {
+                    if(gm.ms.scoreFormat == 1)
+                    {
+                        pm.PlayerList[i].score += 1; //3rd +1
                     }
                     break;
                 }
@@ -237,8 +393,9 @@ public class ArenaLevelController : LevelController
         resultsScreen.gameObject.SetActive(true);
 
 
+        //ADD TEAM TIE CHECK!!
         //check for ties
-        List<PlayerConfig> winners = pm.playerList.FindAll(p => p.score >= gm.ms.pointsToWin);
+        List<PlayerConfig> winners = pm.PlayerList.FindAll(p => p.score >= gm.ms.pointsToWin);
         int max = 0;
         int count = 0;
 
@@ -256,7 +413,7 @@ public class ArenaLevelController : LevelController
 
 
         //if there is one winner show end screen
-        if(pm.playerList.Exists(p => p.score >= gm.ms.pointsToWin) && count ==1)
+        if(pm.PlayerList.Exists(p => p.score >= gm.ms.pointsToWin) && count ==1)
         {
 
             int winner = -1;// = pm.playerList.Find(p => p.score >= gm.ms.pointsToWin).playerIndex;
@@ -271,8 +428,8 @@ public class ArenaLevelController : LevelController
             }
             
             //set winner sprite
-            winnerSprite.sprite = pm.playerList.Find(p => p.playerIndex == winner).playerScript.SpriteSet[0];
-            winnerSprite.color = pm.playerList.Find(p => p.playerIndex == winner).playerScript.sr.color;
+            winnerSprite.sprite = pm.PlayerList.Find(p => p.playerIndex == winner).playerScript.SpriteSet[0];
+            winnerSprite.color = pm.PlayerList.Find(p => p.playerIndex == winner).playerScript.sr.color;
             //set winner text
             winnerText.text = "Player " + winner + " Wins!";
 
@@ -281,7 +438,7 @@ public class ArenaLevelController : LevelController
             finalResultMenu.gameObject.SetActive(true);
 
             //switch P1 input to menu
-            pm.playerList[0].input.SwitchCurrentActionMap("Menu");
+            pm.PlayerList[0].input.SwitchCurrentActionMap("Menu");
             //P1 select results menu
             UIInputModules[0].GetComponent<MultiplayerEventSystem>().SetSelectedGameObject(ReturnButton);
 
@@ -316,7 +473,7 @@ public class ArenaLevelController : LevelController
         if(ctx.performed)
         {
             //start game if all players ready
-            if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+            if(pm.PlayerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.PlayerList.Count(p => p.isActive) > 1)
             {
                 //assign value randomly selected from gm.ms.MapPool
                 int map = gm.ms.PickMap();
@@ -328,7 +485,7 @@ public class ArenaLevelController : LevelController
             }
 
 
-            if(!pm.playerList[playerID].isReady)
+            if(!pm.PlayerList[playerID].isReady)
             {
                 pm.ReadyPlayer(playerID); //calls lc.ReadyPlayer
             }
@@ -342,7 +499,7 @@ public class ArenaLevelController : LevelController
 
         if(ctx.started)
         {
-            if (pm.playerList[playerID].isReady)
+            if (pm.PlayerList[playerID].isReady)
             {
                 FindFirstObjectByType<AudioManager>().Play("UINav2");
                 pm.UnReadyPlayer(playerID);
@@ -361,7 +518,7 @@ public class ArenaLevelController : LevelController
         base.ReadyPlayer(idx);
 
         //allow starting game if all active players are ready && more than 1 player
-        if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+        if(pm.PlayerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.PlayerList.Count(p => p.isActive) > 1)
         {
             //show ready to start UI
             ready2StartUI.gameObject.SetActive(true);
@@ -396,7 +553,7 @@ public class ArenaLevelController : LevelController
 
 
         //allow starting game if all active players are ready && more than 1 player
-        if(pm.playerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.playerList.Count(p => p.isActive) > 1)
+        if(pm.PlayerList.TrueForAll(p => (p.isReady || !p.isActive)) && pm.PlayerList.Count(p => p.isActive) > 1)
         {
             //show ready to start UI
             ready2StartUI.gameObject.SetActive(true);
@@ -417,7 +574,7 @@ public class ArenaLevelController : LevelController
     //moves player to spawnpoint
     public override void SpawnPlayer(int idx)
     {
-        pm.playerList[pm.playerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
+        pm.PlayerList[pm.PlayerList.FindIndex(p => p.playerIndex == idx)].input.gameObject.transform.position = SpawnPoints[idx].position;
     }
 
     public override int GetLevelType()

@@ -1043,6 +1043,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Select ZR",
+                    "type": "Button",
+                    "id": "cfcfb92e-706a-4701-bdcf-9123a13fa899",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Select ZL",
+                    "type": "Button",
+                    "id": "e29b8b4e-75c8-47af-9c1a-24c83aacc04a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1125,30 +1143,8 @@
                 },
                 {
                     "name": "",
-                    "id": "e669c2b0-3b2c-4a5a-8f4a-9693daeea850",
-                    "path": "<Gamepad>/leftTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Select L",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "00116f86-d6a5-4dcf-b0ca-5f4e3fbb0954",
                     "path": "<Gamepad>/rightShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Select R",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f57c0aca-c179-4c86-a861-e8d46f916dea",
-                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -1221,6 +1217,28 @@
                     "action": "Join",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "f57c0aca-c179-4c86-a861-e8d46f916dea",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select ZR",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e669c2b0-3b2c-4a5a-8f4a-9693daeea850",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select ZL",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

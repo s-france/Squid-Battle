@@ -281,7 +281,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -301,7 +301,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1841227551
   m_SortingLayer: 2
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 1, g: 0.99329394, b: 0.7216981, a: 1}
   m_FlipX: 0
@@ -1402,6 +1402,7 @@ MonoBehaviour:
   winnerText: {fileID: 691032943}
   sb: {fileID: 774134857}
   ready2StartUI: {fileID: 1119079211}
+  roundOver: 0
 --- !u!4 &723883653
 Transform:
   m_ObjectHideFlags: 0
@@ -2935,6 +2936,10 @@ PrefabInstance:
     - target: {fileID: 3105877379822129485, guid: 43da02e854c5d0c45884aaca08b3a5c8, type: 3}
       propertyPath: m_Name
       value: ScoreBoard
+      objectReference: {fileID: 0}
+    - target: {fileID: 3105877379822129485, guid: 43da02e854c5d0c45884aaca08b3a5c8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3743517592772358899, guid: 43da02e854c5d0c45884aaca08b3a5c8, type: 3}
       propertyPath: m_Pivot.x
