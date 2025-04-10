@@ -59,7 +59,8 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public List<ItemBehavior> heldItems;
     [HideInInspector] public int selectedItemIdx;
     [HideInInspector] public bool charging;
-    [HideInInspector] public float chargeTime;
+    [HideInInspector] public float chargeTime; //time spent charging
+    [HideInInspector] public float chargeVal; //value of charge (stops building when out of stamina)
     [HideInInspector] public bool specialCharging;
     [HideInInspector] public float specialChargeTime;
 

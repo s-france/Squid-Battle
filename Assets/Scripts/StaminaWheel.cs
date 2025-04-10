@@ -17,7 +17,7 @@ public class StaminaWheel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        wheel.value = 1-(pc.oobTimer/pc.oobLifespan);
+        wheel.value = pc.stamina/pc.maxStamina;
 
         if(wheel.value == 1)
         {

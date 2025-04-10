@@ -25,8 +25,8 @@ public class PlayerController3 : PlayerController
     //int movePriority = 0;
     int movePhase = 0;
 
-    public float oobLifespan; //how long the player can survive offstage
-    [HideInInspector] public float oobTimer; //how long the player has been offstage
+    public float maxStamina; //how long the player can survive offstage
+    [HideInInspector] public float stamina = 5; //how long the player has been offstage
     float oobGraceTimer = 0; //grace period before oobTimer starts passively ticking
 
 
@@ -418,6 +418,7 @@ public class PlayerController3 : PlayerController
 
                 sr.sprite = SpriteSet[2]; //charging sprite
                 chargeTime += Time.deltaTime;
+                
 
                 RotateSprite(i_move);
 
@@ -897,7 +898,7 @@ public class PlayerController3 : PlayerController
         if(!isInBounds) //Offstage
         {
             //if time runs out
-            if(oobTimer > oobLifespan && isAlive && alc.roundOver == false)
+            if(stamina < 0 && isAlive && alc.roundOver == false)
             {
                 //kill this player instance
                 KillPlayer();
@@ -913,13 +914,13 @@ public class PlayerController3 : PlayerController
             {
                 if( (charging && chargeTime <= maxChargeTime) || (specialCharging && specialChargeTime <= maxChargeTime))
                 {
-                    oobTimer += (.75f * Time.fixedDeltaTime);
+                    stamina -= (.75f * Time.fixedDeltaTime);
                 } else if(oobGraceTimer < 2)
                 {
                     oobGraceTimer += Time.fixedDeltaTime;
                 } else
                 {
-                    oobTimer += (.25f * Time.fixedDeltaTime);
+                    stamina -= (.25f * Time.fixedDeltaTime);
                 }
 
             } else
@@ -932,15 +933,18 @@ public class PlayerController3 : PlayerController
         } else //Onstage
         {
             //restore oob time while onstage
-            if(oobTimer > 0)
+            if(stamina < maxStamina)
             {
                 //decrease regen tick rate
-                oobTimer -= .5f * Time.fixedDeltaTime;
-            } else if(oobTimer < 0)
-            {
-                oobTimer = 0;
+                stamina += .25f * Time.fixedDeltaTime;
             }
             
+        }
+
+        //cap stamina at max
+        if(stamina > maxStamina)
+        {
+            stamina = maxStamina;
         }
 
 
@@ -2510,6 +2514,8 @@ public class PlayerController3 : PlayerController
     public override void Reactivate()
     {
         ResetDefaultStats();
+
+        stamina = maxStamina;
 
         bubblePart.gameObject.SetActive(true);
 

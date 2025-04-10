@@ -1282,8 +1282,8 @@ MonoBehaviour:
   alc: {fileID: 0}
   moveSpeedCap: 60
   moveTimeCap: 0.7
-  oobLifespan: 2
-  oobTimer: 0
+  maxStamina: 2
+  stamina: 0
   dodgeSpeed: 10
   dodgeTime: 0.4
   dodgeCurve:
