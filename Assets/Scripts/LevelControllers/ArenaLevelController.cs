@@ -13,6 +13,8 @@ using UnityEngine.Rendering;
 public class ArenaLevelController : LevelController
 {
     //Arena stuff
+    [SerializeField] Transform Laser;
+    [SerializeField] Transform KillPlanes;
     [SerializeField] List<Vector2> ArenaShrinks;
     [SerializeField] float shrinkSpeed;
     Transform arena;
@@ -99,6 +101,35 @@ public class ArenaLevelController : LevelController
         
     }
 
+    public virtual IEnumerator LaserClock()
+    {
+        float timer = 0;
+
+        while (timer < 45)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        Debug.Log("STARTING LASER");
+        Laser.gameObject.SetActive(true);
+
+    }
+
+    public virtual IEnumerator KillPlaneClock()
+    {
+        float timer = 0;
+
+        while (timer < 45)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        Debug.Log("STARTING KILLPLANES");
+        KillPlanes.gameObject.SetActive(true);
+    }
+
 
     public override void StartLevel()
     {
@@ -163,15 +194,35 @@ public class ArenaLevelController : LevelController
             }
         }
         
-
-        
-
         gm.battleStarted = true;
         Debug.Log("game started!");
 
         StartCoroutine(im.RandomSpawns(15));
 
-        StartCoroutine(ShrinkClock());
+        //not doing this anymore
+        //StartCoroutine(ShrinkClock());
+
+        //StartCoroutine(LaserClock());
+        //StartCoroutine(KillPlaneClock());
+
+        //pick random endgame routine
+        //NEW endgame routines
+        int r = Random.Range(1,3);
+        switch (r)
+        {
+            case 1: //laser
+                StartCoroutine(LaserClock());
+                break;
+
+            case 2: //killplanes
+                StartCoroutine(KillPlaneClock());
+                break;
+
+            default:
+                break;
+        }
+
+
 
         //ITEM TESTING
         //itemMan.SpawnItem(2, itemMan.transform);

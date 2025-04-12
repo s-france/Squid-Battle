@@ -8,8 +8,9 @@ using UnityEngine.UIElements;
 public class ShotObj : MonoBehaviour
 {
     [HideInInspector] public int parentID;
-    [SerializeField] float parentImmunityTime;
-    [HideInInspector] public float parentImmunityTimer = 0;
+    [HideInInspector] public int immunityID;
+    [SerializeField] float immunityTime;
+    [HideInInspector] public float immunityTimer = 0;
     [HideInInspector] public bool timerStarted = false;
 
     [HideInInspector] public float activeTimer;
@@ -53,16 +54,16 @@ public class ShotObj : MonoBehaviour
     {
         if(timerStarted)
         {
-            parentImmunityTimer += Time.deltaTime;
+            immunityTimer += Time.deltaTime;
         } else
         {
-            parentImmunityTimer = 0;
+            immunityTimer = 0;
         }
 
-        if(parentImmunityTimer > parentImmunityTime)
+        if(immunityTimer > immunityTime)
         {
-            //remove parent immunity
-            parentID = -1;
+            //remove immunity
+            immunityID = -1;
         }
 
         activeTimer += Time.deltaTime;
@@ -169,12 +170,12 @@ public class ShotObj : MonoBehaviour
     */
 
     //sets shot speed and power based on chargeTime
-    public void Shoot(float chargeTime)
+    public void Shoot(float chargeTime, Vector2 direction)
     {
         chargeTime = Mathf.Clamp(chargeTime, 0, maxChargeTime);
 
         rb = this.GetComponent<Rigidbody2D>();
-        rb.velocity = transform.up;
+        rb.velocity = direction.normalized;
 
         shotPower = maxPower * powerCurve.Evaluate(chargeTime/maxChargeTime);
         shotSpeed = maxSpeed * speedCurve.Evaluate(chargeTime/maxChargeTime);
@@ -186,7 +187,7 @@ public class ShotObj : MonoBehaviour
     void OnTriggerExit2D(Collider2D col)
     {
         PlayerController pc = col.GetComponentInParent<PlayerController>();
-        if(pc != null && pc.idx == parentID)
+        if(pc != null && pc.idx == immunityID)
         {
             //start immunity timer
             timerStarted = true;
@@ -197,7 +198,7 @@ public class ShotObj : MonoBehaviour
     void OnTriggerEnter2D(Collider2D col)
     {
         PlayerController pc = col.GetComponentInParent<PlayerController>();
-        if(pc != null && pc.idx == parentID)
+        if(pc != null && pc.idx == immunityID)
         {
             //reset timer
             timerStarted = false;

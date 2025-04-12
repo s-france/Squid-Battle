@@ -50,6 +50,8 @@ public class DummyPlayerController : PlayerController3
         }
         */
 
+        alc = parent.alc;
+
 
         //pi.uiInputModule = FindFirstObjectByType<InputSystemUIInputModule>();
 
@@ -72,6 +74,27 @@ public class DummyPlayerController : PlayerController3
 
         ChangeColor(colorID);
 
+        //set team UI colors
+        if(gm.gameMode == 1)
+        {
+            ParticleSystem.MainModule bubbles = transform.Find("BubbleTrail").GetComponent<ParticleSystem>().main;
+
+            //player fx match team
+            bubbles.startColor = pm.teamColors[pm.TeamList[pm.PlayerList[idx].team].color];
+            rc.ChangeColor(parent.rc.colorID);
+        }
+
+
+        //match parent hat
+        if(parent.hatSR.enabled)
+        {
+            hatSR.color = parent.hatSR.color;
+            hatSR.enabled = true;
+        } else
+        {
+            hatSR.enabled = false;
+        }
+
         Clones = new List<DummyPlayerController>();
 
         OverpowerPeerPrioTable = new Dictionary<PlayerController, float>();
@@ -92,6 +115,8 @@ public class DummyPlayerController : PlayerController3
         rotation = Vector3.zero;
 
         isRewind = false;
+
+        stamina = maxStamina;
 
         //set default stats
         defaultScale = transform.localScale;

@@ -16,20 +16,29 @@ public class Laser : MonoBehaviour
 
 
     [SerializeField] float freqProgressionTime;
+
+    //laser firing frequency increases over time
     [SerializeField] float startFrequency;
     [SerializeField] float endFrequency;
+
+    //laser size (x-axis) increases over time
+    [SerializeField] float startSize;
+    [SerializeField] float endSize;
     float frequency;
 
     [SerializeField] float warningTime;
     [SerializeField] float activeTime;
 
     float timer = 0;
+    Vector3 scale;
 
     // Start is called before the first frame update
     void Start()
     {
         frequency = startFrequency;
-        
+        scale = transform.localScale;
+        scale.x = startSize;
+        transform.localScale = scale;
     }
 
     // Update is called once per frame
@@ -46,13 +55,17 @@ public class Laser : MonoBehaviour
 
             //frequency progression
             frequency = Mathf.Lerp(startFrequency, endFrequency, timer/freqProgressionTime);
+
+            //size progression
+            scale.x = Mathf.Lerp(startSize, endSize, timer/freqProgressionTime);
+            transform.localScale = scale;
+
             Debug.Log(frequency);
 
             //fire at freq rate
             if (timer % frequency <= .1f && !firing)
             {
                 StartCoroutine(FireLaser());
-
             }
 
 

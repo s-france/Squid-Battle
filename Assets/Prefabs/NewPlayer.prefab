@@ -433,6 +433,7 @@ Transform:
   - {fileID: 5223553992586062208}
   - {fileID: 5485761594052190089}
   - {fileID: 7662443152363485237}
+  - {fileID: 8837229576996658822}
   - {fileID: 5894637164420444278}
   - {fileID: 3349715349416888729}
   - {fileID: 5624397732338500515}
@@ -541,7 +542,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 10432
+    m_Bits: 10944
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -856,6 +857,7 @@ MonoBehaviour:
   sr: {fileID: 0}
   eyeSR: {fileID: 5344140811641832327}
   hatSR: {fileID: 6483987239586590463}
+  staminaBar: {fileID: 4343467308531993484}
   bubblePart: {fileID: 6286807170148970422}
   hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
   impactPart: {fileID: 1176242393547921506, guid: b66d07bc822427b43b2d0b6c2f53e9ce, type: 3}
@@ -885,8 +887,10 @@ MonoBehaviour:
   selectedItemIdx: 0
   charging: 0
   chargeTime: 0
+  chargeVal: 0
   specialCharging: 0
   specialChargeTime: 0
+  specialChargeVal: 0
   staticTimer: 0
   rewindSize: 300
   lastPrevStatePos: {x: 0, y: 0}
@@ -1219,6 +1223,7 @@ MonoBehaviour:
   isCoolingDown: 0
   isGrown: 0
   isRewind: 0
+  isWarp: 0
   isInBounds: 0
   inventorySize: 1
   chargeStrength: 25
@@ -1282,7 +1287,7 @@ MonoBehaviour:
   alc: {fileID: 0}
   moveSpeedCap: 60
   moveTimeCap: 0.7
-  maxStamina: 2
+  maxStamina: 1.3
   stamina: 0
   dodgeSpeed: 10
   dodgeTime: 0.4
@@ -1534,6 +1539,7 @@ MonoBehaviour:
   wr: {fileID: 194492634184046858}
   warpSpeed: 7
   warpSR: {fileID: 8057401209555982923}
+  colorID: 0
   colorSet:
   - serializedVersion: 2
     rgba: 3870883851
@@ -6723,6 +6729,74 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1 &6576476519563937468
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8837229576996658822}
+  - component: {fileID: 610427444772512987}
+  m_Layer: 6
+  m_Name: ArenaHB
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8837229576996658822
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6576476519563937468}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5251562808165186442}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &610427444772512987
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6576476519563937468}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 512
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 7671
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.1
 --- !u!1 &6652042789179508024
 GameObject:
   m_ObjectHideFlags: 0

@@ -3511,6 +3511,8 @@ MonoBehaviour:
   im: {fileID: 0}
   pm: {fileID: 0}
   SpawnPoints: []
+  Laser: {fileID: 0}
+  KillPlanes: {fileID: 0}
   ArenaShrinks:
   - {x: 1.6, y: 1.6}
   - {x: 1.5, y: 1.5}
@@ -4253,6 +4255,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 357469248120527515, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 783451137108293786, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4329,21 +4335,33 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 2102637335033562688, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2510817960810667069, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
       propertyPath: m_Radius
       value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 4025517752903457946, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4025517752903457946, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767308624162395135, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.695
       objectReference: {fileID: 0}
     - target: {fileID: 5767308624162395135, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767308624162395135, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.695
       objectReference: {fileID: 0}
     - target: {fileID: 7572205265979084206, guid: 64ee03cab984b50489960565e0d2b4b9, type: 3}
       propertyPath: m_Radius
@@ -5466,6 +5484,18 @@ PrefabInstance:
     - target: {fileID: 942966022283214142, guid: e01ec347fb511424099a7802b3d3dec4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1646784962425654659, guid: e01ec347fb511424099a7802b3d3dec4, type: 3}
+      propertyPath: m_Color.b
+      value: 0.07308002
+      objectReference: {fileID: 0}
+    - target: {fileID: 1646784962425654659, guid: e01ec347fb511424099a7802b3d3dec4, type: 3}
+      propertyPath: m_Color.g
+      value: 0.4716981
+      objectReference: {fileID: 0}
+    - target: {fileID: 1646784962425654659, guid: e01ec347fb511424099a7802b3d3dec4, type: 3}
+      propertyPath: m_Color.r
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1785965719998655084, guid: e01ec347fb511424099a7802b3d3dec4, type: 3}
       propertyPath: m_Name

@@ -50,6 +50,9 @@ public class WarpBehavior : ItemBehavior
         playerCol.enabled = false;
         playerHB.enabled = false;
 
+        //enter warp state
+        pc.isWarp = true;
+
         ///play warp-out animation
         while(timer < totalTime/3)
         {
@@ -93,6 +96,9 @@ public class WarpBehavior : ItemBehavior
         ///enable collision
         playerCol.enabled = true;
         playerHB.enabled = true;
+
+        //end warp state
+        pc.isWarp = false;
         
         //destroy
         DestroyItem();

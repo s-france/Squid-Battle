@@ -72,6 +72,14 @@ PrefabInstance:
       propertyPath: pc
       value: 
       objectReference: {fileID: 6848271922282867296}
+    - target: {fileID: 8494825964935012234, guid: 2f5f212fb144e774ebd2e4dfc08d170e, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8494825964935012234, guid: 2f5f212fb144e774ebd2e4dfc08d170e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4237179659672751331, guid: 2f5f212fb144e774ebd2e4dfc08d170e, type: 3}
     - {fileID: 4977600058233834703, guid: 2f5f212fb144e774ebd2e4dfc08d170e, type: 3}
@@ -118,6 +126,7 @@ MonoBehaviour:
   sr: {fileID: 0}
   eyeSR: {fileID: 582125318734987415}
   hatSR: {fileID: 2001265292719222255}
+  staminaBar: {fileID: 9113373206197291164}
   bubblePart: {fileID: 1513515051560610982}
   hitPart: {fileID: 6676655591158422987, guid: 66b1363d7d8525b4e803347d7231e0d0, type: 3}
   impactPart: {fileID: 1176242393547921506, guid: b66d07bc822427b43b2d0b6c2f53e9ce, type: 3}
@@ -147,8 +156,10 @@ MonoBehaviour:
   selectedItemIdx: 0
   charging: 0
   chargeTime: 0
+  chargeVal: 0
   specialCharging: 0
   specialChargeTime: 0
+  specialChargeVal: 0
   staticTimer: 0
   rewindSize: 300
   lastPrevStatePos: {x: 0, y: 0}
@@ -481,6 +492,7 @@ MonoBehaviour:
   isCoolingDown: 0
   isGrown: 0
   isRewind: 0
+  isWarp: 0
   isInBounds: 0
   inventorySize: 1
   chargeStrength: 25
@@ -544,7 +556,8 @@ MonoBehaviour:
   alc: {fileID: 0}
   moveSpeedCap: 60
   moveTimeCap: 0.7
-  oobLifespan: 2.85
+  maxStamina: 2
+  stamina: 5
   dodgeSpeed: 10
   dodgeTime: 0.4
   dodgeCurve:
@@ -666,3 +679,14 @@ CircleCollider2D:
   m_CorrespondingSourceObject: {fileID: 3110805048132046526, guid: 2f5f212fb144e774ebd2e4dfc08d170e, type: 3}
   m_PrefabInstance: {fileID: 4773301189638980368}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &9113373206197291164 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4343467308531993484, guid: 2f5f212fb144e774ebd2e4dfc08d170e, type: 3}
+  m_PrefabInstance: {fileID: 4773301189638980368}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

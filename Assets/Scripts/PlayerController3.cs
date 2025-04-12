@@ -281,7 +281,15 @@ public class PlayerController3 : PlayerController
 
             //chargeTime = 0;
             //charging = true;
-            chargePressed = true;
+
+            //prevents new charge after stamina depletion
+            if(isInBounds || stamina > 0)
+            {
+                chargePressed = true;
+            } else
+            {
+                chargePressed = false;
+            }
 
         } else if (ctx.canceled) //released
         {
@@ -294,11 +302,11 @@ public class PlayerController3 : PlayerController
                 {
                     if(movePower > maxMovePower * powerCurve.Evaluate(minCharge/maxChargeTime) && moveTimer/moveTime > .4f)
                     {
-                        ApplyMove(0, i_move, chargeTime);
+                        ApplyMove(0, i_move, chargeVal);
                     }
                 } else
                 {
-                    ApplyMove(0, i_move, chargeTime);
+                    ApplyMove(0, i_move, chargeVal);
                 }
             }
         }
@@ -319,10 +327,11 @@ public class PlayerController3 : PlayerController
     {
         if(ctx.performed) //special charging
         {
+            //maybe:
+            //if(!isInBounds || stamina > 0)
+            
             specialChargePressed = true;
-            //specialChargeTime = 0;
-            //specialCharging = true;
-            //StartCoroutine(SpecialCharge());
+            
             
         } else if (ctx.canceled) //released
         {
@@ -417,7 +426,12 @@ public class PlayerController3 : PlayerController
 
 
                 sr.sprite = SpriteSet[2]; //charging sprite
-                chargeTime += Time.deltaTime;
+                chargeTime += Time.fixedDeltaTime;
+                
+                if(isInBounds || stamina >0)
+                {
+                    chargeVal += Time.fixedDeltaTime;
+                }
                 
 
                 RotateSprite(i_move);
@@ -440,11 +454,12 @@ public class PlayerController3 : PlayerController
                     //force launch
                     if(charging && !isMoving && !isHitStop)
                     {
-                        ApplyMove(0, i_move, chargeTime);
+                        ApplyMove(0, i_move, chargeVal);
                     }
 
                     //cancel charge
                     chargeTime = 0;
+                    chargeVal = 0;
                     charging = false;
                     
                 }
@@ -455,6 +470,7 @@ public class PlayerController3 : PlayerController
         } else //charge button not pressed
         {
             chargeTime = 0;
+            chargeVal = 0;
             charging = false;
 
         }
@@ -485,7 +501,12 @@ public class PlayerController3 : PlayerController
 
 
                 sr.sprite = SpriteSet[2]; //charging sprite
-                specialChargeTime += Time.deltaTime;
+                specialChargeTime += Time.fixedDeltaTime;
+
+                if(isInBounds || stamina > 0)
+                {
+                    specialChargeVal += Time.fixedDeltaTime;
+                }
 
                 //MOVE THIS TO ITEMBEHAVIOR 
                 //some items face forward some face back
@@ -514,6 +535,7 @@ public class PlayerController3 : PlayerController
 
                     //cancel charge
                     specialChargeTime = 0;
+                    specialChargeVal = 0;
                     specialCharging = false;
                     
                 }
@@ -524,6 +546,7 @@ public class PlayerController3 : PlayerController
         } else //special charge button not pressed
         {
             specialChargeTime = 0;
+            specialChargeVal = 0;
             specialCharging = false;
         }
 
@@ -898,7 +921,7 @@ public class PlayerController3 : PlayerController
         if(!isInBounds) //Offstage
         {
             //if time runs out
-            if(stamina < 0 && isAlive && alc.roundOver == false)
+            if(movePower <= (maxMovePower * powerCurve.Evaluate((1.8f * minCharge)/maxChargeTime))  && !charging && !specialCharging && !isRewind && !isWarp && stamina <= 0 && isAlive && alc.roundOver == false)
             {
                 //kill this player instance
                 KillPlayer();
@@ -915,12 +938,13 @@ public class PlayerController3 : PlayerController
                 if( (charging && chargeTime <= maxChargeTime) || (specialCharging && specialChargeTime <= maxChargeTime))
                 {
                     stamina -= (.75f * Time.fixedDeltaTime);
-                } else if(oobGraceTimer < 2)
+                } else if(oobGraceTimer < 1) //1 sec grace period
                 {
                     oobGraceTimer += Time.fixedDeltaTime;
                 } else
                 {
-                    stamina -= (.25f * Time.fixedDeltaTime);
+                    //passive stamina depletion
+                    stamina -= (.35f * Time.fixedDeltaTime);
                 }
 
             } else
@@ -935,8 +959,8 @@ public class PlayerController3 : PlayerController
             //restore oob time while onstage
             if(stamina < maxStamina)
             {
-                //decrease regen tick rate
-                stamina += .25f * Time.fixedDeltaTime;
+                //onstage stamina regen rate
+                stamina += .35f * Time.fixedDeltaTime;
             }
             
         }
@@ -945,6 +969,12 @@ public class PlayerController3 : PlayerController
         if(stamina > maxStamina)
         {
             stamina = maxStamina;
+        }
+
+        //min stamina = 0
+        if(stamina <0)
+        {
+            stamina = 0;
         }
 
 
@@ -1099,6 +1129,7 @@ public class PlayerController3 : PlayerController
             moveArmor = 0;
 
             chargeTime = 0;
+            chargeVal = 0;
         } else if(type == 2) //glide - weak tap
         {
             //ADD THIS
@@ -1272,8 +1303,8 @@ public class PlayerController3 : PlayerController
         } else
         {
             //give temp immunity from shot
-            shot.parentID = idx;
-            shot.parentImmunityTimer = 0;
+            shot.immunityID = idx;
+            shot.immunityTimer = 0;
             shot.timerStarted = true;
         }
         
@@ -1345,6 +1376,7 @@ public class PlayerController3 : PlayerController
         if(otherMPrio > 1 && otherPC.movePower > powerCurve.Evaluate(2f * minCharge))
         {
             chargeTime = 0;
+            chargeVal = 0;
         }
 
 
@@ -2402,7 +2434,7 @@ public class PlayerController3 : PlayerController
             if(col.gameObject.name == "ShotTriggerHurtBox")
             {
                 ShotObj shot = col.GetComponentInParent<ShotObj>();
-                if(shot.parentID != idx)
+                if(shot.immunityID != idx)
                 {
                     Vector2 prev = prevPos[1];
                     Vector2 shotPrev = shot.prevPos[1];
@@ -2485,6 +2517,7 @@ public class PlayerController3 : PlayerController
         i_move = Vector2.zero;
         true_i_move = Vector2.zero;
         chargeTime = 0;
+        chargeVal = 0;
         charging = false;
         specialCharging = false;
         isRewind = false;
@@ -2522,6 +2555,7 @@ public class PlayerController3 : PlayerController
         i_move= Vector2.zero;
         true_i_move = Vector2.zero;
         chargeTime = 0;
+        chargeVal = 0;
         charging = false;
         specialCharging = false;
         

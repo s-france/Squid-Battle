@@ -15,6 +15,8 @@ public class ReticleController : MonoBehaviour
     [SerializeField] float warpSpeed;
     [SerializeField] SpriteRenderer warpSR;
 
+    [HideInInspector] public int colorID;
+
 
     //rewind tick variables
     int prevTC = 0;
@@ -35,7 +37,8 @@ public class ReticleController : MonoBehaviour
 
         states = new Stack<PlayerState>(pc.prevStates.ToArray());
         
-        ChangeColor(pc.colorID);
+        //not needed anymore, causes problems
+        //ChangeColor(pc.colorID);
 
         lr.enabled = false;
         reticlePosition = Vector3.zero;
@@ -84,6 +87,9 @@ public class ReticleController : MonoBehaviour
 
         lr.startColor = colorSet[colorID];
         lr.endColor = colorSet[colorID];
+
+        //confusing lol
+        this.colorID = colorID;
     }
 
     //New Movement 3.0
@@ -91,7 +97,7 @@ public class ReticleController : MonoBehaviour
     {
         if(pc.charging)
         {
-            if(pc.chargeTime > pc.minCharge)
+            if(pc.chargeVal > pc.minCharge)
             {
                 transform.SetParent(pc.transform);
                 transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
@@ -368,7 +374,7 @@ public class ReticleController : MonoBehaviour
         //Debug.Log("specialCharging: " + pc.specialCharging);
 
         //CHANGE 0 TO MINCHARGETIME
-        yield return new WaitUntil(() => pc.chargeTime > pc.minCharge || pc.specialChargeTime > pc.minCharge);
+        yield return new WaitUntil(() => pc.chargeVal > pc.minCharge || pc.specialChargeTime > pc.minCharge);
         ActivateReticle();
         int chargeType;
 

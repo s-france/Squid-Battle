@@ -25,9 +25,9 @@ public class KillBox : MonoBehaviour
             Debug.Log("Player entered KillBox!");
 
             //kill this player instance
-            col.GetComponent<PlayerController>().KillPlayer();
+            col.GetComponentInParent<PlayerController>().KillPlayer();
             //check if all clones dead then do pm.killplayer
-            col.GetComponent<PlayerController3>().CheckIfAlive();
+            col.GetComponentInParent<PlayerController3>().CheckIfAlive();
         }
 
     }

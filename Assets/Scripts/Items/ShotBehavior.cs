@@ -28,7 +28,8 @@ public class ShotBehavior : ItemBehavior
     {
         GameObject shot = Instantiate(ShotPrefab, pc.transform.position, pc.transform.rotation);
         shot.GetComponent<ShotObj>().parentID = pc.idx;
-        shot.GetComponent<ShotObj>().Shoot(chargeTime);
+        shot.GetComponent<ShotObj>().immunityID = pc.idx;
+        shot.GetComponent<ShotObj>().Shoot(chargeTime, pc.i_move);
 
         //pc.ApplyMove(0,);
         pc.ApplyMove(0, -pc.i_move, pc.specialMoveMod * Mathf.Clamp(pc.specialChargeTime, pc.minCharge, pc.maxChargeTime));

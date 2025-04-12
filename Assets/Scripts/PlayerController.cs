@@ -14,7 +14,9 @@ using UnityEngine.InputSystem.Switch;
 using System.Linq;
 using UnityEngine.InputSystem.UI;
 using System.Runtime.InteropServices;
+//using Microsoft.Unity.VisualStudio.Editor;
 //using Unity.Barracuda;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -33,6 +35,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public SpriteRenderer sr;
     public SpriteRenderer eyeSR;
     public SpriteRenderer hatSR;
+    public Image staminaBar;
     public ParticleSystem bubblePart;
     public GameObject hitPart; //particle prefabs
     public GameObject impactPart; //impact particle prefab
@@ -63,6 +66,8 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float chargeVal; //value of charge (stops building when out of stamina)
     [HideInInspector] public bool specialCharging;
     [HideInInspector] public float specialChargeTime;
+    [HideInInspector] public float specialChargeVal; //value of charge (stops building when out of stamina)
+ 
 
     [HideInInspector] public float staticTimer = 0;
     [SerializeField] public int rewindSize;
@@ -122,6 +127,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool isCoolingDown;
     [HideInInspector] public bool isGrown = false;
     [HideInInspector] public bool isRewind;
+    [HideInInspector] public bool isWarp;
     [HideInInspector] public bool isInBounds; //copy of pm.playerList[idx].isInBounds
 
 
@@ -262,6 +268,7 @@ public class PlayerController : MonoBehaviour
         rotation = Vector3.zero;
 
         isRewind = false;
+        isWarp = false;
 
         //set default stats
         defaultScale = transform.localScale;
@@ -367,6 +374,7 @@ public class PlayerController : MonoBehaviour
         charging = false;
         specialCharging = false;
         isRewind = false;
+        isWarp = false;
         ClearInventory();
         this.GetComponent<CircleCollider2D>().enabled = false;
         this.GetComponent<SpriteRenderer>().enabled = false;
@@ -588,10 +596,10 @@ public class PlayerController : MonoBehaviour
         float charge;
         switch (type)
         {
-            case 0:
-                charge = chargeTime;
+            case 0: //normal move
+                charge = chargeVal;
                 break;
-            case 1:
+            case 1: //item move
                 charge = specialChargeTime;
                 break;
             case 2: //exception for powerups that launch full distance
@@ -806,12 +814,16 @@ public class PlayerController : MonoBehaviour
             bubbles.startColor = pm.teamColors[pm.TeamList[pm.PlayerList[idx].team].color];
             rc.ChangeColor(pm.TeamList[pm.PlayerList[idx].team].color);
 
+            staminaBar.color = pm.teamColors[pm.TeamList[pm.PlayerList[idx].team].color];
+
             hatSR.color = pm.teamColors[pm.TeamList[pm.PlayerList[idx].team].color];
         } else
         {
             //player fx match individual
             bubbles.startColor = pm.playerColors[color];
             rc.ChangeColor(color);
+
+            staminaBar.color = pm.playerColors[color];
         }
         
         //Dummys don't access pm

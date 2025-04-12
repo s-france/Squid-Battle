@@ -25,6 +25,9 @@ public class StaminaWheel : MonoBehaviour
         } else if(pc.isAlive)
         {
             wheel.gameObject.SetActive(true);
+        } else
+        {
+            wheel.gameObject.SetActive(false);
         }
 
     }
