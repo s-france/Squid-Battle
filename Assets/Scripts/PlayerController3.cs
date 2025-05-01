@@ -1326,6 +1326,7 @@ public class PlayerController3 : PlayerController
         //ADD THIS
         //isIntangible check -> exit
 
+
         
         if(otherRB.TryGetComponent<PlayerController>(out PlayerController otherPC))
         {
@@ -1573,6 +1574,9 @@ public class PlayerController3 : PlayerController
                     {
                         part.GetComponent<HitEffect>().SetColor(Color.white);
                     }
+
+                    //play Parry soundfx
+                    FindFirstObjectByType<AudioManager>().PlayRandom("Parry");
                     
                     StartCoroutine(ParryLaunch(otherPC));
                     yield break;
@@ -1586,6 +1590,9 @@ public class PlayerController3 : PlayerController
                 timer += Time.fixedDeltaTime;
                 yield return fuWait;
             }
+
+            //play Impact soundfx
+            FindFirstObjectByType<AudioManager>().PlayRandom("Impact");
 
             //KB calc vars
             float impedanceFactor;
@@ -2013,7 +2020,8 @@ public class PlayerController3 : PlayerController
         Debug.Log("solid player collider colliding! col Layer: " + LayerMask.LayerToName(col.gameObject.layer));
 
 
-        FindFirstObjectByType<AudioManager>().PlayRandom("Impact");
+        //impact soundfx
+        //FindFirstObjectByType<AudioManager>().PlayRandom("Impact");
 
 
         if(LayerMask.LayerToName(col.gameObject.layer) == "Solids")
@@ -2348,7 +2356,7 @@ public class PlayerController3 : PlayerController
     //called in OnTriggerEnter2D(
     public override void OnHurtboxTriggerEnter(Collider2D col)
     {
-        FindFirstObjectByType<AudioManager>().PlayRandom("Impact");
+        //FindFirstObjectByType<AudioManager>().PlayRandom("Impact");
 
         Debug.Log("PlayerHB colliding! Collision LayerMask name: " + LayerMask.LayerToName(col.gameObject.layer));
 
@@ -2391,7 +2399,27 @@ public class PlayerController3 : PlayerController
                         otherPrev = otherPC.prevPos[0];
                     }
                     */
-                    
+                    /*
+                    //safety
+                    if(prevPos.Count == 0)
+                    {
+                        prevPos.Add(transform.position);
+                    }
+                    if(prevPos.Count == 1)
+                    {
+                        prevPos.Add(transform.position);
+                    }
+
+                    //safety
+                    if(otherPC.prevPos.Count == 0)
+                    {
+                        otherPC.prevPos.Add(otherPC.transform.position);
+                    }
+                    if(otherPC.prevPos.Count == 1)
+                    {
+                        otherPC.prevPos.Add(otherPC.transform.position);
+                    }
+                    */
 
                     Vector2 prev = prevPos[1];                    
                     Vector2 otherPrev = otherPC.prevPos[1];
@@ -2565,7 +2593,7 @@ public class PlayerController3 : PlayerController
         eyeSR.enabled = true;
 
         //enable hat for team battle
-        if(gm.gameMode == 1)
+        if(gm.gameMode == 1 || gm.gameMode == 2)
         {
             hatSR.enabled = true;
         }

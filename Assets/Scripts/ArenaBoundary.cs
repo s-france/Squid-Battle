@@ -95,8 +95,6 @@ public class ArenaBoundary : MonoBehaviour
             int idx = player.idx;
             //PlayerCollisions.Add(idx);
             PlayerCollisions.Add(player);
-            //pm.playerList[idx].isInBounds = true;
-            //pm.playerList[idx].playerScript.isInBounds = true;
             player.isInBounds = true;
 
             //restore player's default stats
@@ -105,6 +103,8 @@ public class ArenaBoundary : MonoBehaviour
             //band aid fix for grow stats
             if(!player.isGrown)
             {
+                Debug.Log("setting default stats");
+
                 player.maxMoveSpeed = player.defaultMaxMoveSpeed;
                 player.maxMoveTime = player.defaultMaxMoveTime;
                 player.maxMovePower = player.defaultMaxMovePower;

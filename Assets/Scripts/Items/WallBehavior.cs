@@ -12,6 +12,8 @@ public class WallBehavior : ItemBehavior
     {
         base.Start();
 
+        soundFX = "Item_Wall";
+
         WallPrefab = im.ItemObjs[2]; //wall prefab in slot 2
     }
 
@@ -24,6 +26,9 @@ public class WallBehavior : ItemBehavior
 
     public override void UseItem(float charge)
     {
+        //play soundfx
+        FindFirstObjectByType<AudioManager>().Play(soundFX);
+
         GameObject Wall = Instantiate(WallPrefab, Vector3.zero, Quaternion.identity);
         Wall.GetComponent<WallObj>().pc = pc;
         Wall.GetComponent<WallObj>().tr = pc.GetComponentInChildren<TrailRenderer>();

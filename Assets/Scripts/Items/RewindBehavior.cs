@@ -13,6 +13,8 @@ public class RewindBehavior : ItemBehavior
     public override void Start()
     {
         base.Start();
+
+        soundFX = "Item_Rewind";
     }
 
 
@@ -26,6 +28,8 @@ public class RewindBehavior : ItemBehavior
     {
         HideSprite();
 
+        //play soundfx
+        FindFirstObjectByType<AudioManager>().Play(soundFX);
 
 
         StartCoroutine(Rewind(charge));

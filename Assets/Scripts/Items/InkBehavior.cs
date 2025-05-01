@@ -11,6 +11,8 @@ public class InkBehavior : ItemBehavior
     {
         base.Start();
 
+        soundFX = "Item_Ink";
+
         InkPrefab = im.ItemObjs[1]; //ink prefab in slot 1
     }
 
@@ -27,6 +29,9 @@ public class InkBehavior : ItemBehavior
         //MUST CHANGE SPAWN DISTANCE
       
         //Vector2 InkSpawn = transform.parent.position - 1.2f*transform.parent.up;
+
+        //play soundfx
+        FindFirstObjectByType<AudioManager>().Play(soundFX);
 
         GameObject ink = Instantiate(InkPrefab, pc.transform.Find("ItemSpawn").position, pc.transform.Find("ItemSpawn").rotation);
         ink.GetComponent<InkObj>().Deploy(chargeTime);

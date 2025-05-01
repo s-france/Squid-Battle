@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -9,6 +10,8 @@ public class ItemBehavior : MonoBehaviour
     [HideInInspector] public ItemManager im;
     [HideInInspector] public PlayerController pc;
     [HideInInspector] public SpriteRenderer[] Sprites;
+
+    [HideInInspector] public String soundFX;
 
     public virtual void Start()
     {

@@ -3419,7 +3419,14 @@ MonoBehaviour:
   - {fileID: 701267294}
   - {fileID: 660306031}
   - {fileID: 1148471207}
-  ShotToggle: {fileID: 2026388345}
+  ItemToggles:
+  - {fileID: 2026388346}
+  - {fileID: 945189111}
+  - {fileID: 1135050525}
+  - {fileID: 1068127073}
+  - {fileID: 543814289}
+  - {fileID: 1227425287}
+  - {fileID: 1916927818}
   leftCanvas: {fileID: 1376686111}
   rightCanvas: {fileID: 813673803}
   ready2StartUI: {fileID: 1425891749}

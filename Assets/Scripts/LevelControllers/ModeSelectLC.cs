@@ -115,15 +115,17 @@ public class ModeSelectLC : LevelController
         switch(modeID)
         {
             case 0: //classic
+                Debug.Log("classic battle");
                 gm.gameMode = 0;
                 sl.LoadScene("CharacterSelect");
                 break;
             case 1: //teams
-                //INSERT LOAD HERE
+                Debug.Log("team battle");
                 gm.gameMode = 1;
                 sl.LoadScene("TeamCharacterSelect");
                 break;
             case 2: //soccer
+                Debug.Log("soccer");
                 gm.gameMode = 2;
                 sl.LoadScene("TeamCharacterSelect");
                 break;

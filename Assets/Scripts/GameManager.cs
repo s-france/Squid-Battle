@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
             lc = GameObject.Find("LevelController").GetComponent<LevelController>();
             ms = GetComponent<MatchSettings>();
 
+            am = GetComponentInChildren<AudioManager>();
+
             battleStarted = false;
 
         }
@@ -91,7 +93,17 @@ public class GameManager : MonoBehaviour
         //number of players
         int pcount = pm.PlayerList.Count(p => p.isActive);
 
-        string sceneName = "BattleArena" + mapID;
+        string sceneName = "MainMenu";
+        if(gameMode == 0 || gameMode == 1)
+        {
+            sceneName = "BattleArena" + mapID;
+        } else if(gameMode == 2)
+        {
+            sceneName = "SoccerArena" + mapID;
+        } else
+        {
+            Debug.Log("ERROR: invalid gamemode!");
+        }
 
         Debug.Log("StartMAtch scene: " + sceneName);
 

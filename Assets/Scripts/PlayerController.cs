@@ -237,7 +237,7 @@ public class PlayerController : MonoBehaviour
         rc = this.GetComponentInChildren<ReticleController>();
 
         //teams
-        if(gm.gameMode == 1)
+        if(gm.gameMode == 1 || gm.gameMode == 2)
         {
             pm.SetPlayerTeamDefault(idx);
         }
@@ -808,7 +808,7 @@ public class PlayerController : MonoBehaviour
         ParticleSystem.MainModule bubbles = transform.Find("BubbleTrail").GetComponent<ParticleSystem>().main;
 
         //set team color
-        if(gm.gameMode == 1 && pm.PlayerList[idx].team != -1)
+        if((gm.gameMode == 1 || gm.gameMode == 2) && pm.PlayerList[idx].team != -1)
         {
             //player fx match team
             bubbles.startColor = pm.teamColors[pm.TeamList[pm.PlayerList[idx].team].color];

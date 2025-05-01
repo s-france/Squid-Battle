@@ -15,6 +15,7 @@ public class ArenaLevelController : LevelController
     //Arena stuff
     [SerializeField] Transform Laser;
     [SerializeField] Transform KillPlanes;
+    [SerializeField] Transform SoccerBall;
     [SerializeField] List<Vector2> ArenaShrinks;
     [SerializeField] float shrinkSpeed;
     Transform arena;
@@ -22,16 +23,16 @@ public class ArenaLevelController : LevelController
 
     //post-game UI stuff
     [SerializeField] Transform resultsScreen;
-    MapVote mv;
+    [HideInInspector] public MapVote mv;
     [SerializeField] Transform finalResultMenu;
-    [SerializeField] InputSystemUIInputModule[] UIInputModules;
+    public InputSystemUIInputModule[] UIInputModules;
     
 
     [SerializeField] GameObject ReturnButton;
     
     [SerializeField] Image winnerSprite;
     [SerializeField] TextMeshProUGUI winnerText;
-    [SerializeField] ScoreBoard sb;
+    public ScoreBoard sb;
     [SerializeField] Transform ready2StartUI;
 
     [HideInInspector] public bool roundOver = false;
@@ -46,6 +47,13 @@ public class ArenaLevelController : LevelController
         im = GameObject.Find("ItemManager").GetComponent<ItemManager>();
         im.gm = gm;
 
+        //soccer init
+        if(gm.gameMode == 2 && SoccerBall != null)
+        {
+            Debug.Log("Playing Soccer!");
+            //SoccerBall.GetComponent<BallPlayerController>().Init();
+        }
+
         mv = resultsScreen.GetComponentInChildren<MapVote>();
 
         SpawnPoints = new List<Transform>();
@@ -57,10 +65,21 @@ public class ArenaLevelController : LevelController
         SpawnPoints.Add(transform.GetChild(4));
         SpawnPoints.Add(transform.GetChild(5));
 
+        if(gm.gameMode == 2)
+        {
+            SpawnPoints.Add(transform.GetChild(6));
+            SpawnPoints.Add(transform.GetChild(7));
+            SpawnPoints.Add(transform.GetChild(8));
+            SpawnPoints.Add(transform.GetChild(9));
+            SpawnPoints.Add(transform.GetChild(10));
+            SpawnPoints.Add(transform.GetChild(11));
+        }
+
+
         arena = GameObject.Find("Arena").transform;
         arenaAnchor = GameObject.Find("ArenaAnchor").transform;
 
-        arenaAnchor.transform.localScale = arena.transform.localScale;
+        //arenaAnchor.transform.localScale = arena.transform.localScale;
         
         StartLevel();
     }
@@ -183,7 +202,7 @@ public class ArenaLevelController : LevelController
         
         
         //set team colors
-        if(gm.gameMode ==1)
+        if(gm.gameMode ==1 || gm.gameMode ==2)
         {
             foreach (Team t in pm.TeamList)
             {
@@ -255,8 +274,6 @@ public class ArenaLevelController : LevelController
 
         FindFirstObjectByType<AudioManager>().StopAll();
 
-        //ADD TEAM SURVIVAL RANKING!!!!!
-
         //assign points
         pm.placements.Reverse();
         int idx = 0;
@@ -313,8 +330,7 @@ public class ArenaLevelController : LevelController
 
         resultsScreen.gameObject.SetActive(true);
 
-
-        //ADD TEAM TIE CHECK!!
+        //team tie check
         //check for ties
         List<Team> winners = pm.TeamList.FindAll(t => t.score >= gm.ms.pointsToWin);
         
@@ -387,8 +403,6 @@ public class ArenaLevelController : LevelController
         FindFirstObjectByType<AudioManager>().StopAll();
 
 
-        //ADD TEAM SURVIVAL RANKING!!!!!
-
         //assign points
         pm.placements.Reverse();
         int idx = 0;
@@ -443,8 +457,6 @@ public class ArenaLevelController : LevelController
 
         resultsScreen.gameObject.SetActive(true);
 
-
-        //ADD TEAM TIE CHECK!!
         //check for ties
         List<PlayerConfig> winners = pm.PlayerList.FindAll(p => p.score >= gm.ms.pointsToWin);
         int max = 0;

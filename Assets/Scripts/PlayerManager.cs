@@ -307,23 +307,12 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("avoidTeam: " + avoidTeam);
 
 
-        //wrap team search at 6 team IDs
         int result = teamIdx;
-        if(result < 0)
-        {
-            result = 5;
-        } else if(result > 5)
-        {
-            result = 0;
-        }
 
-        //loop through teams starting at idx
-        //until valid team is found 
-        while(TeamList[result].idx == avoidTeam)
+        //regular team battle use all 6 teams
+        if(gm.gameMode == 1)
         {
-            result += leftRight;
-
-            //wrap around
+            //wrap team search at 6 team IDs
             if(result < 0)
             {
                 result = 5;
@@ -331,7 +320,53 @@ public class PlayerManager : MonoBehaviour
             {
                 result = 0;
             }
+
+            //loop through teams starting at idx
+            //until valid team is found 
+            while(TeamList[result].idx == avoidTeam)
+            {
+                result += leftRight;
+
+                //wrap around
+                if(result < 0)
+                {
+                    result = 5;
+                } else if(result > 5)
+                {
+                    result = 0;
+                }
+            }
+
+        //soccer use only 2 teams
+        } else if(gm.gameMode == 2)
+        {
+            //wrap team search at 6 team IDs
+            if(result < 0)
+            {
+                result = 1;
+            } else if(result > 1)
+            {
+                result = 0;
+            }
+
+            //loop through teams starting at idx
+            //until valid team is found 
+            while(TeamList[result].idx == avoidTeam)
+            {
+                result += leftRight;
+
+                //wrap around
+                if(result < 0)
+                {
+                    result = 1;
+                } else if(result > 1)
+                {
+                    result = 0;
+                }
+            }
         }
+
+        
 
         //return idx of next valid team
         return result;

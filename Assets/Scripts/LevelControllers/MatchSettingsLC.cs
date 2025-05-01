@@ -28,7 +28,8 @@ public class MatchSettingsLC : LevelController
 
     [SerializeField] InputSystemUIInputModule[] UIInputModules;
 
-    [SerializeField] GameObject ShotToggle;
+    //[SerializeField] GameObject ShotToggle;
+    [SerializeField] Toggle[] ItemToggles;
 
     [SerializeField] Canvas leftCanvas;
     [SerializeField] Canvas rightCanvas;
@@ -118,8 +119,28 @@ public class MatchSettingsLC : LevelController
             SetUIColors(p.playerIndex);
         }
 
+        //NOT doing this anymore
         //turn all items on
-        gm.ms.ResetItemSettings();
+        //gm.ms.ResetItemSettings();
+
+        //match item settings to menu toggles
+        int idx = 0;
+        foreach(Toggle tog in ItemToggles)
+        {
+            //enable/disable item
+            gm.ms.ActiveItems[idx] = tog.isOn;
+
+            //set default probability
+            gm.ms.ItemProbs[idx] = gm.ms.DefaultItemProbs[idx];
+
+            idx++;
+        }
+
+        //match points to win setting to menu point slider number
+        SetPointsToWin();
+
+
+
 
         //set P1 icon color
         LeftUIElements[4].GetComponent<Image>().color = pm.PlayerList[0].playerScript.sr.color;
@@ -231,7 +252,7 @@ public class MatchSettingsLC : LevelController
                 //move P1 selection to match settings
                 MultiplayerEventSystem evSys = UIInputModules[0].transform.GetComponent<MultiplayerEventSystem>();
                 evSys.playerRoot = leftCanvas.gameObject;
-                evSys.SetSelectedGameObject(ShotToggle);
+                evSys.SetSelectedGameObject(ItemToggles[0].gameObject);
 
                 //hide P1 map select token
                 mv.TokenSprites[0].enabled = false;
@@ -319,22 +340,27 @@ public class MatchSettingsLC : LevelController
     {
         FindFirstObjectByType<AudioManager>().Play("UINav3");
 
-        //update slider visuals
-        int idx = 0;
-        foreach (int i in pointIntervals)
+        if(gm.gameMode != 2)
         {
-            if(pointSlider.value == i-1)
+            //update slider on intervals
+            int idx = 0;
+            foreach (int i in pointIntervals)
             {
-                pointSlider.value = pointIntervals[idx-1];
-                break;
-            } else if(pointSlider.value == i+1)
-            {
-                pointSlider.value = pointIntervals[idx+1];
-                break;
+                if(pointSlider.value == i-1)
+                {
+                    pointSlider.value = pointIntervals[idx-1];
+                    break;
+                } else if(pointSlider.value == i+1)
+                {
+                    pointSlider.value = pointIntervals[idx+1];
+                    break;
+                }
+
+                idx++;
             }
 
-            idx++;
         }
+        
 
         SetPointsToWin();
 

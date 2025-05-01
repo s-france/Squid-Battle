@@ -11,6 +11,8 @@ public class WarpBehavior : ItemBehavior
     public override void Start()
     {
         base.Start();
+
+        soundFX = "Item_Warp";
     }
 
 
@@ -44,6 +46,9 @@ public class WarpBehavior : ItemBehavior
         float totalTime = .5f; //total warp time from start -> finish
 
         Color change = new(0,0,0, -1/(totalTime/3));
+
+        //play soundfx
+        FindFirstObjectByType<AudioManager>().Play(soundFX);
 
         //player disappear:
         ///disable collision

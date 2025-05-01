@@ -79,6 +79,10 @@ public class AudioManager : MonoBehaviour
             case "BattleTheme":
                 n = UnityEngine.Random.Range(1,4);
                 break;
+            
+            case "Parry":
+                n = UnityEngine.Random.Range(1,4);
+                break;
 
             default:
                 n = -1;

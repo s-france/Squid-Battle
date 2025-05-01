@@ -38,6 +38,8 @@ public class GrowBehavior : ItemBehavior
     public override void Start()
     {
         base.Start();
+
+        soundFX = "Item_Grow";
     }
 
     public override string GetItemType()
@@ -63,6 +65,9 @@ public class GrowBehavior : ItemBehavior
         */
 
         HideSprite();
+
+        //play soundfx
+        FindFirstObjectByType<AudioManager>().Play(soundFX);
         
         StartCoroutine(GrowPlayer(chargeTime));
 

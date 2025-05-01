@@ -13,7 +13,8 @@ public class DummyPlayerController : PlayerController3
     // Start is called before the first frame update
     void Start()
     {
-        
+        //trying this...
+        //Init();
     }
 
     // Update is called once per frame
@@ -103,7 +104,13 @@ public class DummyPlayerController : PlayerController3
         heldItems = new List<ItemBehavior>();
 
         prevStates = new Queue<PlayerState>(rewindSize);
-        prevPos = new List<Vector2>(3);
+        prevPos = new List<Vector2>(2)
+        {
+            //preload prevPos
+            transform.position,
+            transform.position
+        };
+
         lastPrevStatePos = Vector2.zero;
 
         

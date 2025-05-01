@@ -68,15 +68,17 @@ public class Platform : MonoBehaviour
         {
             foreach(Collider2D col in contacts)
             {
-                if(col.TryGetComponent<PlayerController>(out PlayerController pc))
+                //if(col.transform.parent.TryGetComponent<PlayerController>(out PlayerController pc))
+                if(LayerMask.LayerToName(col.gameObject.layer) == "Players")
                 {
+                    PlayerController pc = col.GetComponentInParent<PlayerController>();
                     if(!pc.isMoving && !pc.isRewind)
                     {
-                        col.transform.position += (Vector3)diff;
+                        col.transform.parent.position += (Vector3)diff;
                     }
                 } else
                 {
-                    col.transform.position += (Vector3)diff;
+                    col.transform.root.position += (Vector3)diff;
                 }
 
                 

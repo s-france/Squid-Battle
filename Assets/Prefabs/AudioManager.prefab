@@ -70,20 +70,38 @@ MonoBehaviour:
     loop: 1
     source: {fileID: 0}
   - name: Impact1
-    clip: {fileID: 8300000, guid: baf239969ba07e649b6d37d64b02d35a, type: 3}
-    volume: 0.8
+    clip: {fileID: 8300000, guid: 63862b0ef1d0582459eb92c8bc9a8168, type: 3}
+    volume: 0.6
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: Impact2
-    clip: {fileID: 8300000, guid: 33d43457bd83b1544b9980264882631e, type: 3}
-    volume: 0.8
+    clip: {fileID: 8300000, guid: d894f501ededa964db10e6728186ed72, type: 3}
+    volume: 0.6
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: Impact3
-    clip: {fileID: 8300000, guid: e88ec7f4397861441ad2ad465ac9c809, type: 3}
-    volume: 0.8
+    clip: {fileID: 8300000, guid: de615df94c2aa6b499adfbc851d918f4, type: 3}
+    volume: 0.6
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Parry1
+    clip: {fileID: 8300000, guid: e9e58cf98e64805489656bdd091786f1, type: 3}
+    volume: 0.9
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Parry2
+    clip: {fileID: 8300000, guid: 05f73684fb8f47846b77a3734d4987cf, type: 3}
+    volume: 0.9
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Parry3
+    clip: {fileID: 8300000, guid: bd91d985b26c8da4c8a8a318115a2f92, type: 3}
+    volume: 0.9
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -150,6 +168,54 @@ MonoBehaviour:
   - name: UINav3
     clip: {fileID: 8300000, guid: a4e7fa73d01f83b4a8b4a4dc591b7010, type: 3}
     volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Item_Shot
+    clip: {fileID: 8300000, guid: 952b6cc524fe09c47807ba8f84e8791d, type: 3}
+    volume: 0.8
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Item_Ink
+    clip: {fileID: 8300000, guid: e72ddd36db69f3848bb5657420086c27, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Item_Wall
+    clip: {fileID: 8300000, guid: b6aea9ed1dfc35746b6125357dbe35f1, type: 3}
+    volume: 0.9
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Item_Warp
+    clip: {fileID: 8300000, guid: ec044b4ffa5e717499de791e1c5dba08, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Item_Rewind
+    clip: {fileID: 8300000, guid: 55fd7add51d05ba45b186b71e8f71311, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Item_Grow
+    clip: {fileID: 8300000, guid: 0d2e1dcaae9616746985c644c885e2c8, type: 3}
+    volume: 0.9
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Item_Double
+    clip: {fileID: 8300000, guid: 25facc778d5cb204696fbad7bf447d96, type: 3}
+    volume: 0.9
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Laser1
+    clip: {fileID: 8300000, guid: ff46d2390099c4e4e96c3a27688e1924, type: 3}
+    volume: 0.9
     pitch: 1
     loop: 0
     source: {fileID: 0}

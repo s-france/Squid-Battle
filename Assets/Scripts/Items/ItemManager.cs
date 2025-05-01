@@ -14,7 +14,7 @@ public class ItemManager : MonoBehaviour
 
     [SerializeField] Transform[] ItemSpawners;
 
-    public int itemTypesCount;
+    //public int itemTypesCount;
     [HideInInspector] public int spawnedItemsCount;
     [HideInInspector] public int[] spawnedItems;
 

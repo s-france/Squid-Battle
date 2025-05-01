@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class KillBox : MonoBehaviour
 {
+    ArenaLevelController alc;
+
     // Start is called before the first frame update
     void Start()
     {
+        alc = FindFirstObjectByType<ArenaLevelController>();
         
     }
 
@@ -20,7 +23,7 @@ public class KillBox : MonoBehaviour
     {
         Debug.Log("KillBox collision!");
         //kill player on contact
-        if(col.gameObject.layer == LayerMask.NameToLayer("Players"))
+        if(col.gameObject.layer == LayerMask.NameToLayer("Players") && !alc.roundOver && col.GetComponentInParent<PlayerController>().isAlive)
         {
             Debug.Log("Player entered KillBox!");
 

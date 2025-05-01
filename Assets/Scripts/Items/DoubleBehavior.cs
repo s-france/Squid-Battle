@@ -11,6 +11,8 @@ public class DoubleBehavior : ItemBehavior
     public override void Start()
     {
         base.Start();
+
+        soundFX = "Item_Double";
     }
 
     public override string GetItemType()
@@ -21,10 +23,11 @@ public class DoubleBehavior : ItemBehavior
 
     public override void UseItem(float chargeTime)
     {
+        //play soundfx
+        FindFirstObjectByType<AudioManager>().Play(soundFX);
+
         //spawn double
         CreateDouble(); 
-       
-
         
         DestroyItem();
     }

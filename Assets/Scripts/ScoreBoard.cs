@@ -49,7 +49,7 @@ public class ScoreBoard : MonoBehaviour
         }
 
         //teams
-        if(gm.gameMode == 1)
+        if(gm.gameMode == 1 || gm.gameMode == 2)
         {
             //set team icon color
             scores[idx].GetComponent<Image>().sprite = pm.PlayerList[0].playerScript.SpriteSet[0];
@@ -73,7 +73,7 @@ public class ScoreBoard : MonoBehaviour
 
     public void SetScores()
     {
-        if(gm.gameMode == 1) //Teams
+        if(gm.gameMode == 1 || gm.gameMode == 2) //Teams
         {
             foreach (Team t in pm.TeamList)
             {

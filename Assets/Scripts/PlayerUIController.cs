@@ -54,7 +54,16 @@ public class PlayerUIController : MonoBehaviour
             } else if (pm.PlayerList.TrueForAll(p => p.isReady || !p.isActive) && pm.PlayerList.Count(p => p.isActive) > 1)
             {
                 //load map select
-                gm.sl.LoadScene("MatchSettings");
+
+                if(gm.gameMode == 0 || gm.gameMode == 1)
+                {
+                    gm.sl.LoadScene("MatchSettings");
+
+                } else if(gm.gameMode == 2)
+                {
+                    gm.sl.LoadScene("SoccerSettings");
+                }
+
             }
 
         } else
@@ -136,7 +145,7 @@ public class PlayerUIController : MonoBehaviour
 
         //change teams
         //if on Teams CSS and not ready
-        if(ctx.performed && gm.gameMode == 1 && gm.lc.GetLevelType() == 1 && !pm.PlayerList[pc.idx].isReady)
+        if(ctx.performed && (gm.gameMode == 1 || gm.gameMode == 2) && gm.lc.GetLevelType() == 1 && !pm.PlayerList[pc.idx].isReady)
         {
             FindFirstObjectByType<AudioManager>().Play("UINav3");
 

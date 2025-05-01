@@ -14,6 +14,10 @@ public class ShotBehavior : ItemBehavior
         base.Start();
 
         ShotPrefab = im.ItemObjs[0];
+
+
+        soundFX = "Item_Shot";
+
         Debug.Log("ShotBehavior added!");
     }
 
@@ -26,6 +30,9 @@ public class ShotBehavior : ItemBehavior
 
     public override void UseItem(float chargeTime)
     {
+        //play soundfx
+        FindFirstObjectByType<AudioManager>().Play(soundFX);
+
         GameObject shot = Instantiate(ShotPrefab, pc.transform.position, pc.transform.rotation);
         shot.GetComponent<ShotObj>().parentID = pc.idx;
         shot.GetComponent<ShotObj>().immunityID = pc.idx;

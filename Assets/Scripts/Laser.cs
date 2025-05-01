@@ -60,7 +60,7 @@ public class Laser : MonoBehaviour
             scale.x = Mathf.Lerp(startSize, endSize, timer/freqProgressionTime);
             transform.localScale = scale;
 
-            Debug.Log(frequency);
+            //Debug.Log(frequency);
 
             //fire at freq rate
             if (timer % frequency <= .1f && !firing)
@@ -108,6 +108,9 @@ public class Laser : MonoBehaviour
         //activate laser
         LaserSR.enabled = true;
         Col.enabled = true;
+
+        //play soundfx
+        FindFirstObjectByType<AudioManager>().Play("Laser1");
 
         time = 0;
         while (time <= activeTime)
