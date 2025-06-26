@@ -287,8 +287,8 @@ MonoBehaviour:
   minPos: {x: -7, y: -6}
   freqProgressionTime: 30
   startFrequency: 6
-  endFrequency: 5
+  endFrequency: 4
   startSize: 3
-  endSize: 22
+  endSize: 6
   warningTime: 1.75
   activeTime: 0.75

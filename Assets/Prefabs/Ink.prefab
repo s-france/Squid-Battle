@@ -388,6 +388,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc444b2ae7fe6a4f8e056ceaad4a5f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSize: 5
+  maxSize: 7
   maxUpTime: 15
   maxChargeTime: 3

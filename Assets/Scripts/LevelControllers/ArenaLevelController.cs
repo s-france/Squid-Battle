@@ -417,7 +417,8 @@ public class ArenaLevelController : LevelController
                     //headhunters
                     if(gm.ms.scoreFormat == 0)
                     {
-                        pm.PlayerList[i].score += 1; //1st +1
+                        //MAKE THIS AN OPTION (not default)
+                        //pm.PlayerList[i].score += 1; //1st +1
                     //survival
                     } else if(gm.ms.scoreFormat == 1)
                     {

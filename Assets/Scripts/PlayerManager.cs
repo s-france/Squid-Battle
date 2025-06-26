@@ -472,6 +472,8 @@ public class PlayerManager : MonoBehaviour
                         TeamList[PlayerList[killCredit].team].score += 2;
                     } else //punish team kills
                     {
+                        //EDIT: Nevermind! -too harsh for default -should be toggleable
+                        /*
                         TeamList[PlayerList[killCredit].team].score -= 1;
                         if(PlayerList[idx].score < 0)
                         {
@@ -482,6 +484,7 @@ public class PlayerManager : MonoBehaviour
                         {
                             TeamList[PlayerList[killCredit].team].score = 0;
                         }
+                        */
                     }
 
 
@@ -494,11 +497,14 @@ public class PlayerManager : MonoBehaviour
                 
             } else //self destruct
             {
+                //EDIT: not punishing SD by default -make it an option
+                /*
                 PlayerList[idx].score -= 1;
                 if(PlayerList[idx].score < 0)
                 {
                     PlayerList[idx].score = 0;
                 }
+                */
 
                 /* should we really punish SD in team battle?
                 //team scoring
@@ -544,6 +550,7 @@ public class PlayerManager : MonoBehaviour
 
 
                 //open results screen + map select
+                //(assigns placement points also)
                 gm.lc.ShowResults();
 
                 //gm.lc.EndLevel();
